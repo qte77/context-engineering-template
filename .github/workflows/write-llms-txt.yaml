@@ -1,0 +1,64 @@
+# TODO use local installation of repo to text
+# https://github.com/itsitgroup/repo2txt
+name: Write repo llms.txt
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      LLMS_TXT_PATH:
+        description: 'Path to the directory to save llsm.txt'
+        required: true
+        default: 'docs'
+        type: string
+      LLMS_TXT_NAME:
+        description: 'Path to the directory to save llsm.txt'
+        required: true
+        default: 'llms.txt'
+        type: string
+      CONVERTER_URL:
+        description: '[uithub|gittodoc]'  # |repo2txt
+        required: true
+        default: 'uithub.com'
+        type: choice
+        options:
+        - 'uithub.com'
+        - 'gittodoc.com'
+        # - 'repo2txt.com'
+
+jobs:
+  generate-file:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Construct and create llms.txt path
+        id: construct_and_create_llms_txt_path
+        run: |
+          LLMS_TXT_PATH="${{ inputs.LLMS_TXT_PATH }}"
+          LLMS_TXT_PATH="${LLMS_TXT_PATH:-docs}"
+          LLMS_TXT_NAME="${{ inputs.LLMS_TXT_NAME }}"
+          LLMS_TXT_NAME="${LLMS_TXT_NAME:-llms.txt}"
+          echo "LLMS_TXT_FULL=${LLMS_TXT_PATH}/${LLMS_TXT_NAME}" >> $GITHUB_OUTPUT
+          mkdir -p "${LLMS_TXT_PATH}"
+
+      - name: Fetch TXT from URL
+        run: |
+          LLMS_TXT_FULL=${{ steps.construct_and_create_llms_txt_path.outputs.LLMS_TXT_FULL }}
+          URL="https://${{ inputs.CONVERTER_URL }}/${{ github.repository }}"
+          echo "Fetching content from: ${URL}"
+          echo "Saving content to: ${LLMS_TXT_FULL}"
+          curl -s "${URL}" > "${LLMS_TXT_FULL}"
+
+      - name: Commit and push file
+        run: |
+          LLMS_TXT_FULL=${{ steps.construct_and_create_llms_txt_path.outputs.LLMS_TXT_FULL }}
+          commit_msg="feat(docs): Add/Update ${LLMS_TXT_FULL}, a flattened repo as single text file, inspired by [llmstxt.org](https://llmstxt.org/)."
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add "${LLMS_TXT_FULL}"
+          git commit -m "${commit_msg}"
+          git push

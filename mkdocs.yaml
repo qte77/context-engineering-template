@@ -1,0 +1,80 @@
+---
+# https://github.com/james-willett/mkdocs-material-youtube-tutorial
+# https://mkdocstrings.github.io/recipes/
+# site info set in workflow
+site_name: '<gha_sed_site_name_here>'
+site_description: '<gha_sed_site_description_here>'
+repo_url: '<gha_sed_repo_url_here>'
+edit_uri: edit/main
+theme:
+  name: material
+  language: en
+  features:
+    - content.code.annotation
+    - content.code.copy
+    - content.tabs.link
+    - navigation.footer
+    - navigation.sections
+    - navigation.tabs
+    - navigation.top
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        # icon: material/brightness-7
+        icon: material/toggle-switch-off-outline 
+        name: "Toggle Dark Mode"
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        # icon: material/brightness-4
+        icon: material/toggle-switch
+        name: "Toggle Light Mode"
+nav:
+  - Home: index.md
+  - Code: docstrings.md
+  - Change Log: CHANGELOG.md
+  - License: LICENSE.md
+  - llms.txt: llms.txt
+plugins:
+  - search:
+      lang: en
+  - autorefs
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_root_heading: true
+            show_root_full_path: true
+            show_object_full_path: false
+            show_root_members_full_path: false
+            show_category_heading: true
+            show_submodules: true
+markdown_extensions:
+  - attr_list
+  - pymdownx.magiclink
+  - pymdownx.tabbed
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - sane_lists
+  - smarty
+  - toc:
+      permalink: true
+validation:
+  links:
+    not_found: warn
+    anchors: warn
+# builds only if validation succeeds while
+# threating warnings as errors
+# also checks for broken links
+# strict: true
+...

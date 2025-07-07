@@ -1,0 +1,38 @@
+#<--- 72 characters --------------------------------------------------->
+#
+# Conventional Commits, semantic commit messages for humans and machines
+# https://www.conventionalcommits.org/en/v1.0.0/
+# Lint your conventional commits
+# https://github.com/conventional-changelog/commitlint/tree/master/%40 \
+#	commitlint/config-conventional
+# Common types can be (based on Angular convention)
+# build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test
+# https://github.com/conventional-changelog/commitlint/tree/master/%40
+# Footer
+# https://git-scm.com/docs/git-interpret-trailers
+#
+#<--- pattern --------------------------------------------------------->
+#
+# <feat|fix|build|chore|ci|docs|style|refactor|perf|test>[(Scope)][!]: \
+#	<description>
+# short description: <type>[(<scope>)]: <subject>
+#
+# ! after scope in header indicates breaking change
+#
+# [optional body]
+#
+# - with bullets points
+#
+# [optional footer(s)]
+#
+# [BREAKING CHANGE:, Refs:, Resolves:, Addresses:, Reviewed by:]
+#
+#<--- usage ----------------------------------------------------------->
+#
+# Set locally (in the repository)
+# `git config commit.template .gitmessage`
+#
+# Set globally
+# `git config --global commit.template .gitmessage`
+#
+#<--- 72 characters --------------------------------------------------->

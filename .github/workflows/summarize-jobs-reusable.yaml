@@ -1,0 +1,127 @@
+---
+# https://ecanarys.com/supercharging-github-actions-with-job-summaries-and-pull-request-comments/
+# FIXME currently bug in gha summaries ? $GITHUB_STEP_SUMMARY files are empty
+# https://github.com/orgs/community/discussions/110283
+# https://github.com/orgs/community/discussions/67991
+# Possible workaround
+# echo ${{ fromJSON(step).name }}" >> $GITHUB_STEP_SUMMARY
+# echo ${{ fromJSON(step).outcome }}" >> $GITHUB_STEP_SUMMARY
+# echo ${{ fromJSON(step).conclusion }}"
+
+name: Summarize workflow jobs
+
+on:
+  workflow_call:
+    outputs:
+      summary:
+        description: "Outputs summaries of jobs in a workflow"
+        value: ${{ jobs.generate_summary.outputs.summary }}
+    inputs:
+      branch_to_summarize:
+        required: false
+        default: 'main'
+        type: string
+      summary_data:
+        required: false
+        type: string
+
+jobs:
+  generate_summary:
+    name: Generate Summary
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      checks: read
+      pull-requests: none
+    outputs:
+      summary: ${{ steps.add_changed_files.outputs.summary }}
+    steps:
+
+      - name: Add general information
+        id: general_info
+        run: |
+          echo "# Job Summaries" >> $GITHUB_STEP_SUMMARY
+          echo "Job: `${{ github.job }}`" >> $GITHUB_STEP_SUMMARY
+          echo "Date: $(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_STEP_SUMMARY
+
+      - name: Add step states
+        id: step_states
+        run: |
+          echo "### Steps:" >> $GITHUB_STEP_SUMMARY
+          # loop summary_data if valid json
+          if jq -e . >/dev/null 2>&1 <<< "${{ inputs.summary_data }}"; then
+            jq -r '
+              .steps[]
+              | select(.conclusion != null)
+              | "- **\(.name)**: \(
+                if .conclusion == "success" then ":white_check_mark:"
+                elif .conclusion == "failure" then ":x:"
+                else ":warning:" end
+              )"
+            ' <<< "${{ inputs.summary_data }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Invalid JSON in summary data." >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          ref: "${{ inputs.branch_to_summarize }}"
+          fetch-depth: 0
+
+      - name: Add changed files since last push
+        id: add_changed_files
+        run: |
+          # Get the tags
+          # Use disabled lines to get last two commits
+          # current=$(git show -s --format=%ci HEAD)
+          # previous=$(git show -s --format=%ci HEAD~1)
+          # git diff --name-only HEAD^ HEAD >> $GITHUB_STEP_SUMMARY
+          version_tag_regex="^v[0-9]+\.[0-9]+\.[0-9]+$" # v0.0.0 
+          tags=$(git tag --sort=-version:refname | \
+            grep -E "${version_tag_regex}" || echo "")
+
+          # Get latest and previous tags
+          latest_tag=$(echo "${tags}" | head -n 1)
+          previous_tag=$(echo "${tags}" | head -n 2 | tail -n 1)
+
+          echo "tags: latest '${latest_tag}', previous '${previous_tag}'"
+
+          # Write to summary
+          error_msg="No files to output. Tag not found:"
+          echo ${{ steps.step_states.outputs.summary }} >> $GITHUB_STEP_SUMMARY
+          echo "## Changed files on '${{ inputs.branch_to_summarize }}'" >> $GITHUB_STEP_SUMMARY
+
+          if [ -z "${latest_tag}" ]; then
+            echo "${error_msg} latest" >> $GITHUB_STEP_SUMMARY
+          elif [ -z "${previous_tag}" ]; then
+            echo "${error_msg} previous" >> $GITHUB_STEP_SUMMARY
+          elif [ "${latest_tag}" == "${previous_tag}" ]; then
+            echo "Latest and previous tags are the same: '${latest_tag}'" >> $GITHUB_STEP_SUMMARY
+          else
+            # Get commit dates and hashes
+            latest_date=$(git log -1 --format=%ci $latest_tag)
+            previous_date=$(git log -1 --format=%ci $previous_tag)
+            current_hash=$(git rev-parse --short $latest_tag)
+            previous_hash=$(git rev-parse --short $previous_tag)
+
+            # Append summary to the job summary
+            echo "Latest Tag Commit: '${latest_tag}' (${current_hash}) ${latest_date}" >> $GITHUB_STEP_SUMMARY
+            echo "Previous Tag Commit: '${previous_tag}' (${previous_hash}) ${previous_date}" >> $GITHUB_STEP_SUMMARY
+            echo "Files changed:" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            git diff --name-only $previous_tag..$latest_tag >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Output error message in case of failure or cancel
+        if: failure() || cancelled()
+        run: |
+          if [ "${{ job.status }}" == "cancelled" ]; then
+            out_msg="## Workflow was cancelled"
+          else
+            out_msg="## Error in previous step"
+          fi
+          echo $out_msg >> $GITHUB_STEP_SUMMARY
+...

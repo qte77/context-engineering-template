@@ -1,0 +1,22 @@
+{
+    "editor.lineNumbers": "on",
+    "editor.wordWrap": "on",
+    "explorer.confirmDelete": true,
+    "files.autoSave": "onFocusChange",
+    "git.autofetch": true,
+    "git.enableSmartCommit": true,
+    "makefile.configureOnOpen": false,
+    "markdownlint.config": {
+        "MD024": false,
+        "MD033": false
+    },
+    "python.analysis.extraPaths": ["./venv/lib/python3.13/site-packages"],
+    "python.defaultInterpreterPath": "./.venv/bin/python",
+    "python.analysis.typeCheckingMode": "strict",
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportMissingTypeStubs": "none",
+        "reportUnknownMemberType": "none",
+        "reportUnknownVariableType": "none"
+    },
+    "redhat.telemetry.enabled": false
+}

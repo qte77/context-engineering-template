@@ -1,0 +1,38 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# environment
+.venv/
+*.env
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Testing
+.pytest_cache/
+.coverage
+
+# Logs
+*.log
+/logs
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE specific files (adjust as needed)
+# .vscode/
+# .idea/
+
+# mkdocs
+reference/
+site/
+
+# linting
+.ruff_cache
+
+# type checking
+.mypy_cache/
