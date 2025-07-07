@@ -4,7 +4,7 @@
 
 .SILENT:
 .ONESHELL:
-.PHONY: all setup_python_claude setup_dev setup_prod setup_claude_code prp_gen_claude prp_exe_claude ruff test_all check_types coverage_all output_unset_app_env_sh help
+.PHONY: all setup_python_claude setup_dev setup_prod setup_claude_code prp_gen_claude prp_exe_claude ruff test_all check_types coverage_all output_unset_app_env_sh run_gui run_server run_client help
 .DEFAULT_GOAL := help
 
 
@@ -121,6 +121,21 @@ coverage_all:  ## Get test coverage
 
 check_types:  ## Check for static typing errors
 	uv run mypy $(APP_PATH)
+
+
+# MARK: run
+
+
+run_gui:  ## Launch Streamlit GUI
+	uv run python -m src.main gui
+
+
+run_server:  ## Run MCP server
+	uv run python -m src.main server
+
+
+run_client:  ## Run MCP client (requires TOOL and ARGS)
+	uv run python -m src.main client $(ARGS)
 
 
 # MARK: help

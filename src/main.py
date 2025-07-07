@@ -32,6 +32,10 @@ Examples:
   %(prog)s client --server ./server.py roll_dice --notation 2d6
   %(prog)s client --server ./server.py get_weather --location "San Francisco"
   %(prog)s client --server ./server.py get_date --timezone UTC
+  
+  # Launch Streamlit GUI
+  %(prog)s gui
+  %(prog)s gui --port 8502
 """
     )
     
@@ -63,6 +67,24 @@ Examples:
     client_parser = subparsers.add_parser(
         'client',
         help='Run MCP client'
+    )
+    
+    # GUI subcommand
+    gui_parser = subparsers.add_parser(
+        'gui',
+        help='Launch Streamlit GUI'
+    )
+    gui_parser.add_argument(
+        "--log-level",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR"],
+        default="INFO",
+        help="Set the logging level",
+    )
+    gui_parser.add_argument(
+        "--port",
+        type=int,
+        default=8501,
+        help="Port for Streamlit server (default: 8501)",
     )
     client_parser.add_argument(
         '--server',
@@ -166,6 +188,26 @@ Examples:
             # Run the client
             exit_code = await cli.run(client_args)
             sys.exit(exit_code)
+        elif args.mode == 'gui':
+            logger.info("Starting Streamlit GUI application")
+            # Launch Streamlit GUI
+            import os
+            import subprocess
+            
+            # Set environment variables for Streamlit
+            env = os.environ.copy()
+            env['STREAMLIT_SERVER_PORT'] = str(args.port)
+            env['STREAMLIT_LOGGER_LEVEL'] = args.log_level
+            
+            # Run Streamlit
+            cmd = [
+                'streamlit', 'run', 
+                'src/gui/app.py',
+                '--server.port', str(args.port),
+                '--logger.level', args.log_level.lower()
+            ]
+            
+            subprocess.run(cmd, env=env)
         else:
             parser.print_help()
             sys.exit(1)
