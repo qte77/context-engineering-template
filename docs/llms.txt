@@ -1,0 +1,2029 @@
+├── .claude
+    ├── commands
+    │   ├── execute-prp.md
+    │   └── generate-prp.md
+    └── settings.local.json
+├── .devcontainer
+    └── setup_python_claude
+    │   └── devcontainer.json
+├── .env.example
+├── .github
+    ├── dependabot.yaml
+    ├── scripts
+    │   ├── create_pr.sh
+    │   └── delete_branch_pr_tag.sh
+    └── workflows
+    │   ├── bump-my-version.yaml
+    │   ├── codeql.yaml
+    │   ├── generate-deploy-mkdocs-ghpages.yaml
+    │   ├── links-fail-fast.yaml
+    │   ├── pytest.yaml
+    │   ├── ruff.yaml
+    │   ├── summarize-jobs-reusable.yaml
+    │   └── write-llms-txt.yaml
+├── .gitignore
+├── .gitmessage
+├── .vscode
+    ├── extensions.json
+    └── settings.json
+├── AGENTS.md
+├── CHANGELOG.md
+├── CLAUDE.md
+├── LICENSE.md
+├── Makefile
+├── README.md
+├── assets
+    └── images
+    │   ├── sequence_diagram.png
+    │   └── sequence_diagram.svg
+├── context
+    └── templates
+    │   ├── feature_base.md
+    │   └── prp_base.md
+├── docs
+    └── architecture
+    │   └── sequence_diagram.mermaid
+├── mkdocs.yaml
+├── pyproject.toml
+└── src
+    ├── __init__.py
+    ├── main.py
+    └── py.typed
+
+
+/.claude/commands/execute-prp.md:
+--------------------------------------------------------------------------------
+ 1 | # Execute Product Requirements Prompt (PRP)
+ 2 | 
+ 3 | Implement a feature using using the PRP file.
+ 4 | 
+ 5 | ## PRP File: $ARGUMENTS
+ 6 | 
+ 7 | ## Execution Process
+ 8 | 
+ 9 | 1. **Load PRP**
+10 |    - Read the specified PRP file
+11 |    - Understand all context and requirements
+12 |    - Follow all instructions in the PRP and extend the research if needed
+13 |    - Ensure you have all needed context to implement the PRP fully
+14 |    - Do more web searches and codebase exploration as needed
+15 | 
+16 | 2. **ULTRATHINK**
+17 |    - Think hard before you execute the plan. Create a comprehensive plan addressing all requirements.
+18 |    - Break down complex tasks into smaller, manageable steps using your todos tools.
+19 |    - Use the TodoWrite tool to create and track your implementation plan.
+20 |    - Identify implementation patterns from existing code to follow.
+21 | 
+22 | 3. **Execute the plan**
+23 |    - Execute the PRP
+24 |    - Implement all the code
+25 | 
+26 | 4. **Validate**
+27 |    - Run each validation command
+28 |    - Fix any failures
+29 |    - Re-run until all pass
+30 | 
+31 | 5. **Complete**
+32 |    - Ensure all checklist items done
+33 |    - Run final validation suite
+34 |    - Report completion status
+35 |    - Read the PRP again to ensure you have implemented everything
+36 | 
+37 | 6. **Reference the PRP**
+38 |    - You can always reference the PRP again if needed
+39 | 
+40 | Note: If validation fails, use error patterns in PRP to fix and retry.
+41 | 
+
+
+--------------------------------------------------------------------------------
+/.claude/commands/generate-prp.md:
+--------------------------------------------------------------------------------
+ 1 | # Create Product Requirements Prompt (PRP)
+ 2 | 
+ 3 | ## Feature file: $ARGUMENTS
+ 4 | 
+ 5 | Generate a complete PRP (Product Requirements Prompt) for general feature implementation with thorough research. Ensure context is passed to the AI agent to enable self-validation and iterative refinement. Read the feature file first to understand what needs to be created, how the examples provided help, and any other considerations.
+ 6 | 
+ 7 | The AI agent only gets the context you are appending to the PRP and training data. Assume the AI agent has access to the codebase and the same knowledge cutoff as you, so its important that your research findings are included or referenced in the PRP. The Agent has Websearch capabilities, so pass urls to documentation and examples.
+ 8 | 
+ 9 | - Use `/context/PRPs` as `$base_path`
+10 | - Extract only the filename from `$ARGUMENTS` into `$file_name`
+11 | 
+12 | ## Research Process
+13 | 
+14 | 1. **Codebase Analysis**
+15 |    - Search for similar features/patterns in the codebase
+16 |    - Identify files to reference in PRP
+17 |    - Note existing conventions to follow
+18 |    - Check test patterns for validation approach
+19 | 
+20 | 2. **External Research**
+21 |    - Search for similar features/patterns online
+22 |    - Library documentation (include specific URLs)
+23 |    - Implementation examples (GitHub/StackOverflow/blogs)
+24 |    - Best practices and common pitfalls
+25 | 
+26 | 3. **User Clarification** (if needed)
+27 |    - Specific patterns to mirror and where to find them?
+28 |    - Integration requirements and where to find them?
+29 | 
+30 | ## PRP Generation
+31 | 
+32 | - Use `${base_path}/templates/prp_base.md` in the base folder as template
+33 | 
+34 | ### Critical Context to Include and pass to the AI agent as part of the PRP
+35 | 
+36 | - **Documentation**: URLs with specific sections
+37 | - **Code Examples**: Real snippets from codebase
+38 | - **Gotchas**: Library quirks, version issues
+39 | - **Patterns**: Existing approaches to follow
+40 | 
+41 | ### Implementation Blueprint
+42 | 
+43 | - Start with pseudocode showing approach
+44 | - Reference real files for patterns
+45 | - Include error handling strategy
+46 | - list tasks to be completed to fullfill the PRP in the order they should be completed
+47 | 
+48 | ### Validation Gates (Must be Executable) eg for python
+49 | 
+50 | ```bash
+51 | # Syntax/Style
+52 | make ruff
+53 | make check_types
+54 | 
+55 | # Unit Tests
+56 | make coverage_all
+57 | ```
+58 | 
+59 | ***CRITICAL AFTER YOU ARE DONE RESEARCHING AND EXPLORING THE CODEBASE BEFORE YOU START WRITING THE PRP***
+60 | 
+61 | ***ULTRATHINK ABOUT THE PRP AND PLAN YOUR APPROACH THEN START WRITING THE PRP***
+62 | 
+63 | ## Output
+64 | 
+65 | - Save the result to `${base_path}/${file_name}`
+66 | 
+67 | ## Quality Checklist
+68 | 
+69 | - [ ] All necessary context included
+70 | - [ ] Validation gates are executable by AI
+71 | - [ ] References existing patterns
+72 | - [ ] Clear implementation path
+73 | - [ ] Error handling documented
+74 | 
+75 | Score the PRP on a scale of 1-10 (confidence level to succeed in one-pass implementation using claude codes)
+76 | 
+77 | Remember: The goal is one-pass implementation success through comprehensive context.
+78 | 
+
+
+--------------------------------------------------------------------------------
+/.claude/settings.local.json:
+--------------------------------------------------------------------------------
+ 1 | {
+ 2 |   "permissions": {
+ 3 |     "allow": [
+ 4 |       "Bash(cat:*)",
+ 5 |       "Bash(find:*)",
+ 6 |       "Bash(git:diff*)",
+ 7 |       "Bash(git:log*)",
+ 8 |       "Bash(git:status*)",
+ 9 |       "Bash(grep:*)",
+10 |       "Bash(ls:*)",
+11 |       "Bash(mkdir:*)",
+12 |       "Bash(source:*)",
+13 |       "Bash(touch:*)",
+14 |       "Bash(tree:*)",
+15 |       "Bash(uv:run*)", 
+16 |       "Edit(AGENTS.md)",
+17 |       "Edit(docs/**/*.md)",
+18 |       "Edit(src/**/*.py)",
+19 |       "Edit(src/**/*.json)",
+20 |       "Edit(tests/**/*.py)",
+21 |       "WebFetch(domain:docs.anthropic.com)"
+22 |     ],
+23 |     "deny": [
+24 |       "Bash(mv:*)",
+25 |       "Bash(rm:*)",
+26 |       "Edit(CLAUDE.md"
+27 |     ]
+28 |   }
+29 | }
+
+
+--------------------------------------------------------------------------------
+/.devcontainer/setup_python_claude/devcontainer.json:
+--------------------------------------------------------------------------------
+ 1 | {
+ 2 |   "name": "setup_python_claude",
+ 3 |   "image": "mcr.microsoft.com/vscode/devcontainers/python:3.13",
+ 4 |   "features": {
+ 5 |     "ghcr.io/devcontainers/features/node:1": {}
+ 6 |   },
+ 7 |   "customizations": {
+ 8 |     "vscode": {
+ 9 |       "extensions": [
+10 |         "anthropic.claude-code"
+11 |       ]
+12 |     }
+13 |   },
+14 |   "postCreateCommand": "make setup_python_claude"
+15 | }
+
+
+--------------------------------------------------------------------------------
+/.env.example:
+--------------------------------------------------------------------------------
+1 | ANTHROPIC_API_KEY="sk-abc-xyz"
+2 | GEMINI_API_KEY="xyz"
+3 | GITHUB_API_KEY="ghp_xyz"
+4 | GROK_API_KEY="xai-xyz"
+5 | HUGGINGFACE_API_KEY="hf_xyz"
+6 | OPENROUTER_API_KEY="sk-or-v1-xyz"
+7 | PERPLEXITY_API_KEY=""
+8 | RESTACK_API_KEY="xyz"
+9 | TOGETHER_API_KEY="xyz"
+
+
+--------------------------------------------------------------------------------
+/.github/dependabot.yaml:
+--------------------------------------------------------------------------------
+ 1 | ---
+ 2 | # https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+ 3 | version: 2
+ 4 | updates:
+ 5 |   - package-ecosystem: "pip"
+ 6 |     directory: "/"
+ 7 |     schedule:
+ 8 |       interval: "weekly"
+ 9 | ...
+10 | 
+
+
+--------------------------------------------------------------------------------
+/.github/scripts/create_pr.sh:
+--------------------------------------------------------------------------------
+ 1 | #!/bin/bash
+ 2 | # 1 base ref, 2 target ref, 3 title suffix
+ 3 | # 4 current version, 5 bumped
+ 4 | 
+ 5 | pr_title="PR $2 $3"
+ 6 | pr_body="PR automatically created from \`$1\` to bump from \`$4\` to \`$5\` on \`$2\`. Tag \`v$5\` will be created and has to be deleted manually if PR gets closed without merge."
+ 7 | 
+ 8 | gh pr create \
+ 9 |   --base $1 \
+10 |   --head $2 \
+11 |   --title "${pr_title}" \
+12 |   --body "${pr_body}"
+13 |   # --label "bump"
+14 | 
+
+
+--------------------------------------------------------------------------------
+/.github/scripts/delete_branch_pr_tag.sh:
+--------------------------------------------------------------------------------
+ 1 | #!/bin/bash
+ 2 | # 1 repo, 2 target ref, 3 current version
+ 3 | 
+ 4 | tag_to_delete="v$3"
+ 5 | branch_del_api_call="repos/$1/git/refs/heads/$2"
+ 6 | del_msg="'$2' force deletion attempted."
+ 7 | close_msg="Closing PR '$2' to rollback after failure"
+ 8 | 
+ 9 | echo "Tag $tag_to_delete for $del_msg"
+10 | git tag -d "$tag_to_delete"
+11 | echo "PR for $del_msg"
+12 | gh pr close "$2" --comment "$close_msg"
+13 | echo "Branch $del_msg"
+14 | gh api "$branch_del_api_call" -X DELETE && \
+15 |   echo "Branch without error return deleted."
+
+
+--------------------------------------------------------------------------------
+/.github/workflows/bump-my-version.yaml:
+--------------------------------------------------------------------------------
+  1 | ---
+  2 | name: bump-my-version
+  3 | 
+  4 | on:
+  5 |   # pull_request:
+  6 |   #  types: [closed]
+  7 |   #  branches: [main]
+  8 |   workflow_dispatch:
+  9 |     inputs:
+ 10 |       bump_type:
+ 11 |         description: '[major|minor|patch]'
+ 12 |         required: true
+ 13 |         default: 'patch'
+ 14 |         type: choice
+ 15 |         options:
+ 16 |         - 'major'
+ 17 |         - 'minor'
+ 18 |         - 'patch'
+ 19 | 
+ 20 | env:
+ 21 |   BRANCH_NEW: "bump-${{ github.run_number }}-${{ github.ref_name }}"
+ 22 |   SKIP_PR_HINT: "[skip ci bump]"
+ 23 |   SCRIPT_PATH: ".github/scripts"
+ 24 | 
+ 25 | jobs:
+ 26 |   bump_my_version:
+ 27 |     # TODO bug? currently resulting in: Unrecognized named-value: 'env'.
+ 28 |     # https://stackoverflow.com/questions/61238849/github-actions-if-contains-function-not-working-with-env-variable/61240761
+ 29 |     # if: !contains(
+ 30 |     #      github.event.pull_request.title,
+ 31 |     #      ${{ env.SKIP_PR_HINT }}
+ 32 |     #    )
+ 33 |     # TODO check for PR closed by bot to avoid PR creation loop
+ 34 |     # github.actor != 'github-actions'
+ 35 |     if: >
+ 36 |         github.event_name == 'workflow_dispatch' ||
+ 37 |         ( github.event.pull_request.merged == true &&
+ 38 |         github.event.pull_request.closed_by != 'github-actions' )
+ 39 |     runs-on: ubuntu-latest
+ 40 |     outputs:
+ 41 |       branch_new: ${{ steps.create_branch.outputs.branch_new }}
+ 42 |       summary_data: ${{ steps.set_summary.outputs.summary_data }}
+ 43 |     permissions:
+ 44 |       actions: read
+ 45 |       checks: write
+ 46 |       contents: write
+ 47 |       pull-requests: write
+ 48 |     steps:
+ 49 | 
+ 50 |       - name: Checkout repo
+ 51 |         uses: actions/checkout@v4
+ 52 |         with:
+ 53 |           fetch-depth: 1
+ 54 | 
+ 55 |       - name: Set git cfg and create branch
+ 56 |         id: create_branch
+ 57 |         run: |
+ 58 |           git config user.email "bumped@qte77.gha"
+ 59 |           git config user.name "bump-my-version"
+ 60 |           git checkout -b "${{ env.BRANCH_NEW }}"
+ 61 |           echo "branch_new=${{ env.BRANCH_NEW }}" >> $GITHUB_OUTPUT
+ 62 | 
+ 63 |       - name: Bump version
+ 64 |         id: bump
+ 65 |         uses: callowayproject/bump-my-version@0.29.0
+ 66 |         env:
+ 67 |           BUMPVERSION_TAG: "true"
+ 68 |         with:
+ 69 |           args: ${{ inputs.bump_type }}
+ 70 |           branch: ${{ env.BRANCH_NEW }}
+ 71 | 
+ 72 |       - name: "Create PR '${{ env.BRANCH_NEW }}'"
+ 73 |         if: steps.bump.outputs.bumped == 'true'
+ 74 |         env:
+ 75 |           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ 76 |         run: |
+ 77 |           src="${{ env.SCRIPT_PATH }}/create_pr.sh"
+ 78 |           chmod +x "$src"
+ 79 |           $src "${{ github.ref_name }}" "${{ env.BRANCH_NEW }}" "${{ env.SKIP_PR_HINT }}" "${{ steps.bump.outputs.previous-version }}" "${{ steps.bump.outputs.current-version }}"
+ 80 | 
+ 81 |       - name: Delete branch, PR and tag in case of failure or cancel
+ 82 |         if: failure() || cancelled()
+ 83 |         env:
+ 84 |           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ 85 |         run: |
+ 86 |           src="${{ env.SCRIPT_PATH }}/delete_branch_pr_tag.sh"
+ 87 |           chmod +x "$src"
+ 88 |           $src "${{ github.repository }}" "${{ env.BRANCH_NEW }}" "${{ steps.bump.outputs.current-version }}"
+ 89 | 
+ 90 |       - name: Set summary data
+ 91 |         id: set_summary
+ 92 |         if: ${{ always() }}
+ 93 |         run: echo "summary_data=${GITHUB_STEP_SUMMARY}" >> $GITHUB_OUTPUT
+ 94 |   
+ 95 |   generate_summary:
+ 96 |     name: Generate Summary Report 
+ 97 |     if: ${{ always() }}
+ 98 |     needs: bump_my_version
+ 99 |     uses: ./.github/workflows/summarize-jobs-reusable.yaml
+100 |     with:
+101 |       branch_to_summarize: ${{ needs.bump_my_version.outputs.branch_new }}
+102 |       summary_data: ${{ needs.bump_my_version.outputs.summary_data }}
+103 | ...
+104 | 
+
+
+--------------------------------------------------------------------------------
+/.github/workflows/codeql.yaml:
+--------------------------------------------------------------------------------
+ 1 | ---
+ 2 | # https://github.blog/changelog/2023-01-18-code-scanning-codeql-action-v1-is-now-deprecated/
+ 3 | name: "CodeQL"
+ 4 | 
+ 5 | on:
+ 6 |   push:
+ 7 |   pull_request:
+ 8 |     types: [closed]
+ 9 |     branches: [ main ]
+10 |   schedule:
+11 |     - cron: '27 11 * * 0'
+12 |   workflow_dispatch:
+13 | 
+14 | jobs:
+15 |   analyze:
+16 |     name: Analyze
+17 |     runs-on: ubuntu-latest
+18 |     permissions:
+19 |       actions: read
+20 |       contents: read
+21 |       security-events: write
+22 | 
+23 |     steps:
+24 |     - name: Checkout repository
+25 |       uses: actions/checkout@v4
+26 | 
+27 |     - name: Initialize CodeQL
+28 |       uses: github/codeql-action/init@v3
+29 |       with:
+30 |         languages: python
+31 | 
+32 |     - name: Autobuild
+33 |       uses: github/codeql-action/autobuild@v3
+34 |     # if autobuild fails
+35 |     #- run: |
+36 |     #   make bootstrap
+37 |     #   make release
+38 | 
+39 |     - name: Perform CodeQL Analysis
+40 |       uses: github/codeql-action/analyze@v3
+41 |     #- name: sarif
+42 |     #  uses: github/codeql-action/upload-sarif@v2
+43 | ...
+44 | 
+
+
+--------------------------------------------------------------------------------
+/.github/workflows/generate-deploy-mkdocs-ghpages.yaml:
+--------------------------------------------------------------------------------
+  1 | ---
+  2 | name: Deploy Docs
+  3 | 
+  4 | on:
+  5 |   pull_request:
+  6 |     types: [closed]
+  7 |     branches: [main]
+  8 |   workflow_dispatch:
+  9 | 
+ 10 | env:
+ 11 |   DOCSTRINGS_FILE: "docstrings.md"
+ 12 |   DOC_DIR: "docs"
+ 13 |   SRC_DIR: "src"
+ 14 |   SITE_DIR: "site"
+ 15 |   IMG_DIR: "assets/images"
+ 16 | 
+ 17 | jobs:
+ 18 |   build-and-deploy:
+ 19 |     runs-on: ubuntu-latest
+ 20 |     permissions:
+ 21 |       contents: read
+ 22 |       pages: write
+ 23 |       id-token: write
+ 24 |     environment:
+ 25 |       name: github-pages
+ 26 |     steps:
+ 27 | 
+ 28 |     - name: Checkout the repository
+ 29 |       uses: actions/checkout@v4.0.0
+ 30 |       with:
+ 31 |         ref:
+ 32 |           ${{
+ 33 |             github.event.pull_request.merged == true &&
+ 34 |             'main' ||
+ 35 |             github.ref_name
+ 36 |           }}
+ 37 |         fetch-depth: 0
+ 38 | 
+ 39 |     - uses: actions/configure-pages@v5.0.0
+ 40 | 
+ 41 |     # caching instead of actions/cache@v4.0.0
+ 42 |     # https://docs.astral.sh/uv/guides/integration/github/#caching
+ 43 |     - name: Install uv with cache dependency glob
+ 44 |       uses: astral-sh/setup-uv@v5.0.0
+ 45 |       with:
+ 46 |         enable-cache: true
+ 47 |         cache-dependency-glob: "uv.lock"
+ 48 | 
+ 49 |     # setup python from pyproject.toml using uv
+ 50 |     # instead of using actions/setup-python@v5.0.0
+ 51 |     # https://docs.astral.sh/uv/guides/integration/github/#setting-up-python
+ 52 |     - name: "Set up Python"
+ 53 |       run: uv python install
+ 54 | 
+ 55 |     - name: Install only doc deps
+ 56 |       run: uv sync --only-group docs # --frozen
+ 57 | 
+ 58 |     - name: Get repo info and stream into mkdocs.yaml
+ 59 |       id: repo_info
+ 60 |       run: |
+ 61 |         REPO_INFO=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+ 62 |           -H "Accept: application/vnd.github.v3+json" \
+ 63 |           https://api.github.com/repos/${{ github.repository }})
+ 64 |         REPO_URL="${{ github.server_url }}/${{ github.repository }}"
+ 65 |         REPO_URL=$(echo ${REPO_URL} | sed 's|/|\\/|g')
+ 66 |         SITE_NAME=$(sed '1!d' README.md | sed '0,/# /{s/# //}')
+ 67 |         SITE_DESC=$(echo $REPO_INFO | jq -r .description)
+ 68 |         sed -i "s/<gha_sed_repo_url_here>/${REPO_URL}/g" mkdocs.yaml
+ 69 |         sed -i "s/<gha_sed_site_name_here>/${SITE_NAME}/g" mkdocs.yaml
+ 70 |         sed -i "s/<gha_sed_site_description_here>/${SITE_DESC}/g" mkdocs.yaml
+ 71 | 
+ 72 |     - name: Copy text files to be included
+ 73 |       run: |
+ 74 |         CFG_PATH="src/app/config"
+ 75 |         mkdir -p "${DOC_DIR}/${CFG_PATH}"
+ 76 |         cp README.md "${DOC_DIR}/index.md"
+ 77 |         cp {CHANGELOG,LICENSE}.md "${DOC_DIR}"
+ 78 |         # Auxiliary files
+ 79 |         cp .env.example "${DOC_DIR}"
+ 80 |         cp "${CFG_PATH}/config_chat.json" "${DOC_DIR}/${CFG_PATH}"
+ 81 | 
+ 82 |     - name: Generate code docstrings concat file
+ 83 |       run: |
+ 84 |         PREFIX="::: "
+ 85 |         find "${SRC_DIR}" -type f -name "*.py" \
+ 86 |           -type f -not -name "__*__*" -printf "%P\n" | \
+ 87 |           sed 's/\//./g' | sed 's/\.py$//' | \
+ 88 |           sed "s/^/${PREFIX}/" | sort > \
+ 89 |           "${DOC_DIR}/${DOCSTRINGS_FILE}"
+ 90 | 
+ 91 |     - name: Build documentation
+ 92 |       run: uv run --locked --only-group docs mkdocs build
+ 93 | 
+ 94 |     - name: Copy image files to be included
+ 95 |       run: |
+ 96 |         # copy images, mkdocs does not by default
+ 97 |         # mkdocs also overwrites pre-made directories
+ 98 |         dir="${{ env.SITE_DIR }}/${{ env.IMG_DIR }}"
+ 99 |         if [ -d "${{ env.IMG_DIR }}" ]; then
+100 |           mkdir -p "${dir}"
+101 |           cp "${{ env.IMG_DIR }}"/* "${dir}"
+102 |         fi
+103 | 
+104 | #    - name: Push to gh-pages
+105 | #      run: uv run mkdocs gh-deploy --force
+106 | 
+107 |     - name: Upload artifact
+108 |       uses: actions/upload-pages-artifact@v3.0.0
+109 |       with:
+110 |         path: "${{ env.SITE_DIR }}"
+111 | 
+112 |     - name: Deploy to GitHub Pages
+113 |       id: deployment
+114 |       uses: actions/deploy-pages@v4.0.0
+115 | ...
+116 | 
+
+
+--------------------------------------------------------------------------------
+/.github/workflows/links-fail-fast.yaml:
+--------------------------------------------------------------------------------
+ 1 | ---
+ 2 | # https://github.com/lycheeverse/lychee-action
+ 3 | # https://github.com/marketplace/actions/lychee-broken-link-checker
+ 4 | name: "Link Checker"
+ 5 | 
+ 6 | on:
+ 7 |   workflow_dispatch:
+ 8 |   push:
+ 9 |     branches-ignore: [main]
+10 |   pull_request:
+11 |     types: [closed]
+12 |     branches: [main]
+13 |   schedule:
+14 |     - cron: "00 00 * * 0"
+15 | 
+16 | jobs:
+17 |   linkChecker:
+18 |     runs-on: ubuntu-latest
+19 |     permissions:
+20 |       issues: write
+21 | 
+22 |     steps:
+23 |       - uses: actions/checkout@v4
+24 | 
+25 |       - name: Link Checker
+26 |         id: lychee
+27 |         uses: lycheeverse/lychee-action@v2
+28 | 
+29 |       - name: Create Issue From File
+30 |         if: steps.lychee.outputs.exit_code != 0
+31 |         uses: peter-evans/create-issue-from-file@v5
+32 |         with:
+33 |           title: lychee Link Checker Report
+34 |           content-filepath: ./lychee/out.md
+35 |           labels: report, automated issue
+36 | ...
+37 | 
+
+
+--------------------------------------------------------------------------------
+/.github/workflows/pytest.yaml:
+--------------------------------------------------------------------------------
+ 1 | name: pytest
+ 2 | 
+ 3 | on:
+ 4 |   workflow_dispatch:
+ 5 | 
+ 6 | jobs:
+ 7 |   test:
+ 8 |     runs-on: ubuntu-latest
+ 9 |     steps:
+10 |       - name: Checkout repository
+11 |         uses: actions/checkout@v4
+12 | 
+13 |       - name: Set up Python
+14 |         uses: actions/setup-python@v4
+15 |         with:
+16 |           python-version: '3.12'
+17 | 
+18 |       - name: Install dependencies
+19 |         run: |
+20 |           python -m pip install --upgrade pip
+21 |           pip install pytest
+22 | 
+23 |       - name: Run tests
+24 |         run: pytest
+25 | 
+
+
+--------------------------------------------------------------------------------
+/.github/workflows/ruff.yaml:
+--------------------------------------------------------------------------------
+ 1 | ---
+ 2 | # https://github.com/astral-sh/ruff-action
+ 3 | # https://github.com/astral-sh/ruff
+ 4 | name: ruff
+ 5 | on: 
+ 6 |   push:
+ 7 |   pull_request:
+ 8 |     types: [closed]
+ 9 |     branches: [main]
+10 |   schedule:
+11 |     - cron: "0 0 * * 0"
+12 |   workflow_dispatch:
+13 | jobs:
+14 |   ruff:
+15 |     runs-on: ubuntu-latest
+16 |     steps:
+17 |       - uses: actions/checkout@v4
+18 |       - uses: astral-sh/ruff-action@v3
+19 | ...
+20 | 
+
+
+--------------------------------------------------------------------------------
+/.github/workflows/summarize-jobs-reusable.yaml:
+--------------------------------------------------------------------------------
+  1 | ---
+  2 | # https://ecanarys.com/supercharging-github-actions-with-job-summaries-and-pull-request-comments/
+  3 | # FIXME currently bug in gha summaries ? $GITHUB_STEP_SUMMARY files are empty
+  4 | # https://github.com/orgs/community/discussions/110283
+  5 | # https://github.com/orgs/community/discussions/67991
+  6 | # Possible workaround
+  7 | # echo ${{ fromJSON(step).name }}" >> $GITHUB_STEP_SUMMARY
+  8 | # echo ${{ fromJSON(step).outcome }}" >> $GITHUB_STEP_SUMMARY
+  9 | # echo ${{ fromJSON(step).conclusion }}"
+ 10 | 
+ 11 | name: Summarize workflow jobs
+ 12 | 
+ 13 | on:
+ 14 |   workflow_call:
+ 15 |     outputs:
+ 16 |       summary:
+ 17 |         description: "Outputs summaries of jobs in a workflow"
+ 18 |         value: ${{ jobs.generate_summary.outputs.summary }}
+ 19 |     inputs:
+ 20 |       branch_to_summarize:
+ 21 |         required: false
+ 22 |         default: 'main'
+ 23 |         type: string
+ 24 |       summary_data:
+ 25 |         required: false
+ 26 |         type: string
+ 27 | 
+ 28 | jobs:
+ 29 |   generate_summary:
+ 30 |     name: Generate Summary
+ 31 |     runs-on: ubuntu-latest
+ 32 |     permissions:
+ 33 |       contents: read
+ 34 |       actions: read
+ 35 |       checks: read
+ 36 |       pull-requests: none
+ 37 |     outputs:
+ 38 |       summary: ${{ steps.add_changed_files.outputs.summary }}
+ 39 |     steps:
+ 40 | 
+ 41 |       - name: Add general information
+ 42 |         id: general_info
+ 43 |         run: |
+ 44 |           echo "# Job Summaries" >> $GITHUB_STEP_SUMMARY
+ 45 |           echo "Job: `${{ github.job }}`" >> $GITHUB_STEP_SUMMARY
+ 46 |           echo "Date: $(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_STEP_SUMMARY
+ 47 | 
+ 48 |       - name: Add step states
+ 49 |         id: step_states
+ 50 |         run: |
+ 51 |           echo "### Steps:" >> $GITHUB_STEP_SUMMARY
+ 52 |           # loop summary_data if valid json
+ 53 |           if jq -e . >/dev/null 2>&1 <<< "${{ inputs.summary_data }}"; then
+ 54 |             jq -r '
+ 55 |               .steps[]
+ 56 |               | select(.conclusion != null)
+ 57 |               | "- **\(.name)**: \(
+ 58 |                 if .conclusion == "success" then ":white_check_mark:"
+ 59 |                 elif .conclusion == "failure" then ":x:"
+ 60 |                 else ":warning:" end
+ 61 |               )"
+ 62 |             ' <<< "${{ inputs.summary_data }}" >> $GITHUB_STEP_SUMMARY
+ 63 |           else
+ 64 |             echo "Invalid JSON in summary data." >> $GITHUB_STEP_SUMMARY
+ 65 |           fi
+ 66 | 
+ 67 |       - name: Checkout repo
+ 68 |         uses: actions/checkout@v4
+ 69 |         with:
+ 70 |           ref: "${{ inputs.branch_to_summarize }}"
+ 71 |           fetch-depth: 0
+ 72 | 
+ 73 |       - name: Add changed files since last push
+ 74 |         id: add_changed_files
+ 75 |         run: |
+ 76 |           # Get the tags
+ 77 |           # Use disabled lines to get last two commits
+ 78 |           # current=$(git show -s --format=%ci HEAD)
+ 79 |           # previous=$(git show -s --format=%ci HEAD~1)
+ 80 |           # git diff --name-only HEAD^ HEAD >> $GITHUB_STEP_SUMMARY
+ 81 |           version_tag_regex="^v[0-9]+\.[0-9]+\.[0-9]+$" # v0.0.0 
+ 82 |           tags=$(git tag --sort=-version:refname | \
+ 83 |             grep -E "${version_tag_regex}" || echo "")
+ 84 | 
+ 85 |           # Get latest and previous tags
+ 86 |           latest_tag=$(echo "${tags}" | head -n 1)
+ 87 |           previous_tag=$(echo "${tags}" | head -n 2 | tail -n 1)
+ 88 | 
+ 89 |           echo "tags: latest '${latest_tag}', previous '${previous_tag}'"
+ 90 | 
+ 91 |           # Write to summary
+ 92 |           error_msg="No files to output. Tag not found:"
+ 93 |           echo ${{ steps.step_states.outputs.summary }} >> $GITHUB_STEP_SUMMARY
+ 94 |           echo "## Changed files on '${{ inputs.branch_to_summarize }}'" >> $GITHUB_STEP_SUMMARY
+ 95 | 
+ 96 |           if [ -z "${latest_tag}" ]; then
+ 97 |             echo "${error_msg} latest" >> $GITHUB_STEP_SUMMARY
+ 98 |           elif [ -z "${previous_tag}" ]; then
+ 99 |             echo "${error_msg} previous" >> $GITHUB_STEP_SUMMARY
+100 |           elif [ "${latest_tag}" == "${previous_tag}" ]; then
+101 |             echo "Latest and previous tags are the same: '${latest_tag}'" >> $GITHUB_STEP_SUMMARY
+102 |           else
+103 |             # Get commit dates and hashes
+104 |             latest_date=$(git log -1 --format=%ci $latest_tag)
+105 |             previous_date=$(git log -1 --format=%ci $previous_tag)
+106 |             current_hash=$(git rev-parse --short $latest_tag)
+107 |             previous_hash=$(git rev-parse --short $previous_tag)
+108 | 
+109 |             # Append summary to the job summary
+110 |             echo "Latest Tag Commit: '${latest_tag}' (${current_hash}) ${latest_date}" >> $GITHUB_STEP_SUMMARY
+111 |             echo "Previous Tag Commit: '${previous_tag}' (${previous_hash}) ${previous_date}" >> $GITHUB_STEP_SUMMARY
+112 |             echo "Files changed:" >> $GITHUB_STEP_SUMMARY
+113 |             echo '```' >> $GITHUB_STEP_SUMMARY
+114 |             git diff --name-only $previous_tag..$latest_tag >> $GITHUB_STEP_SUMMARY
+115 |             echo '```' >> $GITHUB_STEP_SUMMARY
+116 |           fi
+117 | 
+118 |       - name: Output error message in case of failure or cancel
+119 |         if: failure() || cancelled()
+120 |         run: |
+121 |           if [ "${{ job.status }}" == "cancelled" ]; then
+122 |             out_msg="## Workflow was cancelled"
+123 |           else
+124 |             out_msg="## Error in previous step"
+125 |           fi
+126 |           echo $out_msg >> $GITHUB_STEP_SUMMARY
+127 | ...
+
+
+--------------------------------------------------------------------------------
+/.github/workflows/write-llms-txt.yaml:
+--------------------------------------------------------------------------------
+ 1 | # TODO use local installation of repo to text
+ 2 | # https://github.com/itsitgroup/repo2txt
+ 3 | name: Write repo llms.txt
+ 4 | 
+ 5 | on:
+ 6 |   push:
+ 7 |     branches: [main]
+ 8 |   workflow_dispatch:
+ 9 |     inputs:
+10 |       LLMS_TXT_PATH:
+11 |         description: 'Path to the directory to save llsm.txt'
+12 |         required: true
+13 |         default: 'docs'
+14 |         type: string
+15 |       LLMS_TXT_NAME:
+16 |         description: 'Path to the directory to save llsm.txt'
+17 |         required: true
+18 |         default: 'llms.txt'
+19 |         type: string
+20 |       CONVERTER_URL:
+21 |         description: '[uithub|gittodoc]'  # |repo2txt
+22 |         required: true
+23 |         default: 'uithub.com'
+24 |         type: choice
+25 |         options:
+26 |         - 'uithub.com'
+27 |         - 'gittodoc.com'
+28 |         # - 'repo2txt.com'
+29 | 
+30 | jobs:
+31 |   generate-file:
+32 |     runs-on: ubuntu-latest
+33 | 
+34 |     steps:
+35 |       - name: Checkout repo
+36 |         uses: actions/checkout@v4
+37 | 
+38 |       - name: Construct and create llms.txt path
+39 |         id: construct_and_create_llms_txt_path
+40 |         run: |
+41 |           LLMS_TXT_PATH="${{ inputs.LLMS_TXT_PATH }}"
+42 |           LLMS_TXT_PATH="${LLMS_TXT_PATH:-docs}"
+43 |           LLMS_TXT_NAME="${{ inputs.LLMS_TXT_NAME }}"
+44 |           LLMS_TXT_NAME="${LLMS_TXT_NAME:-llms.txt}"
+45 |           echo "LLMS_TXT_FULL=${LLMS_TXT_PATH}/${LLMS_TXT_NAME}" >> $GITHUB_OUTPUT
+46 |           mkdir -p "${LLMS_TXT_PATH}"
+47 | 
+48 |       - name: Fetch TXT from URL
+49 |         run: |
+50 |           LLMS_TXT_FULL=${{ steps.construct_and_create_llms_txt_path.outputs.LLMS_TXT_FULL }}
+51 |           URL="https://${{ inputs.CONVERTER_URL }}/${{ github.repository }}"
+52 |           echo "Fetching content from: ${URL}"
+53 |           echo "Saving content to: ${LLMS_TXT_FULL}"
+54 |           curl -s "${URL}" > "${LLMS_TXT_FULL}"
+55 | 
+56 |       - name: Commit and push file
+57 |         run: |
+58 |           LLMS_TXT_FULL=${{ steps.construct_and_create_llms_txt_path.outputs.LLMS_TXT_FULL }}
+59 |           commit_msg="feat(docs): Add/Update ${LLMS_TXT_FULL}, a flattened repo as single text file, inspired by [llmstxt.org](https://llmstxt.org/)."
+60 |           git config user.name "github-actions"
+61 |           git config user.email "github-actions@github.com"
+62 |           git add "${LLMS_TXT_FULL}"
+63 |           git commit -m "${commit_msg}"
+64 |           git push
+65 | 
+
+
+--------------------------------------------------------------------------------
+/.gitignore:
+--------------------------------------------------------------------------------
+ 1 | # Python bytecode
+ 2 | __pycache__/
+ 3 | *.py[cod]
+ 4 | 
+ 5 | # environment
+ 6 | .venv/
+ 7 | *.env
+ 8 | 
+ 9 | # Distribution / packaging
+10 | build/
+11 | dist/
+12 | *.egg-info/
+13 | 
+14 | # Testing
+15 | .pytest_cache/
+16 | .coverage
+17 | 
+18 | # Logs
+19 | *.log
+20 | /logs
+21 | 
+22 | # OS generated files
+23 | .DS_Store
+24 | Thumbs.db
+25 | 
+26 | # IDE specific files (adjust as needed)
+27 | # .vscode/
+28 | # .idea/
+29 | 
+30 | # mkdocs
+31 | reference/
+32 | site/
+33 | 
+34 | # linting
+35 | .ruff_cache
+36 | 
+37 | # type checking
+38 | .mypy_cache/
+39 | 
+
+
+--------------------------------------------------------------------------------
+/.gitmessage:
+--------------------------------------------------------------------------------
+ 1 | #<--- 72 characters --------------------------------------------------->
+ 2 | #
+ 3 | # Conventional Commits, semantic commit messages for humans and machines
+ 4 | # https://www.conventionalcommits.org/en/v1.0.0/
+ 5 | # Lint your conventional commits
+ 6 | # https://github.com/conventional-changelog/commitlint/tree/master/%40 \
+ 7 | #	commitlint/config-conventional
+ 8 | # Common types can be (based on Angular convention)
+ 9 | # build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test
+10 | # https://github.com/conventional-changelog/commitlint/tree/master/%40
+11 | # Footer
+12 | # https://git-scm.com/docs/git-interpret-trailers
+13 | #
+14 | #<--- pattern --------------------------------------------------------->
+15 | #
+16 | # <feat|fix|build|chore|ci|docs|style|refactor|perf|test>[(Scope)][!]: \
+17 | #	<description>
+18 | # short description: <type>[(<scope>)]: <subject>
+19 | #
+20 | # ! after scope in header indicates breaking change
+21 | #
+22 | # [optional body]
+23 | #
+24 | # - with bullets points
+25 | #
+26 | # [optional footer(s)]
+27 | #
+28 | # [BREAKING CHANGE:, Refs:, Resolves:, Addresses:, Reviewed by:]
+29 | #
+30 | #<--- usage ----------------------------------------------------------->
+31 | #
+32 | # Set locally (in the repository)
+33 | # `git config commit.template .gitmessage`
+34 | #
+35 | # Set globally
+36 | # `git config --global commit.template .gitmessage`
+37 | #
+38 | #<--- 72 characters --------------------------------------------------->
+
+
+--------------------------------------------------------------------------------
+/.vscode/extensions.json:
+--------------------------------------------------------------------------------
+ 1 | {
+ 2 |     "recommendations": [
+ 3 |         "charliermarsh.ruff",
+ 4 |         "davidanson.vscode-markdownlint",
+ 5 |         "donjayamanne.githistory",
+ 6 |         "editorconfig.editorconfig",
+ 7 |         "gruntfuggly.todo-tree",
+ 8 |         "mhutchie.git-graph",
+ 9 |         "PKief.material-icon-theme",
+10 |         "redhat.vscode-yaml",
+11 |         "tamasfe.even-better-toml",
+12 |         "yzhang.markdown-all-in-one",
+13 | 
+14 |         "github.copilot",
+15 |         "github.copilot-chat",
+16 |         "github.vscode-github-actions",
+17 |         "ms-azuretools.vscode-docker",
+18 |         "ms-python.debugpy",
+19 |         "ms-python.python",
+20 |         "ms-python.vscode-pylance",
+21 |         "ms-vscode.makefile-tools",
+22 |     ]
+23 | }
+
+
+--------------------------------------------------------------------------------
+/.vscode/settings.json:
+--------------------------------------------------------------------------------
+ 1 | {
+ 2 |     "editor.lineNumbers": "on",
+ 3 |     "editor.wordWrap": "on",
+ 4 |     "explorer.confirmDelete": true,
+ 5 |     "files.autoSave": "onFocusChange",
+ 6 |     "git.autofetch": true,
+ 7 |     "git.enableSmartCommit": true,
+ 8 |     "makefile.configureOnOpen": false,
+ 9 |     "markdownlint.config": {
+10 |         "MD024": false,
+11 |         "MD033": false
+12 |     },
+13 |     "python.analysis.extraPaths": ["./venv/lib/python3.13/site-packages"],
+14 |     "python.defaultInterpreterPath": "./.venv/bin/python",
+15 |     "python.analysis.typeCheckingMode": "strict",
+16 |     "python.analysis.diagnosticSeverityOverrides": {
+17 |         "reportMissingTypeStubs": "none",
+18 |         "reportUnknownMemberType": "none",
+19 |         "reportUnknownVariableType": "none"
+20 |     },
+21 |     "redhat.telemetry.enabled": false
+22 | }
+
+
+--------------------------------------------------------------------------------
+/AGENTS.md:
+--------------------------------------------------------------------------------
+  1 | # Agent instructions for `Agents-eval` repository
+  2 | 
+  3 | As proposed by [agentsmd.net](https://agentsmd.net/) and used by [wandb weave AGENTS.md](https://github.com/wandb/weave/blob/master/AGENTS.md).
+  4 | 
+  5 | ## Core Rules & AI Behavior
+  6 | 
+  7 | * When you learn something new about the codebase or introduce a new concept, **update this file (`AGENTS.md`)** to reflect the new knowledge. This is YOUR FILE! It should grow and evolve with you.
+  8 | * If something doesn't make sense architecturally, from a developer experience standpoint, or product-wise, please add it to the **`Requests to Humans`** section below.
+  9 | * Always follow the established coding patterns, conventions, and architectural decisions documented here and in the `docs/` directory.
+ 10 | * **Never assume missing context.** Ask questions if you are uncertain about requirements or implementation details.
+ 11 | * **Never hallucinate libraries or functions.** Only use known, verified Python packages listed in `pyproject.toml`.
+ 12 | * **Always confirm file paths and module names** exist before referencing them in code or tests.
+ 13 | * **Never delete or overwrite existing code** unless explicitly instructed to or as part of a documented refactoring task.
+ 14 | 
+ 15 | ## Architecture Overview
+ 16 | 
+ 17 | This is a multi-agent evaluation system for assessing agentic AI systems. The project uses **PydanticAI** as the core framework for agent orchestration and is designed for evaluation purposes, not for production agent deployment.
+ 18 | 
+ 19 | ### Data Flow
+ 20 | 
+ 21 | 1. User input → Manager Agent
+ 22 | 2. Manager delegates to Researcher Agent (with DuckDuckGo search)
+ 23 | 3. Researcher results → Analyst Agent for validation
+ 24 | 4. Validated data → Synthesizer Agent for report generation
+ 25 | 5. Results evaluated using configurable metrics
+ 26 | 
+ 27 | ### Key Dependencies
+ 28 | 
+ 29 | * **PydanticAI**: Agent framework and orchestration
+ 30 | * **uv**: Fast Python dependency management
+ 31 | * **Streamlit**: GUI framework
+ 32 | * **Ruff**: Code formatting and linting
+ 33 | * **MyPy**: Static type checking
+ 34 | 
+ 35 | ## Codebase Structure & Modularity
+ 36 | 
+ 37 | ### Main Components
+ 38 | 
+ 39 | * `src/app/`: The core application logic. This is where most of your work will be.
+ 40 |   * `main.py`: The main entry point for the CLI application.
+ 41 |   * `agents/agent_system.py`: Defines the multi-agent system, their interactions, and orchestration. **This is the central logic for agent behavior.**
+ 42 |   * `config/data_models.py`: Contains all **Pydantic** models that define the data contracts. This is a critical file for understanding data flow.
+ 43 |   * `config/config_chat.json`: Holds provider settings and system prompts for agents.
+ 44 |   * `config/config_eval.json`: Defines evaluation metrics and their weights.
+ 45 |   * `evals/metrics.py`: Implements the evaluation metrics.
+ 46 | * `src/gui/`: Contains the source code for the Streamlit GUI.
+ 47 | * `docs/`: Contains project documentation, including the Product Requirements Document (`PRD.md`) and the C4 architecture model.
+ 48 | * `tests/`: Contains all tests for the project, written using **pytest**.
+ 49 | 
+ 50 | ### Code Organization Rules
+ 51 | 
+ 52 | * **Never create a file longer than 500 lines of code.** If a file approaches this limit, refactor by splitting it into smaller, more focused modules or helper files.
+ 53 | * Organize code into clearly separated modules grouped by feature.
+ 54 | * Use clear, consistent, and absolute imports within packages.
+ 55 | 
+ 56 | ## Development Commands & Environment
+ 57 | 
+ 58 | ### Environment Setup
+ 59 | 
+ 60 | The project requirements are stated in `pyproject.toml`. Your development environment should be set up automatically using the provided `Makefile`, which configures the virtual environment.
+ 61 | 
+ 62 | * `make setup_dev`: Install all dev dependencies.
+ 63 | * `make setup_dev_claude`: Setup dev environment with Claude Code CLI.
+ 64 | * `make setup_dev_ollama`: Setup dev environment with Ollama local LLM.
+ 65 | 
+ 66 | ### Running the Application
+ 67 | 
+ 68 | * `make run_cli`: Run the CLI application.
+ 69 | * `make run_cli ARGS="--help"`: Run CLI with specific arguments.
+ 70 | * `make run_gui`: Run the Streamlit GUI.
+ 71 | 
+ 72 | ### Testing and Code Quality
+ 73 | 
+ 74 | * `make test_all`: Run all tests with pytest.
+ 75 | * `make coverage_all`: Run tests and generate a coverage report.
+ 76 | * `make ruff`: Format code and fix linting issues with Ruff.
+ 77 | * `make type_check`: Run mypy static type checking on `src/app/`.
+ 78 | 
+ 79 | ## Testing & Reliability
+ 80 | 
+ 81 | * **Always create Pytest unit tests** for new features (functions, classes, etc.).
+ 82 | * Tests must live in the `tests/` folder, mirroring the `src/app` structure.
+ 83 | * After updating any logic, check whether existing unit tests need to be updated. If so, do it.
+ 84 | * For each new feature, include at least:
+ 85 |   * 1 test for the expected use case (happy path).
+ 86 |   * 1 test for a known edge case.
+ 87 |   * 1 test for an expected failure case (e.g., invalid input).
+ 88 | * **To run a specific test file or function, use `uv run pytest` directly:**
+ 89 |   * `uv run pytest tests/test_specific_file.py`
+ 90 |   * `uv run pytest tests/test_specific_file.py::test_function`
+ 91 | 
+ 92 | ## Style, Patterns & Documentation
+ 93 | 
+ 94 | ### Coding Style
+ 95 | 
+ 96 | * **Use Pydantic** models in `src/app/config/data_models.py` for all data validation and data contracts. **Always use or update these models** when modifying data flows.
+ 97 | * Use the predefined error message functions from `src/app/utils/error_messages.py` for consistency.
+ 98 | * When writing complex logic, **add an inline `# Reason:` comment** explaining the *why*, not just the *what*.
+ 99 | * Comment non-obvious code to ensure it is understandable to a mid-level developer.
+100 | 
+101 | ### Documentation
+102 | 
+103 | * Write **docstrings for every function, class, and method** using the Google style format. This is critical as the documentation site is built automatically from docstrings.
+104 | 
+105 |     ```python
+106 |     def example_function(param1: int) -> str:
+107 |         """A brief summary of the function.
+108 | 
+109 |         Args:
+110 |             param1 (int): A description of the first parameter.
+111 | 
+112 |         Returns:
+113 |             str: A description of the return value.
+114 |         """
+115 |         return "example"
+116 |     ```
+117 | 
+118 | * Update this `AGENTS.md` file when introducing new patterns or concepts.
+119 | * Document significant architectural decisions in `docs/ADR.md`.
+120 | * Document all significant changes, features, and bug fixes in `docs/CHANGELOG.md`.
+121 | 
+122 | ## Code Review & PR Guidelines
+123 | 
+124 | ### PR Requirements
+125 | 
+126 | * **Title Format**: Commit messages and PR titles must follow the **Conventional Commits** specification, as outlined in the `.gitmessage` template.
+127 | * Provide detailed PR summaries including the purpose of the changes and the testing performed.
+128 | 
+129 | ### Pre-commit Checklist
+130 | 
+131 | 1. Run the linter and formatter: `make ruff`.
+132 | 2. Ensure all tests pass: `make test_all`.
+133 | 3. Ensure static type checks pass: `make type_check`.
+134 | 4. Update documentation as described below.
+135 | 
+136 | ## Requests to Humans
+137 | 
+138 | This section contains a list of questions, clarifications, or tasks that AI agents wish to have humans complete or elaborate on.
+139 | 
+140 | * [ ] The `agent_system.py` module has a `NotImplementedError` for streaming with Pydantic model outputs. Please clarify the intended approach for streaming structured data.
+141 | * [ ] The `llm_model_funs.py` module has `NotImplementedError` for the Gemini and HuggingFace providers. Please provide the correct implementation or remove them if they are not supported.
+142 | * [ ] The `agent_system.py` module contains a `FIXME` note regarding the use of a try-catch context manager. Please review and implement the intended error handling.
+143 | * [ ] Add TypeScript testing guidelines (if a TypeScript frontend is planned for the future).
+144 | 
+
+
+--------------------------------------------------------------------------------
+/CHANGELOG.md:
+--------------------------------------------------------------------------------
+ 1 | # Changelog
+ 2 | 
+ 3 | All notable changes to this project will be documented in this file.
+ 4 | 
+ 5 | The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+ 6 | and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+ 7 | 
+ 8 | ## Guiding Principles
+ 9 | 
+10 | - Changelogs are for humans, not machines.
+11 | - There should be an entry for every single version.
+12 | - The same types of changes should be grouped.
+13 | - Versions and sections should be linkable.
+14 | - The latest version comes first.
+15 | - The release date of each version is displayed.
+16 | - Mention whether you follow Semantic Versioning.
+17 | 
+18 | ## Types of changes
+19 | 
+20 | - `Added` for new features.
+21 | - `Changed` for changes in existing functionality.
+22 | - `Deprecated` for soon-to-be removed features.
+23 | - `Removed` for now removed features.
+24 | - `Fixed` for any bug fixes.
+25 | - `Security` in case of vulnerabilities.
+26 | 
+27 | ## [Unreleased]
+28 | 
+29 | ### Added
+30 | 
+31 | - Initial template containing templates for PRP
+32 | 
+
+
+--------------------------------------------------------------------------------
+/CLAUDE.md:
+--------------------------------------------------------------------------------
+1 | @AGENTS.md
+
+
+--------------------------------------------------------------------------------
+/LICENSE.md:
+--------------------------------------------------------------------------------
+ 1 | # BSD 3-Clause License
+ 2 | 
+ 3 | Copyright (c) 2025 qte77
+ 4 | 
+ 5 | Redistribution and use in source and binary forms, with or without
+ 6 | modification, are permitted provided that the following conditions are met:
+ 7 | 
+ 8 | 1. Redistributions of source code must retain the above copyright notice, this
+ 9 |    list of conditions and the following disclaimer.
+10 | 
+11 | 2. Redistributions in binary form must reproduce the above copyright notice,
+12 |    this list of conditions and the following disclaimer in the documentation
+13 |    and/or other materials provided with the distribution.
+14 | 
+15 | 3. Neither the name of the copyright holder nor the names of its
+16 |    contributors may be used to endorse or promote products derived from
+17 |    this software without specific prior written permission.
+18 | 
+19 | THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+20 | AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+21 | IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+22 | DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+23 | FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+24 | DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+25 | SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+26 | CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+27 | OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+28 | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+29 | 
+
+
+--------------------------------------------------------------------------------
+/Makefile:
+--------------------------------------------------------------------------------
+  1 | # This Makefile automates the build, test, and clean processes for the project.
+  2 | # It provides a convenient way to run common tasks using the 'make' command.
+  3 | # Run `make help` to see all available recipes.
+  4 | 
+  5 | .SILENT:
+  6 | .ONESHELL:
+  7 | .PHONY: all setup_python_claude setup_dev setup_prod setup_claude_code prp_gen_claude prp_exe_claude ruff test_all check_types coverage_all output_unset_app_env_sh help
+  8 | .DEFAULT_GOAL := help
+  9 | 
+ 10 | 
+ 11 | ENV_FILE := .env
+ 12 | SRC_PATH := src
+ 13 | APP_PATH := $(SRC_PATH)
+ 14 | FEAT_DEF_PATH := /context/features
+ 15 | PRP_DEF_PATH := /context/PRPs
+ 16 | PRP_CLAUDE_GEN_CMD := generate-prp
+ 17 | PRP_CLAUDE_EXE_CMD := execute-prp
+ 18 | 
+ 19 | 
+ 20 | # construct the full paths and execute Claude Code commands
+ 21 | # TODO switch folder by function called ()
+ 22 | # TODO Claude Code non-interactive headless mode tee to CLI
+ 23 | define CLAUDE_PRP_RUNNER
+ 24 | 	echo "Starting Claude Code PRP runner ..."
+ 25 | 	dest_file=$(firstword $(strip $(1)))
+ 26 | 	dest_cmd=$(firstword $(strip $(2)))
+ 27 | 	if [ -z "$${dest_file}" ]; then
+ 28 | 		echo "Error: ARGS for PRP filename is empty. Please provide a PRP filename."
+ 29 | 		exit 1
+ 30 | 	fi
+ 31 | 	case "$${dest_cmd}" in
+ 32 | 		start)
+ 33 | 			dest_cmd=$(PRP_CLAUDE_GEN_CMD)
+ 34 | 			dest_path=$(FEAT_DEF_PATH);;
+ 35 |   		stop)
+ 36 | 			dest_cmd=$(PRP_CLAUDE_EXE_CMD)
+ 37 | 			dest_path=$(PRP_DEF_PATH);;
+ 38 | 		*)
+ 39 |     		echo "Unknown command: $${dest_cmd}. Exiting ..."
+ 40 |     		exit 1;;
+ 41 | 	esac
+ 42 | 	dest_cmd="/project:$${dest_cmd} $${dest_path}/$${dest_file}"
+ 43 | 	echo "Executing command '$${dest_cmd}' ..."
+ 44 | 	claude -p "$${dest_cmd}" 2>&1
+ 45 | 	claude -p "/cost" 2>&1
+ 46 | endef
+ 47 | 
+ 48 | 
+ 49 | setup_python_claude:  # Set up environment and install Claude Code CLI
+ 50 | 	$(MAKE) -s setup_dev
+ 51 | 	$(MAKR) -s export_env_file
+ 52 | 	$(MAKE) -s setup_claude_code
+ 53 | 
+ 54 | 
+ 55 | setup_dev:  ## Install uv and deps, Download and start Ollama 
+ 56 | 	echo "Setting up dev environment ..."
+ 57 | 	pip install uv -q
+ 58 | 	uv sync --all-groups
+ 59 | 
+ 60 | 
+ 61 | setup_prod:  ## Install uv and deps, Download and start Ollama 
+ 62 | 	echo "Setting up prod environment ..."
+ 63 | 	pip install uv -q
+ 64 | 	uv sync --frozen
+ 65 | 
+ 66 | 
+ 67 | setup_claude_code:  ## Setup Claude Code CLI, node.js and npm have to be present
+ 68 | 	echo "Setting up claude code ..."
+ 69 | 	npm install -g @anthropic-ai/claude-code
+ 70 | 	claude config set --global preferredNotifChannel terminal_bell
+ 71 | 	echo "npm version: $$(npm --version)"
+ 72 | 	claude --version
+ 73 | 
+ 74 | 
+ 75 | prp_gen_claude:  ## generates the PRP from the file passed in "ARGS=file"
+ 76 | 	$(call CLAUDE_PRP_RUNNER, $(ARGS), "generate")
+ 77 | 
+ 78 | 
+ 79 | prp_exe_claude:  ## executes the PRP from the file passed in "ARGS=file"
+ 80 | 	$(call CLAUDE_PRP_RUNNER, $(ARGS), "execute")
+ 81 | 
+ 82 | 
+ 83 | export_env_file:  # Read ENV_FILE and export k=v to env
+ 84 | 	while IFS='=' read -r key value || [ -n "$${key}" ]; do
+ 85 | 		case "$${key}" in
+ 86 | 			''|\#*) continue ;;
+ 87 | 		esac
+ 88 | 		value=$$(echo "$${value}" | sed -e 's/^"//' -e 's/"$$//')
+ 89 | 		export "$${key}=$${value}"
+ 90 | 	done < .env
+ 91 | 
+ 92 | 
+ 93 | ruff:  ## Lint: Format and check with ruff
+ 94 | 	uv run ruff format
+ 95 | 	uv run ruff check --fix
+ 96 | 
+ 97 | 
+ 98 | test_all:  ## Run all tests
+ 99 | 	uv run pytest
+100 | 
+101 | 
+102 | coverage_all:  ## Get test coverage
+103 | 	uv run coverage run -m pytest || true
+104 | 	uv run coverage report -m
+105 | 
+106 | 
+107 | check_types:  ## Check for static typing errors
+108 | 	uv run mypy $(APP_PATH)
+109 | 
+110 | 
+111 | output_unset_app_env_sh:  ## Unset app environment variables
+112 | 	uf="./unset_env.sh"
+113 | 	echo "Outputing '$${uf}' ..."
+114 | 	printenv | awk -F= '/_API_KEY=/ {print "unset " $$1}' > $$uf
+115 | 
+116 | 
+117 | # TODO add stackoverflow source
+118 | help:  ## Displays this message with available recipes
+119 | 	echo "Usage: make [recipe]"
+120 | 	echo "Recipes:"
+121 | 	awk '/^[a-zA-Z0-9_-]+:.*?##/ {
+122 | 		helpMessage = match($$0, /## (.*)/)
+123 | 		if (helpMessage) {
+124 | 			recipe = $$1
+125 | 			sub(/:/, "", recipe)
+126 | 			printf "  \033[36m%-20s\033[0m %s\n", recipe, substr($$0, RSTART + 3, RLENGTH)
+127 | 		}
+128 | 	}' $(MAKEFILE_LIST)
+129 | 
+
+
+--------------------------------------------------------------------------------
+/README.md:
+--------------------------------------------------------------------------------
+ 1 | # Context Engineering Template
+ 2 | 
+ 3 | This project aims to implement a template for context engineering with coding agents. As suggested by several resources, including [context-engineering-intro](https://github.com/coleam00/context-engineering-intro), [The rise of "context engineering"](https://blog.langchain.com/the-rise-of-context-engineering/), [Context Engineering](https://blog.langchain.com/context-engineering-for-agents/) and somewhat [He Built 40 Startups Using Just Prompts — Here’s His System](https://youtu.be/CIAu6WeckQ0).
+ 4 | 
+ 5 | [![License](https://img.shields.io/badge/license-BSD3Clause-green.svg)](LICENSE.md)
+ 6 | ![Version](https://img.shields.io/badge/version-0.0.0-58f4c2)
+ 7 | [![CodeQL](https://github.com/qte77/context-engineering-template/actions/workflows/codeql.yaml/badge.svg)](https://github.com/qte77/context-engineering-template/actions/workflows/codeql.yaml)
+ 8 | [![CodeFactor](https://www.codefactor.io/repository/github/qte77/context-engineering-template/badge)](https://www.codefactor.io/repository/github/qte77/context-engineering-template)
+ 9 | [![ruff](https://github.com/qte77/context-engineering-template/actions/workflows/ruff.yaml/badge.svg)](https://github.com/qte77/context-engineering-template/actions/workflows/ruff.yaml)
+10 | [![pytest](https://github.com/qte77/context-engineering-template/actions/workflows/pytest.yaml/badge.svg)](https://github.com/qte77/context-engineering-template/actions/workflows/pytest.yaml)
+11 | [![Link Checker](https://github.com/qte77/context-engineering-template/actions/workflows/links-fail-fast.yaml/badge.svg)](https://github.com/qte77/context-engineering-template/actions/workflows/links-fail-fast.yaml)
+12 | [![Deploy Docs](https://github.com/qte77/context-engineering-template/actions/workflows/generate-deploy-mkdocs-ghpages.yaml/badge.svg)](https://github.com/qte77/context-engineering-template/actions/workflows/generate-deploy-mkdocs-ghpages.yaml)
+13 | 
+14 | **DevEx** [![vscode.dev](https://img.shields.io/static/v1?logo=visualstudiocode&label=&message=vscode.dev&labelColor=2c2c32&color=007acc&logoColor=007acc)](https://vscode.dev/github/qte77/context-engineering-template)
+15 | [![Codespace Python Claude](https://img.shields.io/static/v1?logo=visualstudiocode&label=&message=Codespace%20Dev&labelColor=2c2c32&color=007acc&logoColor=007acc)](https://github.com/codespaces/new?repo=qte77/context-engineering-template&devcontainer_path=.devcontainer/setup_python_claude/devcontainer.json)
+16 | [![TalkToGithub](https://img.shields.io/badge/TalkToGithub-7a83ff.svg)](https://talktogithub.com/qte77/context-engineering-template)
+17 | [![llms.txt (UitHub)](https://img.shields.io/badge/llms.txt-uithub-800080.svg)](https://github.com/qte77/context-engineering-template)
+18 | [![llms.txt (GitToDoc)](https://img.shields.io/badge/llms.txt-GitToDoc-fe4a60.svg)](https://gittodoc.com/qte77/context-engineering-template)
+19 | 
+20 | ## Status
+21 | 
+22 | (DRAFT) (WIP) ----> Not fully implemented yet
+23 | 
+24 | For version history have a look at the [CHANGELOG](CHANGELOG.md).
+25 | 
+26 | ## Purpose
+27 | 
+28 | Let the Coding Agent do the heavy lifting. Build code base from top to bottom: Define Business Requirements (BRD) and afterwards features to be implemented. The goal could be to to implement some kind of guided top-down BDD: behavior > tests > implementation.
+29 | 
+30 | ## Features
+31 | 
+32 | - Runs tests, linting and type checks: only
+33 | 
+34 | <details>
+35 |   <summary>Show Sequence Diagram</summary>
+36 |   <img src="assets/images/sequence_diagram.png#gh-light-mode-only" alt="Sequence Diagram" title="Sequence Diagram" width="60%" />
+37 | </details>
+38 | 
+39 | ## Setup
+40 | 
+41 | `make setup_python_claude`
+42 | 
+43 | ## Usage
+44 | 
+45 | 1. Update [Agents.md](AGENTS.md) to your needs.
+46 | 2. Describe desired feature in `/context/features/feature_XXX.md`, like shown in [feature_base.md](/context/templates/feature_base.md).
+47 | 3. Place optional examples into [/context/examples](/context/examples).
+48 | 4. Let the Product Requirements Prompt (PRP) be generated:
+49 |   - In Claude Code CLI: `/generate-prp feature_XXX.md`
+50 |   - or: `make prp_gen_claude "ARGS=feature_XXX.md"`
+51 | 5. Let the feature be implemented based on the PRP:
+52 |   - In Claude Code CLI: `/execute-prp feature_XXX.md`
+53 |   - or: `make prp_exe_claude "ARGS=feature_XXX.md"`
+54 | 
+55 | ### Configuration
+56 | 
+57 | - General system behavior: `AGENTS.md`, redirected from `CLAUDE.md`
+58 | - Claude settings: `.claude/settings.local.json`
+59 | - CLaude commands: `.claude/commands`
+60 | - Feature template: `context/templates/feature_base.md`
+61 | - PRP template: `context/templates/prp_base.md`
+62 | 
+63 | ### Environment
+64 | 
+65 | [.env.example](.env.example) contains examples for usage of API keys and variables.
+66 | 
+67 | ```text
+68 | ANTHROPIC_API_KEY="sk-abc-xyz"
+69 | GEMINI_API_KEY="xyz"
+70 | GITHUB_API_KEY="ghp_xyz"
+71 | ...
+72 | ```
+73 | 
+74 | ## TODO
+75 | 
+76 | - Implement business process as discussed in [He Built 40 Startups Using Just Prompts — Here’s His System](https://youtu.be/CIAu6WeckQ0)
+77 | - Refine `AGENTS.md` to let the agent not do bulk but incremental changes, also implement tests (red > green > blue) first, then 
+78 | 
+
+
+--------------------------------------------------------------------------------
+/assets/images/sequence_diagram.png:
+--------------------------------------------------------------------------------
+https://raw.githubusercontent.com/qte77/context-engineering-template/5137aa3e2a087c7efed897956e0873156de75de0/assets/images/sequence_diagram.png
+
+
+--------------------------------------------------------------------------------
+/assets/images/sequence_diagram.svg:
+--------------------------------------------------------------------------------
+1 | <?xml version="1.0" encoding="UTF-8"?>
+2 | <?xml-stylesheet href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" type="text/css"?>
+3 | <svg aria-roledescription="sequence" role="graphics-document document" style="overflow: hidden; max-width: 100%; touch-action: none; user-select: none;" xmlns="http://www.w3.org/2000/svg" width="100%" id="graph-231" height="100%" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"><defs><symbol height="24" width="24" id="computer"><path d="M2 2v13h20v-13h-20zm18 11h-16v-9h16v9zm-10.228 6l.466-1h3.524l.467 1h-4.457zm14.228 3h-24l2-6h2.104l-1.33 4h18.45l-1.297-4h2.073l2 6zm-5-10h-14v-7h14v7z" transform="scale(.5)"></path></symbol></defs><defs><symbol clip-rule="evenodd" fill-rule="evenodd" id="database"><path d="M12.258.001l.256.004.255.005.253.008.251.01.249.012.247.015.246.016.242.019.241.02.239.023.236.024.233.027.231.028.229.031.225.032.223.034.22.036.217.038.214.04.211.041.208.043.205.045.201.046.198.048.194.05.191.051.187.053.183.054.18.056.175.057.172.059.168.06.163.061.16.063.155.064.15.066.074.033.073.033.071.034.07.034.069.035.068.035.067.035.066.035.064.036.064.036.062.036.06.036.06.037.058.037.058.037.055.038.055.038.053.038.052.038.051.039.05.039.048.039.047.039.045.04.044.04.043.04.041.04.04.041.039.041.037.041.036.041.034.041.033.042.032.042.03.042.029.042.027.042.026.043.024.043.023.043.021.043.02.043.018.044.017.043.015.044.013.044.012.044.011.045.009.044.007.045.006.045.004.045.002.045.001.045v17l-.001.045-.002.045-.004.045-.006.045-.007.045-.009.044-.011.045-.012.044-.013.044-.015.044-.017.043-.018.044-.02.043-.021.043-.023.043-.024.043-.026.043-.027.042-.029.042-.03.042-.032.042-.033.042-.034.041-.036.041-.037.041-.039.041-.04.041-.041.04-.043.04-.044.04-.045.04-.047.039-.048.039-.05.039-.051.039-.052.038-.053.038-.055.038-.055.038-.058.037-.058.037-.06.037-.06.036-.062.036-.064.036-.064.036-.066.035-.067.035-.068.035-.069.035-.07.034-.071.034-.073.033-.074.033-.15.066-.155.064-.16.063-.163.061-.168.06-.172.059-.175.057-.18.056-.183.054-.187.053-.191.051-.194.05-.198.048-.201.046-.205.045-.208.043-.211.041-.214.04-.217.038-.22.036-.223.034-.225.032-.229.031-.231.028-.233.027-.236.024-.239.023-.241.02-.242.019-.246.016-.247.015-.249.012-.251.01-.253.008-.255.005-.256.004-.258.001-.258-.001-.256-.004-.255-.005-.253-.008-.251-.01-.249-.012-.247-.015-.245-.016-.243-.019-.241-.02-.238-.023-.236-.024-.234-.027-.231-.028-.228-.031-.226-.032-.223-.034-.22-.036-.217-.038-.214-.04-.211-.041-.208-.043-.204-.045-.201-.046-.198-.048-.195-.05-.19-.051-.187-.053-.184-.054-.179-.056-.176-.057-.172-.059-.167-.06-.164-.061-.159-.063-.155-.064-.151-.066-.074-.033-.072-.033-.072-.034-.07-.034-.069-.035-.068-.035-.067-.035-.066-.035-.064-.036-.063-.036-.062-.036-.061-.036-.06-.037-.058-.037-.057-.037-.056-.038-.055-.038-.053-.038-.052-.038-.051-.039-.049-.039-.049-.039-.046-.039-.046-.04-.044-.04-.043-.04-.041-.04-.04-.041-.039-.041-.037-.041-.036-.041-.034-.041-.033-.042-.032-.042-.03-.042-.029-.042-.027-.042-.026-.043-.024-.043-.023-.043-.021-.043-.02-.043-.018-.044-.017-.043-.015-.044-.013-.044-.012-.044-.011-.045-.009-.044-.007-.045-.006-.045-.004-.045-.002-.045-.001-.045v-17l.001-.045.002-.045.004-.045.006-.045.007-.045.009-.044.011-.045.012-.044.013-.044.015-.044.017-.043.018-.044.02-.043.021-.043.023-.043.024-.043.026-.043.027-.042.029-.042.03-.042.032-.042.033-.042.034-.041.036-.041.037-.041.039-.041.04-.041.041-.04.043-.04.044-.04.046-.04.046-.039.049-.039.049-.039.051-.039.052-.038.053-.038.055-.038.056-.038.057-.037.058-.037.06-.037.061-.036.062-.036.063-.036.064-.036.066-.035.067-.035.068-.035.069-.035.07-.034.072-.034.072-.033.074-.033.151-.066.155-.064.159-.063.164-.061.167-.06.172-.059.176-.057.179-.056.184-.054.187-.053.19-.051.195-.05.198-.048.201-.046.204-.045.208-.043.211-.041.214-.04.217-.038.22-.036.223-.034.226-.032.228-.031.231-.028.234-.027.236-.024.238-.023.241-.02.243-.019.245-.016.247-.015.249-.012.251-.01.253-.008.255-.005.256-.004.258-.001.258.001zm-9.258 20.499v.01l.001.021.003.021.004.022.005.021.006.022.007.022.009.023.01.022.011.023.012.023.013.023.015.023.016.024.017.023.018.024.019.024.021.024.022.025.023.024.024.025.052.049.056.05.061.051.066.051.07.051.075.051.079.052.084.052.088.052.092.052.097.052.102.051.105.052.11.052.114.051.119.051.123.051.127.05.131.05.135.05.139.048.144.049.147.047.152.047.155.047.16.045.163.045.167.043.171.043.176.041.178.041.183.039.187.039.19.037.194.035.197.035.202.033.204.031.209.03.212.029.216.027.219.025.222.024.226.021.23.02.233.018.236.016.24.015.243.012.246.01.249.008.253.005.256.004.259.001.26-.001.257-.004.254-.005.25-.008.247-.011.244-.012.241-.014.237-.016.233-.018.231-.021.226-.021.224-.024.22-.026.216-.027.212-.028.21-.031.205-.031.202-.034.198-.034.194-.036.191-.037.187-.039.183-.04.179-.04.175-.042.172-.043.168-.044.163-.045.16-.046.155-.046.152-.047.148-.048.143-.049.139-.049.136-.05.131-.05.126-.05.123-.051.118-.052.114-.051.11-.052.106-.052.101-.052.096-.052.092-.052.088-.053.083-.051.079-.052.074-.052.07-.051.065-.051.06-.051.056-.05.051-.05.023-.024.023-.025.021-.024.02-.024.019-.024.018-.024.017-.024.015-.023.014-.024.013-.023.012-.023.01-.023.01-.022.008-.022.006-.022.006-.022.004-.022.004-.021.001-.021.001-.021v-4.127l-.077.055-.08.053-.083.054-.085.053-.087.052-.09.052-.093.051-.095.05-.097.05-.1.049-.102.049-.105.048-.106.047-.109.047-.111.046-.114.045-.115.045-.118.044-.12.043-.122.042-.124.042-.126.041-.128.04-.13.04-.132.038-.134.038-.135.037-.138.037-.139.035-.142.035-.143.034-.144.033-.147.032-.148.031-.15.03-.151.03-.153.029-.154.027-.156.027-.158.026-.159.025-.161.024-.162.023-.163.022-.165.021-.166.02-.167.019-.169.018-.169.017-.171.016-.173.015-.173.014-.175.013-.175.012-.177.011-.178.01-.179.008-.179.008-.181.006-.182.005-.182.004-.184.003-.184.002h-.37l-.184-.002-.184-.003-.182-.004-.182-.005-.181-.006-.179-.008-.179-.008-.178-.01-.176-.011-.176-.012-.175-.013-.173-.014-.172-.015-.171-.016-.17-.017-.169-.018-.167-.019-.166-.02-.165-.021-.163-.022-.162-.023-.161-.024-.159-.025-.157-.026-.156-.027-.155-.027-.153-.029-.151-.03-.15-.03-.148-.031-.146-.032-.145-.033-.143-.034-.141-.035-.14-.035-.137-.037-.136-.037-.134-.038-.132-.038-.13-.04-.128-.04-.126-.041-.124-.042-.122-.042-.12-.044-.117-.043-.116-.045-.113-.045-.112-.046-.109-.047-.106-.047-.105-.048-.102-.049-.1-.049-.097-.05-.095-.05-.093-.052-.09-.051-.087-.052-.085-.053-.083-.054-.08-.054-.077-.054v4.127zm0-5.654v.011l.001.021.003.021.004.021.005.022.006.022.007.022.009.022.01.022.011.023.012.023.013.023.015.024.016.023.017.024.018.024.019.024.021.024.022.024.023.025.024.024.052.05.056.05.061.05.066.051.07.051.075.052.079.051.084.052.088.052.092.052.097.052.102.052.105.052.11.051.114.051.119.052.123.05.127.051.131.05.135.049.139.049.144.048.147.048.152.047.155.046.16.045.163.045.167.044.171.042.176.042.178.04.183.04.187.038.19.037.194.036.197.034.202.033.204.032.209.03.212.028.216.027.219.025.222.024.226.022.23.02.233.018.236.016.24.014.243.012.246.01.249.008.253.006.256.003.259.001.26-.001.257-.003.254-.006.25-.008.247-.01.244-.012.241-.015.237-.016.233-.018.231-.02.226-.022.224-.024.22-.025.216-.027.212-.029.21-.03.205-.032.202-.033.198-.035.194-.036.191-.037.187-.039.183-.039.179-.041.175-.042.172-.043.168-.044.163-.045.16-.045.155-.047.152-.047.148-.048.143-.048.139-.05.136-.049.131-.05.126-.051.123-.051.118-.051.114-.052.11-.052.106-.052.101-.052.096-.052.092-.052.088-.052.083-.052.079-.052.074-.051.07-.052.065-.051.06-.05.056-.051.051-.049.023-.025.023-.024.021-.025.02-.024.019-.024.018-.024.017-.024.015-.023.014-.023.013-.024.012-.022.01-.023.01-.023.008-.022.006-.022.006-.022.004-.021.004-.022.001-.021.001-.021v-4.139l-.077.054-.08.054-.083.054-.085.052-.087.053-.09.051-.093.051-.095.051-.097.05-.1.049-.102.049-.105.048-.106.047-.109.047-.111.046-.114.045-.115.044-.118.044-.12.044-.122.042-.124.042-.126.041-.128.04-.13.039-.132.039-.134.038-.135.037-.138.036-.139.036-.142.035-.143.033-.144.033-.147.033-.148.031-.15.03-.151.03-.153.028-.154.028-.156.027-.158.026-.159.025-.161.024-.162.023-.163.022-.165.021-.166.02-.167.019-.169.018-.169.017-.171.016-.173.015-.173.014-.175.013-.175.012-.177.011-.178.009-.179.009-.179.007-.181.007-.182.005-.182.004-.184.003-.184.002h-.37l-.184-.002-.184-.003-.182-.004-.182-.005-.181-.007-.179-.007-.179-.009-.178-.009-.176-.011-.176-.012-.175-.013-.173-.014-.172-.015-.171-.016-.17-.017-.169-.018-.167-.019-.166-.02-.165-.021-.163-.022-.162-.023-.161-.024-.159-.025-.157-.026-.156-.027-.155-.028-.153-.028-.151-.03-.15-.03-.148-.031-.146-.033-.145-.033-.143-.033-.141-.035-.14-.036-.137-.036-.136-.037-.134-.038-.132-.039-.13-.039-.128-.04-.126-.041-.124-.042-.122-.043-.12-.043-.117-.044-.116-.044-.113-.046-.112-.046-.109-.046-.106-.047-.105-.048-.102-.049-.1-.049-.097-.05-.095-.051-.093-.051-.09-.051-.087-.053-.085-.052-.083-.054-.08-.054-.077-.054v4.139zm0-5.666v.011l.001.02.003.022.004.021.005.022.006.021.007.022.009.023.01.022.011.023.012.023.013.023.015.023.016.024.017.024.018.023.019.024.021.025.022.024.023.024.024.025.052.05.056.05.061.05.066.051.07.051.075.052.079.051.084.052.088.052.092.052.097.052.102.052.105.051.11.052.114.051.119.051.123.051.127.05.131.05.135.05.139.049.144.048.147.048.152.047.155.046.16.045.163.045.167.043.171.043.176.042.178.04.183.04.187.038.19.037.194.036.197.034.202.033.204.032.209.03.212.028.216.027.219.025.222.024.226.021.23.02.233.018.236.017.24.014.243.012.246.01.249.008.253.006.256.003.259.001.26-.001.257-.003.254-.006.25-.008.247-.01.244-.013.241-.014.237-.016.233-.018.231-.02.226-.022.224-.024.22-.025.216-.027.212-.029.21-.03.205-.032.202-.033.198-.035.194-.036.191-.037.187-.039.183-.039.179-.041.175-.042.172-.043.168-.044.163-.045.16-.045.155-.047.152-.047.148-.048.143-.049.139-.049.136-.049.131-.051.126-.05.123-.051.118-.052.114-.051.11-.052.106-.052.101-.052.096-.052.092-.052.088-.052.083-.052.079-.052.074-.052.07-.051.065-.051.06-.051.056-.05.051-.049.023-.025.023-.025.021-.024.02-.024.019-.024.018-.024.017-.024.015-.023.014-.024.013-.023.012-.023.01-.022.01-.023.008-.022.006-.022.006-.022.004-.022.004-.021.001-.021.001-.021v-4.153l-.077.054-.08.054-.083.053-.085.053-.087.053-.09.051-.093.051-.095.051-.097.05-.1.049-.102.048-.105.048-.106.048-.109.046-.111.046-.114.046-.115.044-.118.044-.12.043-.122.043-.124.042-.126.041-.128.04-.13.039-.132.039-.134.038-.135.037-.138.036-.139.036-.142.034-.143.034-.144.033-.147.032-.148.032-.15.03-.151.03-.153.028-.154.028-.156.027-.158.026-.159.024-.161.024-.162.023-.163.023-.165.021-.166.02-.167.019-.169.018-.169.017-.171.016-.173.015-.173.014-.175.013-.175.012-.177.01-.178.01-.179.009-.179.007-.181.006-.182.006-.182.004-.184.003-.184.001-.185.001-.185-.001-.184-.001-.184-.003-.182-.004-.182-.006-.181-.006-.179-.007-.179-.009-.178-.01-.176-.01-.176-.012-.175-.013-.173-.014-.172-.015-.171-.016-.17-.017-.169-.018-.167-.019-.166-.02-.165-.021-.163-.023-.162-.023-.161-.024-.159-.024-.157-.026-.156-.027-.155-.028-.153-.028-.151-.03-.15-.03-.148-.032-.146-.032-.145-.033-.143-.034-.141-.034-.14-.036-.137-.036-.136-.037-.134-.038-.132-.039-.13-.039-.128-.041-.126-.041-.124-.041-.122-.043-.12-.043-.117-.044-.116-.044-.113-.046-.112-.046-.109-.046-.106-.048-.105-.048-.102-.048-.1-.05-.097-.049-.095-.051-.093-.051-.09-.052-.087-.052-.085-.053-.083-.053-.08-.054-.077-.054v4.153zm8.74-8.179l-.257.004-.254.005-.25.008-.247.011-.244.012-.241.014-.237.016-.233.018-.231.021-.226.022-.224.023-.22.026-.216.027-.212.028-.21.031-.205.032-.202.033-.198.034-.194.036-.191.038-.187.038-.183.04-.179.041-.175.042-.172.043-.168.043-.163.045-.16.046-.155.046-.152.048-.148.048-.143.048-.139.049-.136.05-.131.05-.126.051-.123.051-.118.051-.114.052-.11.052-.106.052-.101.052-.096.052-.092.052-.088.052-.083.052-.079.052-.074.051-.07.052-.065.051-.06.05-.056.05-.051.05-.023.025-.023.024-.021.024-.02.025-.019.024-.018.024-.017.023-.015.024-.014.023-.013.023-.012.023-.01.023-.01.022-.008.022-.006.023-.006.021-.004.022-.004.021-.001.021-.001.021.001.021.001.021.004.021.004.022.006.021.006.023.008.022.01.022.01.023.012.023.013.023.014.023.015.024.017.023.018.024.019.024.02.025.021.024.023.024.023.025.051.05.056.05.06.05.065.051.07.052.074.051.079.052.083.052.088.052.092.052.096.052.101.052.106.052.11.052.114.052.118.051.123.051.126.051.131.05.136.05.139.049.143.048.148.048.152.048.155.046.16.046.163.045.168.043.172.043.175.042.179.041.183.04.187.038.191.038.194.036.198.034.202.033.205.032.21.031.212.028.216.027.22.026.224.023.226.022.231.021.233.018.237.016.241.014.244.012.247.011.25.008.254.005.257.004.26.001.26-.001.257-.004.254-.005.25-.008.247-.011.244-.012.241-.014.237-.016.233-.018.231-.021.226-.022.224-.023.22-.026.216-.027.212-.028.21-.031.205-.032.202-.033.198-.034.194-.036.191-.038.187-.038.183-.04.179-.041.175-.042.172-.043.168-.043.163-.045.16-.046.155-.046.152-.048.148-.048.143-.048.139-.049.136-.05.131-.05.126-.051.123-.051.118-.051.114-.052.11-.052.106-.052.101-.052.096-.052.092-.052.088-.052.083-.052.079-.052.074-.051.07-.052.065-.051.06-.05.056-.05.051-.05.023-.025.023-.024.021-.024.02-.025.019-.024.018-.024.017-.023.015-.024.014-.023.013-.023.012-.023.01-.023.01-.022.008-.022.006-.023.006-.021.004-.022.004-.021.001-.021.001-.021-.001-.021-.001-.021-.004-.021-.004-.022-.006-.021-.006-.023-.008-.022-.01-.022-.01-.023-.012-.023-.013-.023-.014-.023-.015-.024-.017-.023-.018-.024-.019-.024-.02-.025-.021-.024-.023-.024-.023-.025-.051-.05-.056-.05-.06-.05-.065-.051-.07-.052-.074-.051-.079-.052-.083-.052-.088-.052-.092-.052-.096-.052-.101-.052-.106-.052-.11-.052-.114-.052-.118-.051-.123-.051-.126-.051-.131-.05-.136-.05-.139-.049-.143-.048-.148-.048-.152-.048-.155-.046-.16-.046-.163-.045-.168-.043-.172-.043-.175-.042-.179-.041-.183-.04-.187-.038-.191-.038-.194-.036-.198-.034-.202-.033-.205-.032-.21-.031-.212-.028-.216-.027-.22-.026-.224-.023-.226-.022-.231-.021-.233-.018-.237-.016-.241-.014-.244-.012-.247-.011-.25-.008-.254-.005-.257-.004-.26-.001-.26.001z" transform="scale(.5)"></path></symbol></defs><defs><symbol height="24" width="24" id="clock"><path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.848 12.459c.202.038.202.333.001.372-1.907.361-6.045 1.111-6.547 1.111-.719 0-1.301-.582-1.301-1.301 0-.512.77-5.447 1.125-7.445.034-.192.312-.181.343.014l.985 6.238 5.394 1.011z" transform="scale(.5)"></path></symbol></defs><defs><marker orient="auto-start-reverse" markerHeight="12" markerWidth="12" markerUnits="userSpaceOnUse" refY="5" refX="7.9" id="arrowhead"><path d="M -1 0 L 10 5 L 0 10 z"></path></marker></defs><defs><marker refY="4.5" refX="4" orient="auto" markerHeight="8" markerWidth="15" id="crosshead"><path d="M 1,2 L 6,7 M 6,2 L 1,7" stroke-width="1pt" style="stroke-dasharray: 0px, 0px;" stroke="#000000" fill="none"></path></marker></defs><defs><marker orient="auto" markerHeight="28" markerWidth="20" refY="7" refX="15.5" id="filled-head"><path d="M 18,7 L9,13 L14,7 L9,1 Z"></path></marker></defs><defs><marker orient="auto" markerHeight="40" markerWidth="60" refY="15" refX="15" id="sequencenumber"><circle r="6" cy="15" cx="15"></circle></marker></defs><g id="viewport-20250707040040656" class="svg-pan-zoom_viewport" transform="matrix(0.2775280773639679,0,0,0.2775280773639679,13.876420974731445,190.1781005859375)" style="transform: matrix(0.277528, 0, 0, 0.277528, 13.8764, 190.178);"><g><rect class="actor actor-bottom" ry="3" rx="3" name="/context/features/feature_PRP_XXX.md" height="65" width="335" stroke="#666" fill="#eaeaea" y="693" x="2235"></rect><text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="725.5" x="2402.5"><tspan dy="0" x="2402.5">/context/features/feature_PRP_XXX.md</tspan></text></g><g><rect class="actor actor-bottom" ry="3" rx="3" name="/context/features/feature_DESC_XXX.md" height="65" width="346" stroke="#666" fill="#eaeaea" y="693" x="1839"></rect><text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="725.5" x="2012"><tspan dy="0" x="2012">/context/features/feature_DESC_XXX.md</tspan></text></g><g><rect class="actor actor-bottom" ry="3" rx="3" name="AI Coding Agent" height="65" width="150" stroke="#666" fill="#eaeaea" y="693" x="1623.5"></rect><text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="725.5" x="1698.5"><tspan dy="0" x="1698.5">AI Coding Agent</tspan></text></g><g><rect class="actor actor-bottom" ry="3" rx="3" name="execute-prp.md" height="65" width="150" stroke="#666" fill="#eaeaea" y="693" x="1092.5"></rect><text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="725.5" x="1167.5"><tspan dy="0" x="1167.5">execute-prp.md</tspan></text></g><g><rect class="actor actor-bottom" ry="3" rx="3" name="feature_PRP_XXX.md" height="65" width="180" stroke="#666" fill="#eaeaea" y="693" x="862.5"></rect><text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="725.5" x="952.5"><tspan dy="0" x="952.5">feature_PRP_XXX.md</tspan></text></g><g><rect class="actor actor-bottom" ry="3" rx="3" name="generate-prp.md" height="65" width="153" stroke="#666" fill="#eaeaea" y="693" x="659.5"></rect><text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="725.5" x="736"><tspan dy="0" x="736">generate-prp.md</tspan></text></g><g><rect class="actor actor-bottom" ry="3" rx="3" name="ClaudeCode" height="65" width="150" stroke="#666" fill="#eaeaea" y="693" x="441"></rect><text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="725.5" x="516"><tspan dy="0" x="516">ClaudeCode</tspan></text></g><g><rect class="actor actor-bottom" ry="3" rx="3" name="feature_DESC_XXX.md" height="65" width="191" stroke="#666" fill="#eaeaea" y="693" x="200"></rect><text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="725.5" x="295.5"><tspan dy="0" x="295.5">feature_DESC_XXX.md</tspan></text></g><g><rect class="actor actor-bottom" ry="3" rx="3" name="User" height="65" width="150" stroke="#666" fill="#eaeaea" y="693" x="0"></rect><text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="725.5" x="75"><tspan dy="0" x="75">User</tspan></text></g><g><line name="/context/features/feature_PRP_XXX.md" stroke="#999" stroke-width="0.5px" class="actor-line 200" y2="693" x2="2402.5" y1="65" x1="2402.5" id="actor1675"></line><g id="root-1675"><rect class="actor actor-top" ry="3" rx="3" name="/context/features/feature_PRP_XXX.md" height="65" width="335" stroke="#666" fill="#eaeaea" y="0" x="2235"></rect><text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="32.5" x="2402.5"><tspan dy="0" x="2402.5">/context/features/feature_PRP_XXX.md</tspan></text></g></g><g><line name="/context/features/feature_DESC_XXX.md" stroke="#999" stroke-width="0.5px" class="actor-line 200" y2="693" x2="2012" y1="65" x1="2012" id="actor1674"></line><g id="root-1674"><rect class="actor actor-top" ry="3" rx="3" name="/context/features/feature_DESC_XXX.md" height="65" width="346" stroke="#666" fill="#eaeaea" y="0" x="1839"></rect><text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="32.5" x="2012"><tspan dy="0" x="2012">/context/features/feature_DESC_XXX.md</tspan></text></g></g><g><line name="AI Coding Agent" stroke="#999" stroke-width="0.5px" class="actor-line 200" y2="693" x2="1698.5" y1="65" x1="1698.5" id="actor1673"></line><g id="root-1673"><rect class="actor actor-top" ry="3" rx="3" name="AI Coding Agent" height="65" width="150" stroke="#666" fill="#eaeaea" y="0" x="1623.5"></rect><text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="32.5" x="1698.5"><tspan dy="0" x="1698.5">AI Coding Agent</tspan></text></g></g><g><line name="execute-prp.md" stroke="#999" stroke-width="0.5px" class="actor-line 200" y2="693" x2="1167.5" y1="65" x1="1167.5" id="actor1672"></line><g id="root-1672"><rect class="actor actor-top" ry="3" rx="3" name="execute-prp.md" height="65" width="150" stroke="#666" fill="#eaeaea" y="0" x="1092.5"></rect><text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="32.5" x="1167.5"><tspan dy="0" x="1167.5">execute-prp.md</tspan></text></g></g><g><line name="feature_PRP_XXX.md" stroke="#999" stroke-width="0.5px" class="actor-line 200" y2="693" x2="952.5" y1="65" x1="952.5" id="actor1671"></line><g id="root-1671"><rect class="actor actor-top" ry="3" rx="3" name="feature_PRP_XXX.md" height="65" width="180" stroke="#666" fill="#eaeaea" y="0" x="862.5"></rect><text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="32.5" x="952.5"><tspan dy="0" x="952.5">feature_PRP_XXX.md</tspan></text></g></g><g><line name="generate-prp.md" stroke="#999" stroke-width="0.5px" class="actor-line 200" y2="693" x2="736" y1="65" x1="736" id="actor1670"></line><g id="root-1670"><rect class="actor actor-top" ry="3" rx="3" name="generate-prp.md" height="65" width="153" stroke="#666" fill="#eaeaea" y="0" x="659.5"></rect><text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="32.5" x="736"><tspan dy="0" x="736">generate-prp.md</tspan></text></g></g><g><line name="ClaudeCode" stroke="#999" stroke-width="0.5px" class="actor-line 200" y2="693" x2="516" y1="65" x1="516" id="actor1669"></line><g id="root-1669"><rect class="actor actor-top" ry="3" rx="3" name="ClaudeCode" height="65" width="150" stroke="#666" fill="#eaeaea" y="0" x="441"></rect><text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="32.5" x="516"><tspan dy="0" x="516">ClaudeCode</tspan></text></g></g><g><line name="feature_DESC_XXX.md" stroke="#999" stroke-width="0.5px" class="actor-line 200" y2="693" x2="295.5" y1="65" x1="295.5" id="actor1668"></line><g id="root-1668"><rect class="actor actor-top" ry="3" rx="3" name="feature_DESC_XXX.md" height="65" width="191" stroke="#666" fill="#eaeaea" y="0" x="200"></rect><text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="32.5" x="295.5"><tspan dy="0" x="295.5">feature_DESC_XXX.md</tspan></text></g></g><g><line name="User" stroke="#999" stroke-width="0.5px" class="actor-line 200" y2="693" x2="75" y1="65" x1="75" id="actor1667"></line><g id="root-1667"><rect class="actor actor-top" ry="3" rx="3" name="User" height="65" width="150" stroke="#666" fill="#eaeaea" y="0" x="0"></rect><text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="32.5" x="75"><tspan dy="0" x="75">User</tspan></text></g></g><style>#graph-231{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#333;}@keyframes edge-animation-frame{from{stroke-dashoffset:0;}}@keyframes dash{to{stroke-dashoffset:0;}}#graph-231 .edge-animation-slow{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 50s linear infinite;stroke-linecap:round;}#graph-231 .edge-animation-fast{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 20s linear infinite;stroke-linecap:round;}#graph-231 .error-icon{fill:#552222;}#graph-231 .error-text{fill:#552222;stroke:#552222;}#graph-231 .edge-thickness-normal{stroke-width:1px;}#graph-231 .edge-thickness-thick{stroke-width:3.5px;}#graph-231 .edge-pattern-solid{stroke-dasharray:0;}#graph-231 .edge-thickness-invisible{stroke-width:0;fill:none;}#graph-231 .edge-pattern-dashed{stroke-dasharray:3;}#graph-231 .edge-pattern-dotted{stroke-dasharray:2;}#graph-231 .marker{fill:#333333;stroke:#333333;}#graph-231 .marker.cross{stroke:#333333;}#graph-231 svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#graph-231 p{margin:0;}#graph-231 .actor{stroke:hsl(259.6261682243, 59.7765363128%, 87.9019607843%);fill:#ECECFF;}#graph-231 text.actor&gt;tspan{fill:black;stroke:none;}#graph-231 .actor-line{stroke:hsl(259.6261682243, 59.7765363128%, 87.9019607843%);}#graph-231 .messageLine0{stroke-width:1.5;stroke-dasharray:none;stroke:#333;}#graph-231 .messageLine1{stroke-width:1.5;stroke-dasharray:2,2;stroke:#333;}#graph-231 #arrowhead path{fill:#333;stroke:#333;}#graph-231 .sequenceNumber{fill:white;}#graph-231 #sequencenumber{fill:#333;}#graph-231 #crosshead path{fill:#333;stroke:#333;}#graph-231 .messageText{fill:#333;stroke:none;}#graph-231 .labelBox{stroke:hsl(259.6261682243, 59.7765363128%, 87.9019607843%);fill:#ECECFF;}#graph-231 .labelText,#graph-231 .labelText&gt;tspan{fill:black;stroke:none;}#graph-231 .loopText,#graph-231 .loopText&gt;tspan{fill:black;stroke:none;}#graph-231 .loopLine{stroke-width:2px;stroke-dasharray:2,2;stroke:hsl(259.6261682243, 59.7765363128%, 87.9019607843%);fill:hsl(259.6261682243, 59.7765363128%, 87.9019607843%);}#graph-231 .note{stroke:#aaaa33;fill:#fff5ad;}#graph-231 .noteText,#graph-231 .noteText&gt;tspan{fill:black;stroke:none;}#graph-231 .activation0{fill:#f4f4f4;stroke:#666;}#graph-231 .activation1{fill:#f4f4f4;stroke:#666;}#graph-231 .activation2{fill:#f4f4f4;stroke:#666;}#graph-231 .actorPopupMenu{position:absolute;}#graph-231 .actorPopupMenuPanel{position:absolute;fill:#ECECFF;box-shadow:0px 8px 16px 0px rgba(0,0,0,0.2);filter:drop-shadow(3px 5px 2px rgb(0 0 0 / 0.4));}#graph-231 .actor-man line{stroke:hsl(259.6261682243, 59.7765363128%, 87.9019607843%);fill:#ECECFF;}#graph-231 .actor-man circle,#graph-231 line{stroke:hsl(259.6261682243, 59.7765363128%, 87.9019607843%);fill:#ECECFF;stroke-width:2px;}#graph-231 :root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}</style><g></g><text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="80" x="1042">Describes feature</text><line marker-end="url(#arrowhead)" style="fill: none;" stroke="none" stroke-width="2" class="messageLine0" y2="113" x2="2008" y1="113" x1="76"></line><text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="128" x="294">Runs /generate-prp.md /context/features/feature_DESC_XXX.md</text><line marker-end="url(#arrowhead)" style="fill: none;" stroke="none" stroke-width="2" class="messageLine0" y2="163" x2="512" y1="163" x1="76"></line><text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="178" x="625">Executes command</text><line marker-end="url(#arrowhead)" style="fill: none;" stroke="none" stroke-width="2" class="messageLine0" y2="211" x2="732" y1="211" x1="517"></line><text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="226" x="1216">Reads /context/features/feature_DESC_XXX.md, codebase, and web</text><line marker-end="url(#arrowhead)" style="fill: none;" stroke="none" stroke-width="2" class="messageLine0" y2="259" x2="1694.5" y1="259" x1="737"></line><text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="274" x="1219">Researches codebase, docs, and examples</text><line marker-end="url(#arrowhead)" stroke="none" stroke-width="2" class="messageLine1" style="stroke-dasharray: 3px, 3px; fill: none;" y2="307" x2="740" y1="307" x1="1697.5"></line><text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="322" x="1568">Generates PRP</text><line marker-end="url(#arrowhead)" style="fill: none;" stroke="none" stroke-width="2" class="messageLine0" y2="355" x2="2398.5" y1="355" x1="737"></line><text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="370" x="297">PRP saved in /context/PRPs/feature_PRP_XXX.md</text><line marker-end="url(#arrowhead)" style="fill: none;" stroke="none" stroke-width="2" class="messageLine0" y2="403" x2="79" y1="403" x1="515"></line><text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="418" x="294">Runs /execute-prp /context/PRPs/feature_PRP_XXX.md</text><line marker-end="url(#arrowhead)" style="fill: none;" stroke="none" stroke-width="2" class="messageLine0" y2="451" x2="512" y1="451" x1="76"></line><text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="466" x="840">Executes command</text><line marker-end="url(#arrowhead)" style="fill: none;" stroke="none" stroke-width="2" class="messageLine0" y2="499" x2="1163.5" y1="499" x1="517"></line><text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="514" x="1432">Reads /context/PRPs/feature_PRP_XXX.md and CLAUDE.md</text><line marker-end="url(#arrowhead)" style="fill: none;" stroke="none" stroke-width="2" class="messageLine0" y2="547" x2="1694.5" y1="547" x1="1168.5"></line><text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="562" x="1700">Creates implementation plan, executes, validates, and iterates</text><path marker-end="url(#arrowhead)" style="fill: none;" stroke="none" stroke-width="2" class="messageLine0" d="M 1699.5,595 C 1759.5,585 1759.5,625 1699.5,615"></path><text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="640" x="888">Implements feature</text><line marker-end="url(#arrowhead)" stroke="none" stroke-width="2" class="messageLine1" style="stroke-dasharray: 3px, 3px; fill: none;" y2="673" x2="79" y1="673" x1="1697.5"></line></g></svg>
+
+
+--------------------------------------------------------------------------------
+/context/templates/feature_base.md:
+--------------------------------------------------------------------------------
+ 1 | # Feature description for: [ Initial template for new features ]
+ 2 | 
+ 3 | As put forward by [context-engineering-intro](https://github.com/coleam00/context-engineering-intro).
+ 4 | 
+ 5 | ## FEATURE
+ 6 | 
+ 7 | [Insert your feature here]
+ 8 | 
+ 9 | ## EXAMPLES
+10 | 
+11 | [Provide and explain examples that you have in the `/context/examples` folder]
+12 | 
+13 | ## DOCUMENTATION
+14 | 
+15 | [List out any documentation (web pages, sources for an MCP server like Crawl4AI RAG, etc.) that will need to be referenced during development]
+16 | 
+17 | ## OTHER CONSIDERATIONS
+18 | 
+19 | [Any other considerations or specific requirements - great place to include gotchas that you see AI coding assistants miss with your projects a lot]
+20 | 
+
+
+--------------------------------------------------------------------------------
+/context/templates/prp_base.md:
+--------------------------------------------------------------------------------
+  1 | # "Base PRP Template v2 - Context-Rich with Validation Loops"
+  2 | 
+  3 | ## Purpose
+  4 | 
+  5 | Product Requirements Prompt (PRP) Template optimized for AI agents to implement features with sufficient context and self-validation capabilities to achieve working code through iterative refinement.
+  6 | 
+  7 | ## Core Principles
+  8 | 
+  9 | 1. **Context is King**: Include ALL necessary documentation, examples, and caveats
+ 10 | 2. **Validation Loops**: Provide executable tests/lints the AI can run and fix
+ 11 | 3. **Information Dense**: Use keywords and patterns from the codebase
+ 12 | 4. **Progressive Success**: Start simple, validate, then enhance
+ 13 | 5. **Global rules**: Be sure to follow all rules in CLAUDE.md
+ 14 | 
+ 15 | ---
+ 16 | 
+ 17 | ## Goal
+ 18 | 
+ 19 | [What needs to be built - be specific about the end state and desires]
+ 20 | 
+ 21 | ## Why
+ 22 | 
+ 23 | - [Business value and user impact]
+ 24 | - [Integration with existing features]
+ 25 | - [Problems this solves and for whom]
+ 26 | 
+ 27 | ## What
+ 28 | 
+ 29 | [User-visible behavior and technical requirements]
+ 30 | 
+ 31 | ### Success Criteria
+ 32 | 
+ 33 | - [ ] [Specific measurable outcomes]
+ 34 | 
+ 35 | ## All Needed Context
+ 36 | 
+ 37 | ### Documentation & References (list all context needed to implement the feature)
+ 38 | 
+ 39 | ```yaml
+ 40 | # MUST READ - Include these in your context window
+ 41 | - url: [Official API docs URL]
+ 42 |   why: [Specific sections/methods you'll need]
+ 43 |   
+ 44 | - file: [path/to/example.py]
+ 45 |   why: [Pattern to follow, gotchas to avoid]
+ 46 |   
+ 47 | - doc: [Library documentation URL] 
+ 48 |   section: [Specific section about common pitfalls]
+ 49 |   critical: [Key insight that prevents common errors]
+ 50 | 
+ 51 | - docfile: [PRPs/ai_docs/file.md]
+ 52 |   why: [docs that the user has pasted in to the project]
+ 53 | ```
+ 54 | 
+ 55 | ### Current Codebase tree (run `tree` in the root of the project) to get an overview of the codebase
+ 56 | 
+ 57 | ```bash
+ 58 | 
+ 59 | ```
+ 60 | 
+ 61 | ### Desired Codebase tree with files to be added and responsibility of file
+ 62 | 
+ 63 | ```bash
+ 64 | 
+ 65 | ```
+ 66 | 
+ 67 | ### Known Gotchas of our codebase & Library Quirks
+ 68 | 
+ 69 | ```python
+ 70 | # CRITICAL: [Library name] requires [specific setup]
+ 71 | # Example: FastAPI requires async functions for endpoints
+ 72 | # Example: This ORM doesn't support batch inserts over 1000 records
+ 73 | # Example: We use pydantic v2 and  
+ 74 | ```
+ 75 | 
+ 76 | ## Implementation Blueprint
+ 77 | 
+ 78 | ### Data models and structure
+ 79 | 
+ 80 | Create the core data models, we ensure type safety and consistency.
+ 81 | 
+ 82 | ```python
+ 83 | Examples: 
+ 84 |  - orm models
+ 85 |  - pydantic models
+ 86 |  - pydantic schemas
+ 87 |  - pydantic validators
+ 88 | 
+ 89 | ```
+ 90 | 
+ 91 | ### list of tasks to be completed to fullfill the PRP in the order they should be completed
+ 92 | 
+ 93 | ```yaml
+ 94 | Task 1:
+ 95 | MODIFY src/existing_module.py:
+ 96 |   - FIND pattern: "class OldImplementation"
+ 97 |   - INJECT after line containing "def __init__"
+ 98 |   - PRESERVE existing method signatures
+ 99 | 
+100 | CREATE src/new_feature.py:
+101 |   - MIRROR pattern from: src/similar_feature.py
+102 |   - MODIFY class name and core logic
+103 |   - KEEP error handling pattern identical
+104 | 
+105 | ...(...)
+106 | 
+107 | Task N:
+108 | ...
+109 | 
+110 | ```
+111 | 
+112 | ### Per task pseudocode as needed added to each task
+113 | 
+114 | ```python
+115 | 
+116 | # Task 1
+117 | # Pseudocode with CRITICAL details dont write entire code
+118 | async def new_feature(param: str) -> Result:
+119 |     # PATTERN: Always validate input first (see src/validators.py)
+120 |     validated = validate_input(param)  # raises ValidationError
+121 |     
+122 |     # GOTCHA: This library requires connection pooling
+123 |     async with get_connection() as conn:  # see src/db/pool.py
+124 |         # PATTERN: Use existing retry decorator
+125 |         @retry(attempts=3, backoff=exponential)
+126 |         async def _inner():
+127 |             # CRITICAL: API returns 429 if >10 req/sec
+128 |             await rate_limiter.acquire()
+129 |             return await external_api.call(validated)
+130 |         
+131 |         result = await _inner()
+132 |     
+133 |     # PATTERN: Standardized response format
+134 |     return format_response(result)  # see src/utils/responses.py
+135 | ```
+136 | 
+137 | ### Integration Points
+138 | 
+139 | ```yaml
+140 | DATABASE:
+141 |   - migration: "Add column 'feature_enabled' to users table"
+142 |   - index: "CREATE INDEX idx_feature_lookup ON users(feature_id)"
+143 |   
+144 | CONFIG:
+145 |   - add to: config/settings.py
+146 |   - pattern: "FEATURE_TIMEOUT = int(os.getenv('FEATURE_TIMEOUT', '30'))"
+147 |   
+148 | ROUTES:
+149 |   - add to: src/api/routes.py  
+150 |   - pattern: "router.include_router(feature_router, prefix='/feature')"
+151 | ```
+152 | 
+153 | ## Validation Loop
+154 | 
+155 | ### Level 1: Syntax & Style
+156 | 
+157 | ```bash
+158 | # Run these FIRST - fix any errors before proceeding
+159 | ruff check src/new_feature.py --fix  # Auto-fix what's possible
+160 | mypy src/new_feature.py              # Type checking
+161 | 
+162 | # Expected: No errors. If errors, READ the error and fix.
+163 | ```
+164 | 
+165 | ### Level 2: Unit Tests each new feature/file/function use existing test patterns
+166 | 
+167 | ```python
+168 | # CREATE test_new_feature.py with these test cases:
+169 | def test_happy_path():
+170 |     """Basic functionality works"""
+171 |     result = new_feature("valid_input")
+172 |     assert result.status == "success"
+173 | 
+174 | def test_validation_error():
+175 |     """Invalid input raises ValidationError"""
+176 |     with pytest.raises(ValidationError):
+177 |         new_feature("")
+178 | 
+179 | def test_external_api_timeout():
+180 |     """Handles timeouts gracefully"""
+181 |     with mock.patch('external_api.call', side_effect=TimeoutError):
+182 |         result = new_feature("valid")
+183 |         assert result.status == "error"
+184 |         assert "timeout" in result.message
+185 | ```
+186 | 
+187 | ```bash
+188 | # Run and iterate until passing:
+189 | uv run pytest test_new_feature.py -v
+190 | # If failing: Read error, understand root cause, fix code, re-run (never mock to pass)
+191 | ```
+192 | 
+193 | ### Level 3: Integration Test
+194 | 
+195 | ```bash
+196 | # Start the service
+197 | uv run python -m src.main --dev
+198 | 
+199 | # Test the endpoint
+200 | curl -X POST http://localhost:8000/feature \
+201 |   -H "Content-Type: application/json" \
+202 |   -d '{"param": "test_value"}'
+203 | 
+204 | # Expected: {"status": "success", "data": {...}}
+205 | # If error: Check logs at logs/app.log for stack trace
+206 | ```
+207 | 
+208 | ## Final validation Checklist
+209 | 
+210 | - [ ] All tests pass: `uv run pytest tests/ -v`
+211 | - [ ] No linting errors: `uv run ruff check src/`
+212 | - [ ] No type errors: `uv run mypy src/`
+213 | - [ ] Manual test successful: [specific curl/command]
+214 | - [ ] Error cases handled gracefully
+215 | - [ ] Logs are informative but not verbose
+216 | - [ ] Documentation updated if needed
+217 | 
+218 | ---
+219 | 
+220 | ## Anti-Patterns to Avoid
+221 | 
+222 | - ❌ Don't create new patterns when existing ones work
+223 | - ❌ Don't skip validation because "it should work"  
+224 | - ❌ Don't ignore failing tests - fix them
+225 | - ❌ Don't use sync functions in async context
+226 | - ❌ Don't hardcode values that should be config
+227 | - ❌ Don't catch all exceptions - be specific
+228 | 
+
+
+--------------------------------------------------------------------------------
+/docs/architecture/sequence_diagram.mermaid:
+--------------------------------------------------------------------------------
+ 1 | sequenceDiagram
+ 2 |     participant User
+ 3 |     participant feature_DESC_XXX.md
+ 4 |     participant ClaudeCode
+ 5 |     participant generate-prp.md
+ 6 |     participant feature_PRP_XXX.md
+ 7 |     participant execute-prp.md
+ 8 |     participant AI Coding Agent
+ 9 | 
+10 |     User->>/context/features/feature_DESC_XXX.md: Describes feature
+11 |     User->>ClaudeCode: Runs /generate-prp.md /context/features/feature_DESC_XXX.md
+12 |     ClaudeCode->>generate-prp.md: Executes command
+13 |     generate-prp.md->>AI Coding Agent: Reads /context/features/feature_DESC_XXX.md, codebase, and web
+14 |     AI Coding Agent-->>generate-prp.md: Researches codebase, docs, and examples
+15 |     generate-prp.md->>/context/features/feature_PRP_XXX.md: Generates PRP
+16 |     ClaudeCode->>User: PRP saved in /context/PRPs/feature_PRP_XXX.md
+17 |     User->>ClaudeCode: Runs /execute-prp /context/PRPs/feature_PRP_XXX.md
+18 |     ClaudeCode->>execute-prp.md: Executes command
+19 |     execute-prp.md->>AI Coding Agent: Reads /context/PRPs/feature_PRP_XXX.md and CLAUDE.md
+20 |     AI Coding Agent->>AI Coding Agent: Creates implementation plan, executes, validates, and iterates
+21 |     AI Coding Agent-->>User: Implements feature
+22 | 
+
+
+--------------------------------------------------------------------------------
+/mkdocs.yaml:
+--------------------------------------------------------------------------------
+ 1 | ---
+ 2 | # https://github.com/james-willett/mkdocs-material-youtube-tutorial
+ 3 | # https://mkdocstrings.github.io/recipes/
+ 4 | # site info set in workflow
+ 5 | site_name: '<gha_sed_site_name_here>'
+ 6 | site_description: '<gha_sed_site_description_here>'
+ 7 | repo_url: '<gha_sed_repo_url_here>'
+ 8 | edit_uri: edit/main
+ 9 | theme:
+10 |   name: material
+11 |   language: en
+12 |   features:
+13 |     - content.code.annotation
+14 |     - content.code.copy
+15 |     - content.tabs.link
+16 |     - navigation.footer
+17 |     - navigation.sections
+18 |     - navigation.tabs
+19 |     - navigation.top
+20 |     - toc.integrate
+21 |     - search.suggest
+22 |     - search.highlight
+23 |   palette:
+24 |     - media: "(prefers-color-scheme: light)"
+25 |       scheme: default
+26 |       toggle:
+27 |         # icon: material/brightness-7
+28 |         icon: material/toggle-switch-off-outline 
+29 |         name: "Toggle Dark Mode"
+30 |     - media: "(prefers-color-scheme: dark)"
+31 |       scheme: slate
+32 |       toggle:
+33 |         # icon: material/brightness-4
+34 |         icon: material/toggle-switch
+35 |         name: "Toggle Light Mode"
+36 | nav:
+37 |   - Home: index.md
+38 |   - Code: docstrings.md
+39 |   - Change Log: CHANGELOG.md
+40 |   - License: LICENSE.md
+41 |   - llms.txt: llms.txt
+42 | plugins:
+43 |   - search:
+44 |       lang: en
+45 |   - autorefs
+46 |   - mkdocstrings:
+47 |       handlers:
+48 |         python:
+49 |           paths: [src]
+50 |           options:
+51 |             show_root_heading: true
+52 |             show_root_full_path: true
+53 |             show_object_full_path: false
+54 |             show_root_members_full_path: false
+55 |             show_category_heading: true
+56 |             show_submodules: true
+57 | markdown_extensions:
+58 |   - attr_list
+59 |   - pymdownx.magiclink
+60 |   - pymdownx.tabbed
+61 |   - pymdownx.highlight:
+62 |       anchor_linenums: true
+63 |   - pymdownx.superfences
+64 |   - pymdownx.snippets:
+65 |       check_paths: true
+66 |   - pymdownx.tasklist:
+67 |       custom_checkbox: true
+68 |   - sane_lists
+69 |   - smarty
+70 |   - toc:
+71 |       permalink: true
+72 | validation:
+73 |   links:
+74 |     not_found: warn
+75 |     anchors: warn
+76 | # builds only if validation succeeds while
+77 | # threating warnings as errors
+78 | # also checks for broken links
+79 | # strict: true
+80 | ...
+81 | 
+
+
+--------------------------------------------------------------------------------
+/pyproject.toml:
+--------------------------------------------------------------------------------
+  1 | [build-system]
+  2 | requires = ["hatchling"]
+  3 | build-backend = "hatchling.build"
+  4 | 
+  5 | [project]
+  6 | version = "0.0.0"
+  7 | name = "context-engineering-template"
+  8 | description = "Assess the effectiveness of agentic AI systems across various use cases focusing on agnostic metrics that measure core agentic capabilities."
+  9 | authors = [
+ 10 |     {name = "qte77", email = "qte@77.gh"}
+ 11 | ]
+ 12 | readme = "README.md"
+ 13 | requires-python = "==3.13.*"
+ 14 | license = "bsd-3-clause"
+ 15 | dependencies = []
+ 16 | 
+ 17 | # [project.urls]
+ 18 | # Documentation = ""
+ 19 | 
+ 20 | [dependency-groups]
+ 21 | dev = [
+ 22 |     "mypy>=1.16.0",
+ 23 |     "ruff>=0.11.12",
+ 24 | ]
+ 25 | test = []
+ 26 | docs = [
+ 27 |     "griffe>=1.5.1",
+ 28 |     "mkdocs>=1.6.1",
+ 29 |     "mkdocs-awesome-pages-plugin>=2.9.3",
+ 30 |     "mkdocs-gen-files>=0.5.0",
+ 31 |     "mkdocs-literate-nav>=0.6.1",
+ 32 |     "mkdocs-material>=9.5.44",
+ 33 |     "mkdocs-section-index>=0.3.8",
+ 34 |     "mkdocstrings[python]>=0.27.0",
+ 35 | ]
+ 36 | 
+ 37 | [tool.uv]
+ 38 | package = true
+ 39 | exclude-newer = "2025-07-06T00:00:00Z"
+ 40 | 
+ 41 | [tool.hatch.build.targets.wheel]
+ 42 | only-include = ["/README.md"]
+ 43 | 
+ 44 | [tool.hatch.build.targets.sdist]
+ 45 | include = ["/README.md", "/Makefile", "/tests"]
+ 46 | 
+ 47 | [tool.ruff]
+ 48 | target-version = "py313"
+ 49 | src = ["src", "tests"]
+ 50 | 
+ 51 | [tool.ruff.format]
+ 52 | docstring-code-format = true
+ 53 | 
+ 54 | [tool.ruff.lint]
+ 55 | # ignore = ["E203"]  # Whitespace before ':'
+ 56 | unfixable = ["B"]
+ 57 | select = [
+ 58 |     # pycodestyle
+ 59 |     "E",
+ 60 |     # Pyflakes
+ 61 |     "F",
+ 62 |     # pyupgrade
+ 63 |     "UP",
+ 64 |     # isort
+ 65 |     "I",
+ 66 | ]
+ 67 | 
+ 68 | [tool.ruff.lint.isort]
+ 69 | known-first-party = ["src", "tests"]
+ 70 | 
+ 71 | [tool.ruff.lint.pydocstyle]
+ 72 | convention = "google"
+ 73 | 
+ 74 | [tool.pytest.ini_options]
+ 75 | addopts = "--strict-markers"
+ 76 | # "function", "class", "module", "package", "session"
+ 77 | asyncio_default_fixture_loop_scope = "function"
+ 78 | pythonpath = ["src"]
+ 79 | testpaths = ["tests/"]
+ 80 | 
+ 81 | [tool.coverage]
+ 82 | [tool.coverage.run]
+ 83 | include = [
+ 84 |     "tests/**/*.py",
+ 85 | ]
+ 86 | # omit = []
+ 87 | # branch = true
+ 88 | 
+ 89 | [tool.coverage.report]
+ 90 | show_missing = true
+ 91 | exclude_lines = [
+ 92 |     # 'pragma: no cover',
+ 93 |     'raise AssertionError',
+ 94 |     'raise NotImplementedError',
+ 95 | ]
+ 96 | omit = [
+ 97 |     'env/*',
+ 98 |     'venv/*',
+ 99 |     '.venv/*',
+100 |     '*/virtualenv/*',
+101 |     '*/virtualenvs/*',
+102 |     '*/tests/*',
+103 | ]
+104 | 
+105 | [tool.bumpversion]
+106 | current_version = "0.0.0"
+107 | parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
+108 | serialize = ["{major}.{minor}.{patch}"]
+109 | commit = true
+110 | tag = true
+111 | allow_dirty = false
+112 | ignore_missing_version = false
+113 | sign_tags = false
+114 | tag_name = "v{new_version}"
+115 | tag_message = "Bump version: {current_version} → {new_version}"
+116 | message = "Bump version: {current_version} → {new_version}"
+117 | commit_args = ""
+118 | 
+119 | [[tool.bumpversion.files]]
+120 | filename = "pyproject.toml"
+121 | search = 'version = "{current_version}"'
+122 | replace = 'version = "{new_version}"'
+123 | 
+124 | [[tool.bumpversion.files]]
+125 | filename = "src/__init__.py"
+126 | search = '__version__ = "{current_version}"'
+127 | replace = '__version__ = "{new_version}"'
+128 | 
+129 | [[tool.bumpversion.files]]
+130 | filename = "README.md"
+131 | search = "version-{current_version}-58f4c2"
+132 | replace = "version-{new_version}-58f4c2"
+133 | 
+134 | [[tool.bumpversion.files]]
+135 | filename = "CHANGELOG.md"
+136 | search = """
+137 | ## [Unreleased]
+138 | """
+139 | replace = """
+140 | ## [Unreleased]
+141 | 
+142 | ## [{new_version}] - {now:%Y-%m-%d}
+143 | """
+144 | 
+
+
+--------------------------------------------------------------------------------
+/src/__init__.py:
+--------------------------------------------------------------------------------
+1 | """Defines the application version."""
+2 | 
+3 | __version__ = "0.0.0"
+4 | 
+
+
+--------------------------------------------------------------------------------
+/src/main.py:
+--------------------------------------------------------------------------------
+1 | """Main entry point for the application."""
+2 | 
+3 | from asyncio import run
+4 | 
+5 | if __name__ == "__main__":
+6 |     run(main())
+7 | 
+
+
+--------------------------------------------------------------------------------
+/src/py.typed:
+--------------------------------------------------------------------------------
+1 | # PEP 561 – Distributing and Packaging Type Information
+2 | # https://peps.python.org/pep-0561/
+
+
+--------------------------------------------------------------------------------
