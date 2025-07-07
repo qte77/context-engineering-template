@@ -48,7 +48,7 @@ endef
 
 setup_python_claude:  # Set up environment and install Claude Code CLI
 	$(MAKE) -s setup_dev
-	$(MAKR) -s export_env_file
+	$(MAKE) -s export_env_file
 	$(MAKE) -s setup_claude_code
 
 
