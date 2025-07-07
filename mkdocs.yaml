@@ -37,7 +37,7 @@ nav:
   - Home: index.md
   - Code: docstrings.md
   - Change Log: CHANGELOG.md
-  - License: LICENSE.md
+  - License: LICENSE
   - llms.txt: llms.txt
 plugins:
   - search:
