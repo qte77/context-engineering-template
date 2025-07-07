@@ -3,7 +3,7 @@
 This project aims to implement a template for context engineering with coding agents. As suggested by several resources, including [context-engineering-intro](https://github.com/coleam00/context-engineering-intro), [The rise of "context engineering"](https://blog.langchain.com/the-rise-of-context-engineering/), [Context Engineering](https://blog.langchain.com/context-engineering-for-agents/) and somewhat [He Built 40 Startups Using Just Prompts — Here’s His System](https://youtu.be/CIAu6WeckQ0).
 
 [![License](https://img.shields.io/badge/license-GNUGPLv3-green.svg)](LICENSE)
-![Version](https://img.shields.io/badge/version-0.0.0-58f4c2)
+![Version](https://img.shields.io/badge/version-0.0.1-58f4c2)
 [![CodeQL](https://github.com/qte77/context-engineering-template/actions/workflows/codeql.yaml/badge.svg)](https://github.com/qte77/context-engineering-template/actions/workflows/codeql.yaml)
 [![CodeFactor](https://www.codefactor.io/repository/github/qte77/context-engineering-template/badge)](https://www.codefactor.io/repository/github/qte77/context-engineering-template)
 [![ruff](https://github.com/qte77/context-engineering-template/actions/workflows/ruff.yaml/badge.svg)](https://github.com/qte77/context-engineering-template/actions/workflows/ruff.yaml)
