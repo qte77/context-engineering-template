@@ -90,6 +90,12 @@ export_env_file:  # Read ENV_FILE and export k=v to env
 	done < .env
 
 
+output_unset_env_sh:  ## Unset app environment variables
+	uf="./unset_env.sh"
+	echo "Outputing '$${uf}' ..."
+	printenv | awk -F= '/_API_KEY=/ {print "unset " $$1}' > $$uf
+
+
 ruff:  ## Lint: Format and check with ruff
 	uv run ruff format
 	uv run ruff check --fix
@@ -106,12 +112,6 @@ coverage_all:  ## Get test coverage
 
 check_types:  ## Check for static typing errors
 	uv run mypy $(APP_PATH)
-
-
-output_unset_app_env_sh:  ## Unset app environment variables
-	uf="./unset_env.sh"
-	echo "Outputing '$${uf}' ..."
-	printenv | awk -F= '/_API_KEY=/ {print "unset " $$1}' > $$uf
 
 
 # TODO add stackoverflow source
