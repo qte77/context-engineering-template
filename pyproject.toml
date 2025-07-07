@@ -12,7 +12,11 @@ authors = [
 readme = "README.md"
 requires-python = "==3.13.*"
 license = "bsd-3-clause"
-dependencies = []
+dependencies = [
+    "mcp[cli]>=1.10.0",
+    "httpx>=0.25.0",
+    "pydantic>=2.0.0",
+]
 
 # [project.urls]
 # Documentation = ""
@@ -22,7 +26,11 @@ dev = [
     "mypy>=1.16.0",
     "ruff>=0.11.12",
 ]
-test = []
+test = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-httpx>=0.28.0",
+]
 docs = [
     "griffe>=1.5.1",
     "mkdocs>=1.6.1",
@@ -70,6 +78,20 @@ known-first-party = ["src", "tests"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+disallow_untyped_defs = true
+disallow_any_generics = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_return_any = true
+warn_unreachable = true
+show_error_codes = true
+namespace_packages = true
+explicit_package_bases = true
+mypy_path = "src"
 
 [tool.pytest.ini_options]
 addopts = "--strict-markers"
