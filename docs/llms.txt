@@ -29,7 +29,7 @@
 ├── AGENTS.md
 ├── CHANGELOG.md
 ├── CLAUDE.md
-├── LICENSE.md
+├── LICENSE
 ├── Makefile
 ├── README.md
 ├── assets
@@ -41,14 +41,16 @@
     │   ├── feature_base.md
     │   └── prp_base.md
 ├── docs
-    └── architecture
+    ├── architecture
     │   └── sequence_diagram.mermaid
+    └── llms.txt
 ├── mkdocs.yaml
 ├── pyproject.toml
-└── src
+├── src
     ├── __init__.py
     ├── main.py
     └── py.typed
+└── uv.lock
 
 
 /.claude/commands/execute-prp.md:
@@ -304,110 +306,108 @@
 --------------------------------------------------------------------------------
 /.github/workflows/bump-my-version.yaml:
 --------------------------------------------------------------------------------
-  1 | ---
-  2 | name: bump-my-version
-  3 | 
-  4 | on:
-  5 |   # pull_request:
-  6 |   #  types: [closed]
-  7 |   #  branches: [main]
-  8 |   workflow_dispatch:
-  9 |     inputs:
- 10 |       bump_type:
- 11 |         description: '[major|minor|patch]'
- 12 |         required: true
- 13 |         default: 'patch'
- 14 |         type: choice
- 15 |         options:
- 16 |         - 'major'
- 17 |         - 'minor'
- 18 |         - 'patch'
- 19 | 
- 20 | env:
- 21 |   BRANCH_NEW: "bump-${{ github.run_number }}-${{ github.ref_name }}"
- 22 |   SKIP_PR_HINT: "[skip ci bump]"
- 23 |   SCRIPT_PATH: ".github/scripts"
- 24 | 
- 25 | jobs:
- 26 |   bump_my_version:
- 27 |     # TODO bug? currently resulting in: Unrecognized named-value: 'env'.
- 28 |     # https://stackoverflow.com/questions/61238849/github-actions-if-contains-function-not-working-with-env-variable/61240761
- 29 |     # if: !contains(
- 30 |     #      github.event.pull_request.title,
- 31 |     #      ${{ env.SKIP_PR_HINT }}
- 32 |     #    )
- 33 |     # TODO check for PR closed by bot to avoid PR creation loop
- 34 |     # github.actor != 'github-actions'
- 35 |     if: >
- 36 |         github.event_name == 'workflow_dispatch' ||
- 37 |         ( github.event.pull_request.merged == true &&
- 38 |         github.event.pull_request.closed_by != 'github-actions' )
- 39 |     runs-on: ubuntu-latest
- 40 |     outputs:
- 41 |       branch_new: ${{ steps.create_branch.outputs.branch_new }}
- 42 |       summary_data: ${{ steps.set_summary.outputs.summary_data }}
- 43 |     permissions:
- 44 |       actions: read
- 45 |       checks: write
- 46 |       contents: write
- 47 |       pull-requests: write
- 48 |     steps:
- 49 | 
- 50 |       - name: Checkout repo
- 51 |         uses: actions/checkout@v4
- 52 |         with:
- 53 |           fetch-depth: 1
- 54 | 
- 55 |       - name: Set git cfg and create branch
- 56 |         id: create_branch
- 57 |         run: |
- 58 |           git config user.email "bumped@qte77.gha"
- 59 |           git config user.name "bump-my-version"
- 60 |           git checkout -b "${{ env.BRANCH_NEW }}"
- 61 |           echo "branch_new=${{ env.BRANCH_NEW }}" >> $GITHUB_OUTPUT
- 62 | 
- 63 |       - name: Bump version
- 64 |         id: bump
- 65 |         uses: callowayproject/bump-my-version@0.29.0
- 66 |         env:
- 67 |           BUMPVERSION_TAG: "true"
- 68 |         with:
- 69 |           args: ${{ inputs.bump_type }}
- 70 |           branch: ${{ env.BRANCH_NEW }}
- 71 | 
- 72 |       - name: "Create PR '${{ env.BRANCH_NEW }}'"
- 73 |         if: steps.bump.outputs.bumped == 'true'
- 74 |         env:
- 75 |           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
- 76 |         run: |
- 77 |           src="${{ env.SCRIPT_PATH }}/create_pr.sh"
- 78 |           chmod +x "$src"
- 79 |           $src "${{ github.ref_name }}" "${{ env.BRANCH_NEW }}" "${{ env.SKIP_PR_HINT }}" "${{ steps.bump.outputs.previous-version }}" "${{ steps.bump.outputs.current-version }}"
- 80 | 
- 81 |       - name: Delete branch, PR and tag in case of failure or cancel
- 82 |         if: failure() || cancelled()
- 83 |         env:
- 84 |           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
- 85 |         run: |
- 86 |           src="${{ env.SCRIPT_PATH }}/delete_branch_pr_tag.sh"
- 87 |           chmod +x "$src"
- 88 |           $src "${{ github.repository }}" "${{ env.BRANCH_NEW }}" "${{ steps.bump.outputs.current-version }}"
- 89 | 
- 90 |       - name: Set summary data
- 91 |         id: set_summary
- 92 |         if: ${{ always() }}
- 93 |         run: echo "summary_data=${GITHUB_STEP_SUMMARY}" >> $GITHUB_OUTPUT
- 94 |   
- 95 |   generate_summary:
- 96 |     name: Generate Summary Report 
- 97 |     if: ${{ always() }}
- 98 |     needs: bump_my_version
- 99 |     uses: ./.github/workflows/summarize-jobs-reusable.yaml
-100 |     with:
-101 |       branch_to_summarize: ${{ needs.bump_my_version.outputs.branch_new }}
-102 |       summary_data: ${{ needs.bump_my_version.outputs.summary_data }}
-103 | ...
-104 | 
+  1 | name: bump-my-version
+  2 | 
+  3 | on:
+  4 |   # pull_request:
+  5 |   #  types: [closed]
+  6 |   #  branches: [main]
+  7 |   workflow_dispatch:
+  8 |     inputs:
+  9 |       bump_type:
+ 10 |         description: '[major|minor|patch]'
+ 11 |         required: true
+ 12 |         default: 'patch'
+ 13 |         type: choice
+ 14 |         options:
+ 15 |         - 'major'
+ 16 |         - 'minor'
+ 17 |         - 'patch'
+ 18 | 
+ 19 | env:
+ 20 |   BRANCH_NEW: "bump-${{ github.run_number }}-${{ github.ref_name }}"
+ 21 |   SKIP_PR_HINT: "[skip ci bump]"
+ 22 |   SCRIPT_PATH: ".github/scripts"
+ 23 | 
+ 24 | jobs:
+ 25 |   bump_my_version:
+ 26 |     # TODO bug? currently resulting in: Unrecognized named-value: 'env'.
+ 27 |     # https://stackoverflow.com/questions/61238849/github-actions-if-contains-function-not-working-with-env-variable/61240761
+ 28 |     # if: !contains(
+ 29 |     #      github.event.pull_request.title,
+ 30 |     #      ${{ env.SKIP_PR_HINT }}
+ 31 |     #    )
+ 32 |     # TODO check for PR closed by bot to avoid PR creation loop
+ 33 |     # github.actor != 'github-actions'
+ 34 |     if: >
+ 35 |         github.event_name == 'workflow_dispatch' ||
+ 36 |         ( github.event.pull_request.merged == true &&
+ 37 |         github.event.pull_request.closed_by != 'github-actions' )
+ 38 |     runs-on: ubuntu-latest
+ 39 |     outputs:
+ 40 |       branch_new: ${{ steps.create_branch.outputs.branch_new }}
+ 41 |       summary_data: ${{ steps.set_summary.outputs.summary_data }}
+ 42 |     permissions:
+ 43 |       actions: read
+ 44 |       checks: write
+ 45 |       contents: write
+ 46 |       pull-requests: write
+ 47 |     steps:
+ 48 | 
+ 49 |       - name: Checkout repo
+ 50 |         uses: actions/checkout@v4
+ 51 |         with:
+ 52 |           fetch-depth: 1
+ 53 | 
+ 54 |       - name: Set git cfg and create branch
+ 55 |         id: create_branch
+ 56 |         run: |
+ 57 |           git config user.email "github-actions@users.noreply.github.com"
+ 58 |           git config user.name "github-actions[bot]"
+ 59 |           git checkout -b "${{ env.BRANCH_NEW }}"
+ 60 |           echo "branch_new=${{ env.BRANCH_NEW }}" >> $GITHUB_OUTPUT
+ 61 | 
+ 62 |       - name: Bump version
+ 63 |         id: bump
+ 64 |         uses: callowayproject/bump-my-version@0.29.0
+ 65 |         env:
+ 66 |           BUMPVERSION_TAG: "true"
+ 67 |         with:
+ 68 |           args: ${{ inputs.bump_type }}
+ 69 |           branch: ${{ env.BRANCH_NEW }}
+ 70 | 
+ 71 |       - name: "Create PR '${{ env.BRANCH_NEW }}'"
+ 72 |         if: steps.bump.outputs.bumped == 'true'
+ 73 |         env:
+ 74 |           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ 75 |         run: |
+ 76 |           src="${{ env.SCRIPT_PATH }}/create_pr.sh"
+ 77 |           chmod +x "$src"
+ 78 |           $src "${{ github.ref_name }}" "${{ env.BRANCH_NEW }}" "${{ env.SKIP_PR_HINT }}" "${{ steps.bump.outputs.previous-version }}" "${{ steps.bump.outputs.current-version }}"
+ 79 | 
+ 80 |       - name: Delete branch, PR and tag in case of failure or cancel
+ 81 |         if: failure() || cancelled()
+ 82 |         env:
+ 83 |           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ 84 |         run: |
+ 85 |           src="${{ env.SCRIPT_PATH }}/delete_branch_pr_tag.sh"
+ 86 |           chmod +x "$src"
+ 87 |           $src "${{ github.repository }}" "${{ env.BRANCH_NEW }}" "${{ steps.bump.outputs.current-version }}"
+ 88 | 
+ 89 |       - name: Set summary data
+ 90 |         id: set_summary
+ 91 |         if: ${{ always() }}
+ 92 |         run: echo "summary_data=${GITHUB_STEP_SUMMARY}" >> $GITHUB_OUTPUT
+ 93 |   
+ 94 |   generate_summary:
+ 95 |     name: Generate Summary Report 
+ 96 |     if: ${{ always() }}
+ 97 |     needs: bump_my_version
+ 98 |     uses: ./.github/workflows/summarize-jobs-reusable.yaml
+ 99 |     with:
+100 |       branch_to_summarize: ${{ needs.bump_my_version.outputs.branch_new }}
+101 |       summary_data: ${{ needs.bump_my_version.outputs.summary_data }}
+102 | 
 
 
 --------------------------------------------------------------------------------
@@ -538,46 +538,45 @@
  74 |         CFG_PATH="src/app/config"
  75 |         mkdir -p "${DOC_DIR}/${CFG_PATH}"
  76 |         cp README.md "${DOC_DIR}/index.md"
- 77 |         cp {CHANGELOG,LICENSE}.md "${DOC_DIR}"
+ 77 |         cp CHANGELOG.md LICENSE "${DOC_DIR}"
  78 |         # Auxiliary files
  79 |         cp .env.example "${DOC_DIR}"
- 80 |         cp "${CFG_PATH}/config_chat.json" "${DOC_DIR}/${CFG_PATH}"
- 81 | 
- 82 |     - name: Generate code docstrings concat file
- 83 |       run: |
- 84 |         PREFIX="::: "
- 85 |         find "${SRC_DIR}" -type f -name "*.py" \
- 86 |           -type f -not -name "__*__*" -printf "%P\n" | \
- 87 |           sed 's/\//./g' | sed 's/\.py$//' | \
- 88 |           sed "s/^/${PREFIX}/" | sort > \
- 89 |           "${DOC_DIR}/${DOCSTRINGS_FILE}"
- 90 | 
- 91 |     - name: Build documentation
- 92 |       run: uv run --locked --only-group docs mkdocs build
- 93 | 
- 94 |     - name: Copy image files to be included
- 95 |       run: |
- 96 |         # copy images, mkdocs does not by default
- 97 |         # mkdocs also overwrites pre-made directories
- 98 |         dir="${{ env.SITE_DIR }}/${{ env.IMG_DIR }}"
- 99 |         if [ -d "${{ env.IMG_DIR }}" ]; then
-100 |           mkdir -p "${dir}"
-101 |           cp "${{ env.IMG_DIR }}"/* "${dir}"
-102 |         fi
-103 | 
-104 | #    - name: Push to gh-pages
-105 | #      run: uv run mkdocs gh-deploy --force
-106 | 
-107 |     - name: Upload artifact
-108 |       uses: actions/upload-pages-artifact@v3.0.0
-109 |       with:
-110 |         path: "${{ env.SITE_DIR }}"
-111 | 
-112 |     - name: Deploy to GitHub Pages
-113 |       id: deployment
-114 |       uses: actions/deploy-pages@v4.0.0
-115 | ...
-116 | 
+ 80 | 
+ 81 |     - name: Generate code docstrings concat file
+ 82 |       run: |
+ 83 |         PREFIX="::: "
+ 84 |         find "${SRC_DIR}" -type f -name "*.py" \
+ 85 |           -type f -not -name "__*__*" -printf "%P\n" | \
+ 86 |           sed 's/\//./g' | sed 's/\.py$//' | \
+ 87 |           sed "s/^/${PREFIX}/" | sort > \
+ 88 |           "${DOC_DIR}/${DOCSTRINGS_FILE}"
+ 89 | 
+ 90 |     - name: Build documentation
+ 91 |       run: uv run --locked --only-group docs mkdocs build
+ 92 | 
+ 93 |     - name: Copy image files to be included
+ 94 |       run: |
+ 95 |         # copy images, mkdocs does not by default
+ 96 |         # mkdocs also overwrites pre-made directories
+ 97 |         dir="${{ env.SITE_DIR }}/${{ env.IMG_DIR }}"
+ 98 |         if [ -d "${{ env.IMG_DIR }}" ]; then
+ 99 |           mkdir -p "${dir}"
+100 |           cp "${{ env.IMG_DIR }}"/* "${dir}"
+101 |         fi
+102 | 
+103 | #    - name: Push to gh-pages
+104 | #      run: uv run mkdocs gh-deploy --force
+105 | 
+106 |     - name: Upload artifact
+107 |       uses: actions/upload-pages-artifact@v3.0.0
+108 |       with:
+109 |         path: "${{ env.SITE_DIR }}"
+110 | 
+111 |     - name: Deploy to GitHub Pages
+112 |       id: deployment
+113 |       uses: actions/deploy-pages@v4.0.0
+114 | ...
+115 | 
 
 
 --------------------------------------------------------------------------------
@@ -1214,37 +1213,682 @@
 
 
 --------------------------------------------------------------------------------
-/LICENSE.md:
+/LICENSE:
 --------------------------------------------------------------------------------
- 1 | # BSD 3-Clause License
- 2 | 
- 3 | Copyright (c) 2025 qte77
- 4 | 
- 5 | Redistribution and use in source and binary forms, with or without
- 6 | modification, are permitted provided that the following conditions are met:
- 7 | 
- 8 | 1. Redistributions of source code must retain the above copyright notice, this
- 9 |    list of conditions and the following disclaimer.
-10 | 
-11 | 2. Redistributions in binary form must reproduce the above copyright notice,
-12 |    this list of conditions and the following disclaimer in the documentation
-13 |    and/or other materials provided with the distribution.
-14 | 
-15 | 3. Neither the name of the copyright holder nor the names of its
-16 |    contributors may be used to endorse or promote products derived from
-17 |    this software without specific prior written permission.
-18 | 
-19 | THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-20 | AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-21 | IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-22 | DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-23 | FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-24 | DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-25 | SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-26 | CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-27 | OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-28 | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-29 | 
+  1 |                     GNU GENERAL PUBLIC LICENSE
+  2 |                        Version 3, 29 June 2007
+  3 | 
+  4 |  Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+  5 |  Everyone is permitted to copy and distribute verbatim copies
+  6 |  of this license document, but changing it is not allowed.
+  7 | 
+  8 |                             Preamble
+  9 | 
+ 10 |   The GNU General Public License is a free, copyleft license for
+ 11 | software and other kinds of works.
+ 12 | 
+ 13 |   The licenses for most software and other practical works are designed
+ 14 | to take away your freedom to share and change the works.  By contrast,
+ 15 | the GNU General Public License is intended to guarantee your freedom to
+ 16 | share and change all versions of a program--to make sure it remains free
+ 17 | software for all its users.  We, the Free Software Foundation, use the
+ 18 | GNU General Public License for most of our software; it applies also to
+ 19 | any other work released this way by its authors.  You can apply it to
+ 20 | your programs, too.
+ 21 | 
+ 22 |   When we speak of free software, we are referring to freedom, not
+ 23 | price.  Our General Public Licenses are designed to make sure that you
+ 24 | have the freedom to distribute copies of free software (and charge for
+ 25 | them if you wish), that you receive source code or can get it if you
+ 26 | want it, that you can change the software or use pieces of it in new
+ 27 | free programs, and that you know you can do these things.
+ 28 | 
+ 29 |   To protect your rights, we need to prevent others from denying you
+ 30 | these rights or asking you to surrender the rights.  Therefore, you have
+ 31 | certain responsibilities if you distribute copies of the software, or if
+ 32 | you modify it: responsibilities to respect the freedom of others.
+ 33 | 
+ 34 |   For example, if you distribute copies of such a program, whether
+ 35 | gratis or for a fee, you must pass on to the recipients the same
+ 36 | freedoms that you received.  You must make sure that they, too, receive
+ 37 | or can get the source code.  And you must show them these terms so they
+ 38 | know their rights.
+ 39 | 
+ 40 |   Developers that use the GNU GPL protect your rights with two steps:
+ 41 | (1) assert copyright on the software, and (2) offer you this License
+ 42 | giving you legal permission to copy, distribute and/or modify it.
+ 43 | 
+ 44 |   For the developers' and authors' protection, the GPL clearly explains
+ 45 | that there is no warranty for this free software.  For both users' and
+ 46 | authors' sake, the GPL requires that modified versions be marked as
+ 47 | changed, so that their problems will not be attributed erroneously to
+ 48 | authors of previous versions.
+ 49 | 
+ 50 |   Some devices are designed to deny users access to install or run
+ 51 | modified versions of the software inside them, although the manufacturer
+ 52 | can do so.  This is fundamentally incompatible with the aim of
+ 53 | protecting users' freedom to change the software.  The systematic
+ 54 | pattern of such abuse occurs in the area of products for individuals to
+ 55 | use, which is precisely where it is most unacceptable.  Therefore, we
+ 56 | have designed this version of the GPL to prohibit the practice for those
+ 57 | products.  If such problems arise substantially in other domains, we
+ 58 | stand ready to extend this provision to those domains in future versions
+ 59 | of the GPL, as needed to protect the freedom of users.
+ 60 | 
+ 61 |   Finally, every program is threatened constantly by software patents.
+ 62 | States should not allow patents to restrict development and use of
+ 63 | software on general-purpose computers, but in those that do, we wish to
+ 64 | avoid the special danger that patents applied to a free program could
+ 65 | make it effectively proprietary.  To prevent this, the GPL assures that
+ 66 | patents cannot be used to render the program non-free.
+ 67 | 
+ 68 |   The precise terms and conditions for copying, distribution and
+ 69 | modification follow.
+ 70 | 
+ 71 |                        TERMS AND CONDITIONS
+ 72 | 
+ 73 |   0. Definitions.
+ 74 | 
+ 75 |   "This License" refers to version 3 of the GNU General Public License.
+ 76 | 
+ 77 |   "Copyright" also means copyright-like laws that apply to other kinds of
+ 78 | works, such as semiconductor masks.
+ 79 | 
+ 80 |   "The Program" refers to any copyrightable work licensed under this
+ 81 | License.  Each licensee is addressed as "you".  "Licensees" and
+ 82 | "recipients" may be individuals or organizations.
+ 83 | 
+ 84 |   To "modify" a work means to copy from or adapt all or part of the work
+ 85 | in a fashion requiring copyright permission, other than the making of an
+ 86 | exact copy.  The resulting work is called a "modified version" of the
+ 87 | earlier work or a work "based on" the earlier work.
+ 88 | 
+ 89 |   A "covered work" means either the unmodified Program or a work based
+ 90 | on the Program.
+ 91 | 
+ 92 |   To "propagate" a work means to do anything with it that, without
+ 93 | permission, would make you directly or secondarily liable for
+ 94 | infringement under applicable copyright law, except executing it on a
+ 95 | computer or modifying a private copy.  Propagation includes copying,
+ 96 | distribution (with or without modification), making available to the
+ 97 | public, and in some countries other activities as well.
+ 98 | 
+ 99 |   To "convey" a work means any kind of propagation that enables other
+100 | parties to make or receive copies.  Mere interaction with a user through
+101 | a computer network, with no transfer of a copy, is not conveying.
+102 | 
+103 |   An interactive user interface displays "Appropriate Legal Notices"
+104 | to the extent that it includes a convenient and prominently visible
+105 | feature that (1) displays an appropriate copyright notice, and (2)
+106 | tells the user that there is no warranty for the work (except to the
+107 | extent that warranties are provided), that licensees may convey the
+108 | work under this License, and how to view a copy of this License.  If
+109 | the interface presents a list of user commands or options, such as a
+110 | menu, a prominent item in the list meets this criterion.
+111 | 
+112 |   1. Source Code.
+113 | 
+114 |   The "source code" for a work means the preferred form of the work
+115 | for making modifications to it.  "Object code" means any non-source
+116 | form of a work.
+117 | 
+118 |   A "Standard Interface" means an interface that either is an official
+119 | standard defined by a recognized standards body, or, in the case of
+120 | interfaces specified for a particular programming language, one that
+121 | is widely used among developers working in that language.
+122 | 
+123 |   The "System Libraries" of an executable work include anything, other
+124 | than the work as a whole, that (a) is included in the normal form of
+125 | packaging a Major Component, but which is not part of that Major
+126 | Component, and (b) serves only to enable use of the work with that
+127 | Major Component, or to implement a Standard Interface for which an
+128 | implementation is available to the public in source code form.  A
+129 | "Major Component", in this context, means a major essential component
+130 | (kernel, window system, and so on) of the specific operating system
+131 | (if any) on which the executable work runs, or a compiler used to
+132 | produce the work, or an object code interpreter used to run it.
+133 | 
+134 |   The "Corresponding Source" for a work in object code form means all
+135 | the source code needed to generate, install, and (for an executable
+136 | work) run the object code and to modify the work, including scripts to
+137 | control those activities.  However, it does not include the work's
+138 | System Libraries, or general-purpose tools or generally available free
+139 | programs which are used unmodified in performing those activities but
+140 | which are not part of the work.  For example, Corresponding Source
+141 | includes interface definition files associated with source files for
+142 | the work, and the source code for shared libraries and dynamically
+143 | linked subprograms that the work is specifically designed to require,
+144 | such as by intimate data communication or control flow between those
+145 | subprograms and other parts of the work.
+146 | 
+147 |   The Corresponding Source need not include anything that users
+148 | can regenerate automatically from other parts of the Corresponding
+149 | Source.
+150 | 
+151 |   The Corresponding Source for a work in source code form is that
+152 | same work.
+153 | 
+154 |   2. Basic Permissions.
+155 | 
+156 |   All rights granted under this License are granted for the term of
+157 | copyright on the Program, and are irrevocable provided the stated
+158 | conditions are met.  This License explicitly affirms your unlimited
+159 | permission to run the unmodified Program.  The output from running a
+160 | covered work is covered by this License only if the output, given its
+161 | content, constitutes a covered work.  This License acknowledges your
+162 | rights of fair use or other equivalent, as provided by copyright law.
+163 | 
+164 |   You may make, run and propagate covered works that you do not
+165 | convey, without conditions so long as your license otherwise remains
+166 | in force.  You may convey covered works to others for the sole purpose
+167 | of having them make modifications exclusively for you, or provide you
+168 | with facilities for running those works, provided that you comply with
+169 | the terms of this License in conveying all material for which you do
+170 | not control copyright.  Those thus making or running the covered works
+171 | for you must do so exclusively on your behalf, under your direction
+172 | and control, on terms that prohibit them from making any copies of
+173 | your copyrighted material outside their relationship with you.
+174 | 
+175 |   Conveying under any other circumstances is permitted solely under
+176 | the conditions stated below.  Sublicensing is not allowed; section 10
+177 | makes it unnecessary.
+178 | 
+179 |   3. Protecting Users' Legal Rights From Anti-Circumvention Law.
+180 | 
+181 |   No covered work shall be deemed part of an effective technological
+182 | measure under any applicable law fulfilling obligations under article
+183 | 11 of the WIPO copyright treaty adopted on 20 December 1996, or
+184 | similar laws prohibiting or restricting circumvention of such
+185 | measures.
+186 | 
+187 |   When you convey a covered work, you waive any legal power to forbid
+188 | circumvention of technological measures to the extent such circumvention
+189 | is effected by exercising rights under this License with respect to
+190 | the covered work, and you disclaim any intention to limit operation or
+191 | modification of the work as a means of enforcing, against the work's
+192 | users, your or third parties' legal rights to forbid circumvention of
+193 | technological measures.
+194 | 
+195 |   4. Conveying Verbatim Copies.
+196 | 
+197 |   You may convey verbatim copies of the Program's source code as you
+198 | receive it, in any medium, provided that you conspicuously and
+199 | appropriately publish on each copy an appropriate copyright notice;
+200 | keep intact all notices stating that this License and any
+201 | non-permissive terms added in accord with section 7 apply to the code;
+202 | keep intact all notices of the absence of any warranty; and give all
+203 | recipients a copy of this License along with the Program.
+204 | 
+205 |   You may charge any price or no price for each copy that you convey,
+206 | and you may offer support or warranty protection for a fee.
+207 | 
+208 |   5. Conveying Modified Source Versions.
+209 | 
+210 |   You may convey a work based on the Program, or the modifications to
+211 | produce it from the Program, in the form of source code under the
+212 | terms of section 4, provided that you also meet all of these conditions:
+213 | 
+214 |     a) The work must carry prominent notices stating that you modified
+215 |     it, and giving a relevant date.
+216 | 
+217 |     b) The work must carry prominent notices stating that it is
+218 |     released under this License and any conditions added under section
+219 |     7.  This requirement modifies the requirement in section 4 to
+220 |     "keep intact all notices".
+221 | 
+222 |     c) You must license the entire work, as a whole, under this
+223 |     License to anyone who comes into possession of a copy.  This
+224 |     License will therefore apply, along with any applicable section 7
+225 |     additional terms, to the whole of the work, and all its parts,
+226 |     regardless of how they are packaged.  This License gives no
+227 |     permission to license the work in any other way, but it does not
+228 |     invalidate such permission if you have separately received it.
+229 | 
+230 |     d) If the work has interactive user interfaces, each must display
+231 |     Appropriate Legal Notices; however, if the Program has interactive
+232 |     interfaces that do not display Appropriate Legal Notices, your
+233 |     work need not make them do so.
+234 | 
+235 |   A compilation of a covered work with other separate and independent
+236 | works, which are not by their nature extensions of the covered work,
+237 | and which are not combined with it such as to form a larger program,
+238 | in or on a volume of a storage or distribution medium, is called an
+239 | "aggregate" if the compilation and its resulting copyright are not
+240 | used to limit the access or legal rights of the compilation's users
+241 | beyond what the individual works permit.  Inclusion of a covered work
+242 | in an aggregate does not cause this License to apply to the other
+243 | parts of the aggregate.
+244 | 
+245 |   6. Conveying Non-Source Forms.
+246 | 
+247 |   You may convey a covered work in object code form under the terms
+248 | of sections 4 and 5, provided that you also convey the
+249 | machine-readable Corresponding Source under the terms of this License,
+250 | in one of these ways:
+251 | 
+252 |     a) Convey the object code in, or embodied in, a physical product
+253 |     (including a physical distribution medium), accompanied by the
+254 |     Corresponding Source fixed on a durable physical medium
+255 |     customarily used for software interchange.
+256 | 
+257 |     b) Convey the object code in, or embodied in, a physical product
+258 |     (including a physical distribution medium), accompanied by a
+259 |     written offer, valid for at least three years and valid for as
+260 |     long as you offer spare parts or customer support for that product
+261 |     model, to give anyone who possesses the object code either (1) a
+262 |     copy of the Corresponding Source for all the software in the
+263 |     product that is covered by this License, on a durable physical
+264 |     medium customarily used for software interchange, for a price no
+265 |     more than your reasonable cost of physically performing this
+266 |     conveying of source, or (2) access to copy the
+267 |     Corresponding Source from a network server at no charge.
+268 | 
+269 |     c) Convey individual copies of the object code with a copy of the
+270 |     written offer to provide the Corresponding Source.  This
+271 |     alternative is allowed only occasionally and noncommercially, and
+272 |     only if you received the object code with such an offer, in accord
+273 |     with subsection 6b.
+274 | 
+275 |     d) Convey the object code by offering access from a designated
+276 |     place (gratis or for a charge), and offer equivalent access to the
+277 |     Corresponding Source in the same way through the same place at no
+278 |     further charge.  You need not require recipients to copy the
+279 |     Corresponding Source along with the object code.  If the place to
+280 |     copy the object code is a network server, the Corresponding Source
+281 |     may be on a different server (operated by you or a third party)
+282 |     that supports equivalent copying facilities, provided you maintain
+283 |     clear directions next to the object code saying where to find the
+284 |     Corresponding Source.  Regardless of what server hosts the
+285 |     Corresponding Source, you remain obligated to ensure that it is
+286 |     available for as long as needed to satisfy these requirements.
+287 | 
+288 |     e) Convey the object code using peer-to-peer transmission, provided
+289 |     you inform other peers where the object code and Corresponding
+290 |     Source of the work are being offered to the general public at no
+291 |     charge under subsection 6d.
+292 | 
+293 |   A separable portion of the object code, whose source code is excluded
+294 | from the Corresponding Source as a System Library, need not be
+295 | included in conveying the object code work.
+296 | 
+297 |   A "User Product" is either (1) a "consumer product", which means any
+298 | tangible personal property which is normally used for personal, family,
+299 | or household purposes, or (2) anything designed or sold for incorporation
+300 | into a dwelling.  In determining whether a product is a consumer product,
+301 | doubtful cases shall be resolved in favor of coverage.  For a particular
+302 | product received by a particular user, "normally used" refers to a
+303 | typical or common use of that class of product, regardless of the status
+304 | of the particular user or of the way in which the particular user
+305 | actually uses, or expects or is expected to use, the product.  A product
+306 | is a consumer product regardless of whether the product has substantial
+307 | commercial, industrial or non-consumer uses, unless such uses represent
+308 | the only significant mode of use of the product.
+309 | 
+310 |   "Installation Information" for a User Product means any methods,
+311 | procedures, authorization keys, or other information required to install
+312 | and execute modified versions of a covered work in that User Product from
+313 | a modified version of its Corresponding Source.  The information must
+314 | suffice to ensure that the continued functioning of the modified object
+315 | code is in no case prevented or interfered with solely because
+316 | modification has been made.
+317 | 
+318 |   If you convey an object code work under this section in, or with, or
+319 | specifically for use in, a User Product, and the conveying occurs as
+320 | part of a transaction in which the right of possession and use of the
+321 | User Product is transferred to the recipient in perpetuity or for a
+322 | fixed term (regardless of how the transaction is characterized), the
+323 | Corresponding Source conveyed under this section must be accompanied
+324 | by the Installation Information.  But this requirement does not apply
+325 | if neither you nor any third party retains the ability to install
+326 | modified object code on the User Product (for example, the work has
+327 | been installed in ROM).
+328 | 
+329 |   The requirement to provide Installation Information does not include a
+330 | requirement to continue to provide support service, warranty, or updates
+331 | for a work that has been modified or installed by the recipient, or for
+332 | the User Product in which it has been modified or installed.  Access to a
+333 | network may be denied when the modification itself materially and
+334 | adversely affects the operation of the network or violates the rules and
+335 | protocols for communication across the network.
+336 | 
+337 |   Corresponding Source conveyed, and Installation Information provided,
+338 | in accord with this section must be in a format that is publicly
+339 | documented (and with an implementation available to the public in
+340 | source code form), and must require no special password or key for
+341 | unpacking, reading or copying.
+342 | 
+343 |   7. Additional Terms.
+344 | 
+345 |   "Additional permissions" are terms that supplement the terms of this
+346 | License by making exceptions from one or more of its conditions.
+347 | Additional permissions that are applicable to the entire Program shall
+348 | be treated as though they were included in this License, to the extent
+349 | that they are valid under applicable law.  If additional permissions
+350 | apply only to part of the Program, that part may be used separately
+351 | under those permissions, but the entire Program remains governed by
+352 | this License without regard to the additional permissions.
+353 | 
+354 |   When you convey a copy of a covered work, you may at your option
+355 | remove any additional permissions from that copy, or from any part of
+356 | it.  (Additional permissions may be written to require their own
+357 | removal in certain cases when you modify the work.)  You may place
+358 | additional permissions on material, added by you to a covered work,
+359 | for which you have or can give appropriate copyright permission.
+360 | 
+361 |   Notwithstanding any other provision of this License, for material you
+362 | add to a covered work, you may (if authorized by the copyright holders of
+363 | that material) supplement the terms of this License with terms:
+364 | 
+365 |     a) Disclaiming warranty or limiting liability differently from the
+366 |     terms of sections 15 and 16 of this License; or
+367 | 
+368 |     b) Requiring preservation of specified reasonable legal notices or
+369 |     author attributions in that material or in the Appropriate Legal
+370 |     Notices displayed by works containing it; or
+371 | 
+372 |     c) Prohibiting misrepresentation of the origin of that material, or
+373 |     requiring that modified versions of such material be marked in
+374 |     reasonable ways as different from the original version; or
+375 | 
+376 |     d) Limiting the use for publicity purposes of names of licensors or
+377 |     authors of the material; or
+378 | 
+379 |     e) Declining to grant rights under trademark law for use of some
+380 |     trade names, trademarks, or service marks; or
+381 | 
+382 |     f) Requiring indemnification of licensors and authors of that
+383 |     material by anyone who conveys the material (or modified versions of
+384 |     it) with contractual assumptions of liability to the recipient, for
+385 |     any liability that these contractual assumptions directly impose on
+386 |     those licensors and authors.
+387 | 
+388 |   All other non-permissive additional terms are considered "further
+389 | restrictions" within the meaning of section 10.  If the Program as you
+390 | received it, or any part of it, contains a notice stating that it is
+391 | governed by this License along with a term that is a further
+392 | restriction, you may remove that term.  If a license document contains
+393 | a further restriction but permits relicensing or conveying under this
+394 | License, you may add to a covered work material governed by the terms
+395 | of that license document, provided that the further restriction does
+396 | not survive such relicensing or conveying.
+397 | 
+398 |   If you add terms to a covered work in accord with this section, you
+399 | must place, in the relevant source files, a statement of the
+400 | additional terms that apply to those files, or a notice indicating
+401 | where to find the applicable terms.
+402 | 
+403 |   Additional terms, permissive or non-permissive, may be stated in the
+404 | form of a separately written license, or stated as exceptions;
+405 | the above requirements apply either way.
+406 | 
+407 |   8. Termination.
+408 | 
+409 |   You may not propagate or modify a covered work except as expressly
+410 | provided under this License.  Any attempt otherwise to propagate or
+411 | modify it is void, and will automatically terminate your rights under
+412 | this License (including any patent licenses granted under the third
+413 | paragraph of section 11).
+414 | 
+415 |   However, if you cease all violation of this License, then your
+416 | license from a particular copyright holder is reinstated (a)
+417 | provisionally, unless and until the copyright holder explicitly and
+418 | finally terminates your license, and (b) permanently, if the copyright
+419 | holder fails to notify you of the violation by some reasonable means
+420 | prior to 60 days after the cessation.
+421 | 
+422 |   Moreover, your license from a particular copyright holder is
+423 | reinstated permanently if the copyright holder notifies you of the
+424 | violation by some reasonable means, this is the first time you have
+425 | received notice of violation of this License (for any work) from that
+426 | copyright holder, and you cure the violation prior to 30 days after
+427 | your receipt of the notice.
+428 | 
+429 |   Termination of your rights under this section does not terminate the
+430 | licenses of parties who have received copies or rights from you under
+431 | this License.  If your rights have been terminated and not permanently
+432 | reinstated, you do not qualify to receive new licenses for the same
+433 | material under section 10.
+434 | 
+435 |   9. Acceptance Not Required for Having Copies.
+436 | 
+437 |   You are not required to accept this License in order to receive or
+438 | run a copy of the Program.  Ancillary propagation of a covered work
+439 | occurring solely as a consequence of using peer-to-peer transmission
+440 | to receive a copy likewise does not require acceptance.  However,
+441 | nothing other than this License grants you permission to propagate or
+442 | modify any covered work.  These actions infringe copyright if you do
+443 | not accept this License.  Therefore, by modifying or propagating a
+444 | covered work, you indicate your acceptance of this License to do so.
+445 | 
+446 |   10. Automatic Licensing of Downstream Recipients.
+447 | 
+448 |   Each time you convey a covered work, the recipient automatically
+449 | receives a license from the original licensors, to run, modify and
+450 | propagate that work, subject to this License.  You are not responsible
+451 | for enforcing compliance by third parties with this License.
+452 | 
+453 |   An "entity transaction" is a transaction transferring control of an
+454 | organization, or substantially all assets of one, or subdividing an
+455 | organization, or merging organizations.  If propagation of a covered
+456 | work results from an entity transaction, each party to that
+457 | transaction who receives a copy of the work also receives whatever
+458 | licenses to the work the party's predecessor in interest had or could
+459 | give under the previous paragraph, plus a right to possession of the
+460 | Corresponding Source of the work from the predecessor in interest, if
+461 | the predecessor has it or can get it with reasonable efforts.
+462 | 
+463 |   You may not impose any further restrictions on the exercise of the
+464 | rights granted or affirmed under this License.  For example, you may
+465 | not impose a license fee, royalty, or other charge for exercise of
+466 | rights granted under this License, and you may not initiate litigation
+467 | (including a cross-claim or counterclaim in a lawsuit) alleging that
+468 | any patent claim is infringed by making, using, selling, offering for
+469 | sale, or importing the Program or any portion of it.
+470 | 
+471 |   11. Patents.
+472 | 
+473 |   A "contributor" is a copyright holder who authorizes use under this
+474 | License of the Program or a work on which the Program is based.  The
+475 | work thus licensed is called the contributor's "contributor version".
+476 | 
+477 |   A contributor's "essential patent claims" are all patent claims
+478 | owned or controlled by the contributor, whether already acquired or
+479 | hereafter acquired, that would be infringed by some manner, permitted
+480 | by this License, of making, using, or selling its contributor version,
+481 | but do not include claims that would be infringed only as a
+482 | consequence of further modification of the contributor version.  For
+483 | purposes of this definition, "control" includes the right to grant
+484 | patent sublicenses in a manner consistent with the requirements of
+485 | this License.
+486 | 
+487 |   Each contributor grants you a non-exclusive, worldwide, royalty-free
+488 | patent license under the contributor's essential patent claims, to
+489 | make, use, sell, offer for sale, import and otherwise run, modify and
+490 | propagate the contents of its contributor version.
+491 | 
+492 |   In the following three paragraphs, a "patent license" is any express
+493 | agreement or commitment, however denominated, not to enforce a patent
+494 | (such as an express permission to practice a patent or covenant not to
+495 | sue for patent infringement).  To "grant" such a patent license to a
+496 | party means to make such an agreement or commitment not to enforce a
+497 | patent against the party.
+498 | 
+499 |   If you convey a covered work, knowingly relying on a patent license,
+500 | and the Corresponding Source of the work is not available for anyone
+501 | to copy, free of charge and under the terms of this License, through a
+502 | publicly available network server or other readily accessible means,
+503 | then you must either (1) cause the Corresponding Source to be so
+504 | available, or (2) arrange to deprive yourself of the benefit of the
+505 | patent license for this particular work, or (3) arrange, in a manner
+506 | consistent with the requirements of this License, to extend the patent
+507 | license to downstream recipients.  "Knowingly relying" means you have
+508 | actual knowledge that, but for the patent license, your conveying the
+509 | covered work in a country, or your recipient's use of the covered work
+510 | in a country, would infringe one or more identifiable patents in that
+511 | country that you have reason to believe are valid.
+512 | 
+513 |   If, pursuant to or in connection with a single transaction or
+514 | arrangement, you convey, or propagate by procuring conveyance of, a
+515 | covered work, and grant a patent license to some of the parties
+516 | receiving the covered work authorizing them to use, propagate, modify
+517 | or convey a specific copy of the covered work, then the patent license
+518 | you grant is automatically extended to all recipients of the covered
+519 | work and works based on it.
+520 | 
+521 |   A patent license is "discriminatory" if it does not include within
+522 | the scope of its coverage, prohibits the exercise of, or is
+523 | conditioned on the non-exercise of one or more of the rights that are
+524 | specifically granted under this License.  You may not convey a covered
+525 | work if you are a party to an arrangement with a third party that is
+526 | in the business of distributing software, under which you make payment
+527 | to the third party based on the extent of your activity of conveying
+528 | the work, and under which the third party grants, to any of the
+529 | parties who would receive the covered work from you, a discriminatory
+530 | patent license (a) in connection with copies of the covered work
+531 | conveyed by you (or copies made from those copies), or (b) primarily
+532 | for and in connection with specific products or compilations that
+533 | contain the covered work, unless you entered into that arrangement,
+534 | or that patent license was granted, prior to 28 March 2007.
+535 | 
+536 |   Nothing in this License shall be construed as excluding or limiting
+537 | any implied license or other defenses to infringement that may
+538 | otherwise be available to you under applicable patent law.
+539 | 
+540 |   12. No Surrender of Others' Freedom.
+541 | 
+542 |   If conditions are imposed on you (whether by court order, agreement or
+543 | otherwise) that contradict the conditions of this License, they do not
+544 | excuse you from the conditions of this License.  If you cannot convey a
+545 | covered work so as to satisfy simultaneously your obligations under this
+546 | License and any other pertinent obligations, then as a consequence you may
+547 | not convey it at all.  For example, if you agree to terms that obligate you
+548 | to collect a royalty for further conveying from those to whom you convey
+549 | the Program, the only way you could satisfy both those terms and this
+550 | License would be to refrain entirely from conveying the Program.
+551 | 
+552 |   13. Use with the GNU Affero General Public License.
+553 | 
+554 |   Notwithstanding any other provision of this License, you have
+555 | permission to link or combine any covered work with a work licensed
+556 | under version 3 of the GNU Affero General Public License into a single
+557 | combined work, and to convey the resulting work.  The terms of this
+558 | License will continue to apply to the part which is the covered work,
+559 | but the special requirements of the GNU Affero General Public License,
+560 | section 13, concerning interaction through a network will apply to the
+561 | combination as such.
+562 | 
+563 |   14. Revised Versions of this License.
+564 | 
+565 |   The Free Software Foundation may publish revised and/or new versions of
+566 | the GNU General Public License from time to time.  Such new versions will
+567 | be similar in spirit to the present version, but may differ in detail to
+568 | address new problems or concerns.
+569 | 
+570 |   Each version is given a distinguishing version number.  If the
+571 | Program specifies that a certain numbered version of the GNU General
+572 | Public License "or any later version" applies to it, you have the
+573 | option of following the terms and conditions either of that numbered
+574 | version or of any later version published by the Free Software
+575 | Foundation.  If the Program does not specify a version number of the
+576 | GNU General Public License, you may choose any version ever published
+577 | by the Free Software Foundation.
+578 | 
+579 |   If the Program specifies that a proxy can decide which future
+580 | versions of the GNU General Public License can be used, that proxy's
+581 | public statement of acceptance of a version permanently authorizes you
+582 | to choose that version for the Program.
+583 | 
+584 |   Later license versions may give you additional or different
+585 | permissions.  However, no additional obligations are imposed on any
+586 | author or copyright holder as a result of your choosing to follow a
+587 | later version.
+588 | 
+589 |   15. Disclaimer of Warranty.
+590 | 
+591 |   THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
+592 | APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
+593 | HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY
+594 | OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,
+595 | THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+596 | PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM
+597 | IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF
+598 | ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+599 | 
+600 |   16. Limitation of Liability.
+601 | 
+602 |   IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+603 | WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS
+604 | THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY
+605 | GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE
+606 | USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF
+607 | DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD
+608 | PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),
+609 | EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
+610 | SUCH DAMAGES.
+611 | 
+612 |   17. Interpretation of Sections 15 and 16.
+613 | 
+614 |   If the disclaimer of warranty and limitation of liability provided
+615 | above cannot be given local legal effect according to their terms,
+616 | reviewing courts shall apply local law that most closely approximates
+617 | an absolute waiver of all civil liability in connection with the
+618 | Program, unless a warranty or assumption of liability accompanies a
+619 | copy of the Program in return for a fee.
+620 | 
+621 |                      END OF TERMS AND CONDITIONS
+622 | 
+623 |             How to Apply These Terms to Your New Programs
+624 | 
+625 |   If you develop a new program, and you want it to be of the greatest
+626 | possible use to the public, the best way to achieve this is to make it
+627 | free software which everyone can redistribute and change under these terms.
+628 | 
+629 |   To do so, attach the following notices to the program.  It is safest
+630 | to attach them to the start of each source file to most effectively
+631 | state the exclusion of warranty; and each file should have at least
+632 | the "copyright" line and a pointer to where the full notice is found.
+633 | 
+634 |     <one line to give the program's name and a brief idea of what it does.>
+635 |     Copyright (C) <year>  <name of author>
+636 | 
+637 |     This program is free software: you can redistribute it and/or modify
+638 |     it under the terms of the GNU General Public License as published by
+639 |     the Free Software Foundation, either version 3 of the License, or
+640 |     (at your option) any later version.
+641 | 
+642 |     This program is distributed in the hope that it will be useful,
+643 |     but WITHOUT ANY WARRANTY; without even the implied warranty of
+644 |     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+645 |     GNU General Public License for more details.
+646 | 
+647 |     You should have received a copy of the GNU General Public License
+648 |     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+649 | 
+650 | Also add information on how to contact you by electronic and paper mail.
+651 | 
+652 |   If the program does terminal interaction, make it output a short
+653 | notice like this when it starts in an interactive mode:
+654 | 
+655 |     <program>  Copyright (C) <year>  <name of author>
+656 |     This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+657 |     This is free software, and you are welcome to redistribute it
+658 |     under certain conditions; type `show c' for details.
+659 | 
+660 | The hypothetical commands `show w' and `show c' should show the appropriate
+661 | parts of the General Public License.  Of course, your program's commands
+662 | might be different; for a GUI interface, you would use an "about box".
+663 | 
+664 |   You should also get your employer (if you work as a programmer) or school,
+665 | if any, to sign a "copyright disclaimer" for the program, if necessary.
+666 | For more information on this, and how to apply and follow the GNU GPL, see
+667 | <https://www.gnu.org/licenses/>.
+668 | 
+669 |   The GNU General Public License does not permit incorporating your program
+670 | into proprietary programs.  If your program is a subroutine library, you
+671 | may consider it more useful to permit linking proprietary applications with
+672 | the library.  If this is what you want to do, use the GNU Lesser General
+673 | Public License instead of this License.  But first, please read
+674 | <https://www.gnu.org/licenses/why-not-lgpl.html>.
 
 
 --------------------------------------------------------------------------------
@@ -1269,116 +1913,128 @@
  17 | PRP_CLAUDE_EXE_CMD := execute-prp
  18 | 
  19 | 
- 20 | # construct the full paths and execute Claude Code commands
- 21 | # TODO switch folder by function called ()
- 22 | # TODO Claude Code non-interactive headless mode tee to CLI
- 23 | define CLAUDE_PRP_RUNNER
- 24 | 	echo "Starting Claude Code PRP runner ..."
- 25 | 	dest_file=$(firstword $(strip $(1)))
- 26 | 	dest_cmd=$(firstword $(strip $(2)))
- 27 | 	if [ -z "$${dest_file}" ]; then
- 28 | 		echo "Error: ARGS for PRP filename is empty. Please provide a PRP filename."
- 29 | 		exit 1
- 30 | 	fi
- 31 | 	case "$${dest_cmd}" in
- 32 | 		start)
- 33 | 			dest_cmd=$(PRP_CLAUDE_GEN_CMD)
- 34 | 			dest_path=$(FEAT_DEF_PATH);;
- 35 |   		stop)
- 36 | 			dest_cmd=$(PRP_CLAUDE_EXE_CMD)
- 37 | 			dest_path=$(PRP_DEF_PATH);;
- 38 | 		*)
- 39 |     		echo "Unknown command: $${dest_cmd}. Exiting ..."
- 40 |     		exit 1;;
- 41 | 	esac
- 42 | 	dest_cmd="/project:$${dest_cmd} $${dest_path}/$${dest_file}"
- 43 | 	echo "Executing command '$${dest_cmd}' ..."
- 44 | 	claude -p "$${dest_cmd}" 2>&1
- 45 | 	claude -p "/cost" 2>&1
- 46 | endef
- 47 | 
- 48 | 
- 49 | setup_python_claude:  # Set up environment and install Claude Code CLI
- 50 | 	$(MAKE) -s setup_dev
- 51 | 	$(MAKR) -s export_env_file
- 52 | 	$(MAKE) -s setup_claude_code
- 53 | 
- 54 | 
- 55 | setup_dev:  ## Install uv and deps, Download and start Ollama 
- 56 | 	echo "Setting up dev environment ..."
- 57 | 	pip install uv -q
- 58 | 	uv sync --all-groups
- 59 | 
- 60 | 
- 61 | setup_prod:  ## Install uv and deps, Download and start Ollama 
- 62 | 	echo "Setting up prod environment ..."
- 63 | 	pip install uv -q
- 64 | 	uv sync --frozen
- 65 | 
- 66 | 
- 67 | setup_claude_code:  ## Setup Claude Code CLI, node.js and npm have to be present
- 68 | 	echo "Setting up claude code ..."
- 69 | 	npm install -g @anthropic-ai/claude-code
- 70 | 	claude config set --global preferredNotifChannel terminal_bell
- 71 | 	echo "npm version: $$(npm --version)"
- 72 | 	claude --version
- 73 | 
- 74 | 
- 75 | prp_gen_claude:  ## generates the PRP from the file passed in "ARGS=file"
- 76 | 	$(call CLAUDE_PRP_RUNNER, $(ARGS), "generate")
+ 20 | # MARK: setup
+ 21 | 
+ 22 | 
+ 23 | # construct the full paths and execute Claude Code commands
+ 24 | # TODO switch folder by function called ()
+ 25 | # TODO Claude Code non-interactive headless mode tee to CLI
+ 26 | define CLAUDE_PRP_RUNNER
+ 27 | 	echo "Starting Claude Code PRP runner ..."
+ 28 | 	dest_file=$(firstword $(strip $(1)))
+ 29 | 	dest_cmd=$(firstword $(strip $(2)))
+ 30 | 	if [ -z "$${dest_file}" ]; then
+ 31 | 		echo "Error: ARGS for PRP filename is empty. Please provide a PRP filename."
+ 32 | 		exit 1
+ 33 | 	fi
+ 34 | 	case "$${dest_cmd}" in
+ 35 | 		start)
+ 36 | 			dest_cmd=$(PRP_CLAUDE_GEN_CMD)
+ 37 | 			dest_path=$(FEAT_DEF_PATH);;
+ 38 |   		stop)
+ 39 | 			dest_cmd=$(PRP_CLAUDE_EXE_CMD)
+ 40 | 			dest_path=$(PRP_DEF_PATH);;
+ 41 | 		*)
+ 42 |     		echo "Unknown command: $${dest_cmd}. Exiting ..."
+ 43 |     		exit 1;;
+ 44 | 	esac
+ 45 | 	dest_cmd="/project:$${dest_cmd} $${dest_path}/$${dest_file}"
+ 46 | 	echo "Executing command '$${dest_cmd}' ..."
+ 47 | 	claude -p "$${dest_cmd}" 2>&1
+ 48 | 	claude -p "/cost" 2>&1
+ 49 | endef
+ 50 | 
+ 51 | 
+ 52 | setup_python_claude:  # Set up environment and install Claude Code CLI
+ 53 | 	$(MAKE) -s setup_dev
+ 54 | 	$(MAKE) -s export_env_file
+ 55 | 	$(MAKE) -s setup_claude_code
+ 56 | 
+ 57 | 
+ 58 | setup_dev:  ## Install uv and deps, Download and start Ollama 
+ 59 | 	echo "Setting up dev environment ..."
+ 60 | 	pip install uv -q
+ 61 | 	uv sync --all-groups
+ 62 | 
+ 63 | 
+ 64 | setup_prod:  ## Install uv and deps, Download and start Ollama 
+ 65 | 	echo "Setting up prod environment ..."
+ 66 | 	pip install uv -q
+ 67 | 	uv sync --frozen
+ 68 | 
+ 69 | 
+ 70 | setup_claude_code:  ## Setup Claude Code CLI, node.js and npm have to be present
+ 71 | 	echo "Setting up claude code ..."
+ 72 | 	npm install -g @anthropic-ai/claude-code
+ 73 | 	claude config set --global preferredNotifChannel terminal_bell
+ 74 | 	echo "npm version: $$(npm --version)"
+ 75 | 	claude --version
+ 76 | 
  77 | 
- 78 | 
- 79 | prp_exe_claude:  ## executes the PRP from the file passed in "ARGS=file"
- 80 | 	$(call CLAUDE_PRP_RUNNER, $(ARGS), "execute")
- 81 | 
- 82 | 
- 83 | export_env_file:  # Read ENV_FILE and export k=v to env
- 84 | 	while IFS='=' read -r key value || [ -n "$${key}" ]; do
- 85 | 		case "$${key}" in
- 86 | 			''|\#*) continue ;;
- 87 | 		esac
- 88 | 		value=$$(echo "$${value}" | sed -e 's/^"//' -e 's/"$$//')
- 89 | 		export "$${key}=$${value}"
- 90 | 	done < .env
- 91 | 
+ 78 | export_env_file:  # Read ENV_FILE and export k=v to env
+ 79 | 	while IFS='=' read -r key value || [ -n "$${key}" ]; do
+ 80 | 		case "$${key}" in
+ 81 | 			''|\#*) continue ;;
+ 82 | 		esac
+ 83 | 		value=$$(echo "$${value}" | sed -e 's/^"//' -e 's/"$$//')
+ 84 | 		export "$${key}=$${value}"
+ 85 | 	done < .env
+ 86 | 
+ 87 | 
+ 88 | output_unset_env_sh:  ## Unset app environment variables
+ 89 | 	uf="./unset_env.sh"
+ 90 | 	echo "Outputing '$${uf}' ..."
+ 91 | 	printenv | awk -F= '/_API_KEY=/ {print "unset " $$1}' > $$uf
  92 | 
- 93 | ruff:  ## Lint: Format and check with ruff
- 94 | 	uv run ruff format
- 95 | 	uv run ruff check --fix
+ 93 | 
+ 94 | # MARK: context engineering
+ 95 | 
  96 | 
- 97 | 
- 98 | test_all:  ## Run all tests
- 99 | 	uv run pytest
+ 97 | prp_gen_claude:  ## generates the PRP from the file passed in "ARGS=file"
+ 98 | 	$(call CLAUDE_PRP_RUNNER, $(ARGS), "generate")
+ 99 | 
 100 | 
-101 | 
-102 | coverage_all:  ## Get test coverage
-103 | 	uv run coverage run -m pytest || true
-104 | 	uv run coverage report -m
-105 | 
+101 | prp_exe_claude:  ## executes the PRP from the file passed in "ARGS=file"
+102 | 	$(call CLAUDE_PRP_RUNNER, $(ARGS), "execute")
+103 | 
+104 | 
+105 | # MARK: code quality
 106 | 
-107 | check_types:  ## Check for static typing errors
-108 | 	uv run mypy $(APP_PATH)
-109 | 
-110 | 
-111 | output_unset_app_env_sh:  ## Unset app environment variables
-112 | 	uf="./unset_env.sh"
-113 | 	echo "Outputing '$${uf}' ..."
-114 | 	printenv | awk -F= '/_API_KEY=/ {print "unset " $$1}' > $$uf
+107 | 
+108 | ruff:  ## Lint: Format and check with ruff
+109 | 	uv run ruff format
+110 | 	uv run ruff check --fix
+111 | 
+112 | 
+113 | test_all:  ## Run all tests
+114 | 	uv run pytest
 115 | 
 116 | 
-117 | # TODO add stackoverflow source
-118 | help:  ## Displays this message with available recipes
-119 | 	echo "Usage: make [recipe]"
-120 | 	echo "Recipes:"
-121 | 	awk '/^[a-zA-Z0-9_-]+:.*?##/ {
-122 | 		helpMessage = match($$0, /## (.*)/)
-123 | 		if (helpMessage) {
-124 | 			recipe = $$1
-125 | 			sub(/:/, "", recipe)
-126 | 			printf "  \033[36m%-20s\033[0m %s\n", recipe, substr($$0, RSTART + 3, RLENGTH)
-127 | 		}
-128 | 	}' $(MAKEFILE_LIST)
-129 | 
+117 | coverage_all:  ## Get test coverage
+118 | 	uv run coverage run -m pytest || true
+119 | 	uv run coverage report -m
+120 | 
+121 | 
+122 | check_types:  ## Check for static typing errors
+123 | 	uv run mypy $(APP_PATH)
+124 | 
+125 | 
+126 | # MARK: help
+127 | 
+128 | 
+129 | # TODO add stackoverflow source
+130 | help:  ## Displays this message with available recipes
+131 | 	echo "Usage: make [recipe]"
+132 | 	echo "Recipes:"
+133 | 	awk '/^[a-zA-Z0-9_-]+:.*?##/ {
+134 | 		helpMessage = match($$0, /## (.*)/)
+135 | 		if (helpMessage) {
+136 | 			recipe = $$1
+137 | 			sub(/:/, "", recipe)
+138 | 			printf "  \033[36m%-20s\033[0m %s\n", recipe, substr($$0, RSTART + 3, RLENGTH)
+139 | 		}
+140 | 	}' $(MAKEFILE_LIST)
+141 | 
 
 
 --------------------------------------------------------------------------------
@@ -1388,7 +2044,7 @@
  2 | 
  3 | This project aims to implement a template for context engineering with coding agents. As suggested by several resources, including [context-engineering-intro](https://github.com/coleam00/context-engineering-intro), [The rise of "context engineering"](https://blog.langchain.com/the-rise-of-context-engineering/), [Context Engineering](https://blog.langchain.com/context-engineering-for-agents/) and somewhat [He Built 40 Startups Using Just Prompts — Here’s His System](https://youtu.be/CIAu6WeckQ0).
  4 | 
- 5 | [![License](https://img.shields.io/badge/license-BSD3Clause-green.svg)](LICENSE.md)
+ 5 | [![License](https://img.shields.io/badge/license-GNUGPLv3-green.svg)](LICENSE)
  6 | ![Version](https://img.shields.io/badge/version-0.0.0-58f4c2)
  7 | [![CodeQL](https://github.com/qte77/context-engineering-template/actions/workflows/codeql.yaml/badge.svg)](https://github.com/qte77/context-engineering-template/actions/workflows/codeql.yaml)
  8 | [![CodeFactor](https://www.codefactor.io/repository/github/qte77/context-engineering-template/badge)](https://www.codefactor.io/repository/github/qte77/context-engineering-template)
@@ -1419,55 +2075,61 @@
 33 | 
 34 | <details>
 35 |   <summary>Show Sequence Diagram</summary>
-36 |   <img src="assets/images/sequence_diagram.png#gh-light-mode-only" alt="Sequence Diagram" title="Sequence Diagram" width="60%" />
-37 | </details>
-38 | 
-39 | ## Setup
-40 | 
-41 | `make setup_python_claude`
-42 | 
-43 | ## Usage
-44 | 
-45 | 1. Update [Agents.md](AGENTS.md) to your needs.
-46 | 2. Describe desired feature in `/context/features/feature_XXX.md`, like shown in [feature_base.md](/context/templates/feature_base.md).
-47 | 3. Place optional examples into [/context/examples](/context/examples).
-48 | 4. Let the Product Requirements Prompt (PRP) be generated:
-49 |   - In Claude Code CLI: `/generate-prp feature_XXX.md`
-50 |   - or: `make prp_gen_claude "ARGS=feature_XXX.md"`
-51 | 5. Let the feature be implemented based on the PRP:
-52 |   - In Claude Code CLI: `/execute-prp feature_XXX.md`
-53 |   - or: `make prp_exe_claude "ARGS=feature_XXX.md"`
-54 | 
-55 | ### Configuration
-56 | 
-57 | - General system behavior: `AGENTS.md`, redirected from `CLAUDE.md`
-58 | - Claude settings: `.claude/settings.local.json`
-59 | - CLaude commands: `.claude/commands`
-60 | - Feature template: `context/templates/feature_base.md`
-61 | - PRP template: `context/templates/prp_base.md`
+36 |   <a href="assets/images/sequence_diagram.png">
+37 |     <img src="assets/images/sequence_diagram.png#gh-light-mode-only" alt="Sequence Diagram" title="Sequence Diagram" width="111%" />
+38 |   </a>
+39 |   <a href="assets/images/sequence_diagram.png">
+40 |     <img src="assets/images/sequence_diagram.png#gh-dark-mode-only" alt="Sequence Diagram" title="Sequence Diagram" width="111%" />
+41 |   </a>
+42 | </details>
+43 | 
+44 | ## Setup
+45 | 
+46 | 1. `make setup_python_claude`
+47 | 2. If .env to be used: `make export_env_file`
+48 | 
+49 | ## Usage
+50 | 
+51 | 1. Update [Agents.md](AGENTS.md) to your needs.
+52 | 2. Describe desired feature in `/context/features/feature_XXX.md`, like shown in [feature_base.md](/context/templates/feature_base.md).
+53 | 3. Place optional examples into [/context/examples](/context/examples).
+54 | 4. Let the Product Requirements Prompt (PRP) be generated:
+55 |    - In Claude Code CLI: `/generate-prp feature_XXX.md`
+56 |    - or: `make prp_gen_claude "ARGS=feature_XXX.md"`
+57 | 5. Let the feature be implemented based on the PRP:
+58 |    - In Claude Code CLI: `/execute-prp feature_XXX.md`
+59 |    - or: `make prp_exe_claude "ARGS=feature_XXX.md"`
+60 | 
+61 | ### Configuration
 62 | 
-63 | ### Environment
-64 | 
-65 | [.env.example](.env.example) contains examples for usage of API keys and variables.
-66 | 
-67 | ```text
-68 | ANTHROPIC_API_KEY="sk-abc-xyz"
-69 | GEMINI_API_KEY="xyz"
-70 | GITHUB_API_KEY="ghp_xyz"
-71 | ...
-72 | ```
-73 | 
-74 | ## TODO
-75 | 
-76 | - Implement business process as discussed in [He Built 40 Startups Using Just Prompts — Here’s His System](https://youtu.be/CIAu6WeckQ0)
-77 | - Refine `AGENTS.md` to let the agent not do bulk but incremental changes, also implement tests (red > green > blue) first, then 
-78 | 
+63 | - General system behavior: `AGENTS.md`, redirected from `CLAUDE.md`
+64 | - Claude settings: `.claude/settings.local.json`
+65 | - CLaude commands: `.claude/commands`
+66 | - Feature template: `context/templates/feature_base.md`
+67 | - PRP template: `context/templates/prp_base.md`
+68 | 
+69 | ### Environment
+70 | 
+71 | [.env.example](.env.example) contains examples for usage of API keys and variables.
+72 | 
+73 | ```text
+74 | ANTHROPIC_API_KEY="sk-abc-xyz"
+75 | GEMINI_API_KEY="xyz"
+76 | GITHUB_API_KEY="ghp_xyz"
+77 | ...
+78 | ```
+79 | 
+80 | ## TODO
+81 | 
+82 | - Implement business process as discussed in [He Built 40 Startups Using Just Prompts — Here’s His System](https://youtu.be/CIAu6WeckQ0)
+83 | - Refine `AGENTS.md` to let the agent not do bulk but incremental changes, also implement tests first, then code and iterate until functional (red > green > blue).
+84 | 
 
 
 --------------------------------------------------------------------------------
 /assets/images/sequence_diagram.png:
 --------------------------------------------------------------------------------
-https://raw.githubusercontent.com/qte77/context-engineering-template/5137aa3e2a087c7efed897956e0873156de75de0/assets/images/sequence_diagram.png
+https://raw.githubusercontent.com/qte77/context-engineering-template/8cbe69d12e4b61c3e7e376f47d7fd74b78af55b8/assets/images/sequence_diagram.png
 
 
 --------------------------------------------------------------------------------
@@ -1805,7 +2467,7 @@ https://raw.githubusercontent.com/qte77/context-engineering-template/5137aa3e2a0
 37 |   - Home: index.md
 38 |   - Code: docstrings.md
 39 |   - Change Log: CHANGELOG.md
-40 |   - License: LICENSE.md
+40 |   - License: LICENSE
 41 |   - llms.txt: llms.txt
 42 | plugins:
 43 |   - search:
@@ -2024,6 +2686,638 @@ https://raw.githubusercontent.com/qte77/context-engineering-template/5137aa3e2a0
 --------------------------------------------------------------------------------
 1 | # PEP 561 – Distributing and Packaging Type Information
 2 | # https://peps.python.org/pep-0561/
+
+
+--------------------------------------------------------------------------------
+/uv.lock:
+--------------------------------------------------------------------------------
+  1 | version = 1
+  2 | revision = 2
+  3 | requires-python = "==3.13.*"
+  4 | 
+  5 | [options]
+  6 | exclude-newer = "2025-07-06T00:00:00Z"
+  7 | 
+  8 | [[package]]
+  9 | name = "babel"
+ 10 | version = "2.17.0"
+ 11 | source = { registry = "https://pypi.org/simple" }
+ 12 | sdist = { url = "https://files.pythonhosted.org/packages/7d/6b/d52e42361e1aa00709585ecc30b3f9684b3ab62530771402248b1b1d6240/babel-2.17.0.tar.gz", hash = "sha256:0c54cffb19f690cdcc52a3b50bcbf71e07a808d1c80d549f2459b9d2cf0afb9d", size = 9951852, upload-time = "2025-02-01T15:17:41.026Z" }
+ 13 | wheels = [
+ 14 |     { url = "https://files.pythonhosted.org/packages/b7/b8/3fe70c75fe32afc4bb507f75563d39bc5642255d1d94f1f23604725780bf/babel-2.17.0-py3-none-any.whl", hash = "sha256:4d0b53093fdfb4b21c92b5213dba5a1b23885afa8383709427046b21c366e5f2", size = 10182537, upload-time = "2025-02-01T15:17:37.39Z" },
+ 15 | ]
+ 16 | 
+ 17 | [[package]]
+ 18 | name = "backrefs"
+ 19 | version = "5.9"
+ 20 | source = { registry = "https://pypi.org/simple" }
+ 21 | sdist = { url = "https://files.pythonhosted.org/packages/eb/a7/312f673df6a79003279e1f55619abbe7daebbb87c17c976ddc0345c04c7b/backrefs-5.9.tar.gz", hash = "sha256:808548cb708d66b82ee231f962cb36faaf4f2baab032f2fbb783e9c2fdddaa59", size = 5765857, upload-time = "2025-06-22T19:34:13.97Z" }
+ 22 | wheels = [
+ 23 |     { url = "https://files.pythonhosted.org/packages/19/4d/798dc1f30468134906575156c089c492cf79b5a5fd373f07fe26c4d046bf/backrefs-5.9-py310-none-any.whl", hash = "sha256:db8e8ba0e9de81fcd635f440deab5ae5f2591b54ac1ebe0550a2ca063488cd9f", size = 380267, upload-time = "2025-06-22T19:34:05.252Z" },
+ 24 |     { url = "https://files.pythonhosted.org/packages/55/07/f0b3375bf0d06014e9787797e6b7cc02b38ac9ff9726ccfe834d94e9991e/backrefs-5.9-py311-none-any.whl", hash = "sha256:6907635edebbe9b2dc3de3a2befff44d74f30a4562adbb8b36f21252ea19c5cf", size = 392072, upload-time = "2025-06-22T19:34:06.743Z" },
+ 25 |     { url = "https://files.pythonhosted.org/packages/9d/12/4f345407259dd60a0997107758ba3f221cf89a9b5a0f8ed5b961aef97253/backrefs-5.9-py312-none-any.whl", hash = "sha256:7fdf9771f63e6028d7fee7e0c497c81abda597ea45d6b8f89e8ad76994f5befa", size = 397947, upload-time = "2025-06-22T19:34:08.172Z" },
+ 26 |     { url = "https://files.pythonhosted.org/packages/10/bf/fa31834dc27a7f05e5290eae47c82690edc3a7b37d58f7fb35a1bdbf355b/backrefs-5.9-py313-none-any.whl", hash = "sha256:cc37b19fa219e93ff825ed1fed8879e47b4d89aa7a1884860e2db64ccd7c676b", size = 399843, upload-time = "2025-06-22T19:34:09.68Z" },
+ 27 |     { url = "https://files.pythonhosted.org/packages/41/ff/392bff89415399a979be4a65357a41d92729ae8580a66073d8ec8d810f98/backrefs-5.9-py39-none-any.whl", hash = "sha256:f48ee18f6252b8f5777a22a00a09a85de0ca931658f1dd96d4406a34f3748c60", size = 380265, upload-time = "2025-06-22T19:34:12.405Z" },
+ 28 | ]
+ 29 | 
+ 30 | [[package]]
+ 31 | name = "bracex"
+ 32 | version = "2.6"
+ 33 | source = { registry = "https://pypi.org/simple" }
+ 34 | sdist = { url = "https://files.pythonhosted.org/packages/63/9a/fec38644694abfaaeca2798b58e276a8e61de49e2e37494ace423395febc/bracex-2.6.tar.gz", hash = "sha256:98f1347cd77e22ee8d967a30ad4e310b233f7754dbf31ff3fceb76145ba47dc7", size = 26642, upload-time = "2025-06-22T19:12:31.254Z" }
+ 35 | wheels = [
+ 36 |     { url = "https://files.pythonhosted.org/packages/9d/2a/9186535ce58db529927f6cf5990a849aa9e052eea3e2cfefe20b9e1802da/bracex-2.6-py3-none-any.whl", hash = "sha256:0b0049264e7340b3ec782b5cb99beb325f36c3782a32e36e876452fd49a09952", size = 11508, upload-time = "2025-06-22T19:12:29.781Z" },
+ 37 | ]
+ 38 | 
+ 39 | [[package]]
+ 40 | name = "certifi"
+ 41 | version = "2025.6.15"
+ 42 | source = { registry = "https://pypi.org/simple" }
+ 43 | sdist = { url = "https://files.pythonhosted.org/packages/73/f7/f14b46d4bcd21092d7d3ccef689615220d8a08fb25e564b65d20738e672e/certifi-2025.6.15.tar.gz", hash = "sha256:d747aa5a8b9bbbb1bb8c22bb13e22bd1f18e9796defa16bab421f7f7a317323b", size = 158753, upload-time = "2025-06-15T02:45:51.329Z" }
+ 44 | wheels = [
+ 45 |     { url = "https://files.pythonhosted.org/packages/84/ae/320161bd181fc06471eed047ecce67b693fd7515b16d495d8932db763426/certifi-2025.6.15-py3-none-any.whl", hash = "sha256:2e0c7ce7cb5d8f8634ca55d2ba7e6ec2689a2fd6537d8dec1296a477a4910057", size = 157650, upload-time = "2025-06-15T02:45:49.977Z" },
+ 46 | ]
+ 47 | 
+ 48 | [[package]]
+ 49 | name = "charset-normalizer"
+ 50 | version = "3.4.2"
+ 51 | source = { registry = "https://pypi.org/simple" }
+ 52 | sdist = { url = "https://files.pythonhosted.org/packages/e4/33/89c2ced2b67d1c2a61c19c6751aa8902d46ce3dacb23600a283619f5a12d/charset_normalizer-3.4.2.tar.gz", hash = "sha256:5baececa9ecba31eff645232d59845c07aa030f0c81ee70184a90d35099a0e63", size = 126367, upload-time = "2025-05-02T08:34:42.01Z" }
+ 53 | wheels = [
+ 54 |     { url = "https://files.pythonhosted.org/packages/ea/12/a93df3366ed32db1d907d7593a94f1fe6293903e3e92967bebd6950ed12c/charset_normalizer-3.4.2-cp313-cp313-macosx_10_13_universal2.whl", hash = "sha256:926ca93accd5d36ccdabd803392ddc3e03e6d4cd1cf17deff3b989ab8e9dbcf0", size = 199622, upload-time = "2025-05-02T08:32:56.363Z" },
+ 55 |     { url = "https://files.pythonhosted.org/packages/04/93/bf204e6f344c39d9937d3c13c8cd5bbfc266472e51fc8c07cb7f64fcd2de/charset_normalizer-3.4.2-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:eba9904b0f38a143592d9fc0e19e2df0fa2e41c3c3745554761c5f6447eedabf", size = 143435, upload-time = "2025-05-02T08:32:58.551Z" },
+ 56 |     { url = "https://files.pythonhosted.org/packages/22/2a/ea8a2095b0bafa6c5b5a55ffdc2f924455233ee7b91c69b7edfcc9e02284/charset_normalizer-3.4.2-cp313-cp313-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:3fddb7e2c84ac87ac3a947cb4e66d143ca5863ef48e4a5ecb83bd48619e4634e", size = 153653, upload-time = "2025-05-02T08:33:00.342Z" },
+ 57 |     { url = "https://files.pythonhosted.org/packages/b6/57/1b090ff183d13cef485dfbe272e2fe57622a76694061353c59da52c9a659/charset_normalizer-3.4.2-cp313-cp313-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:98f862da73774290f251b9df8d11161b6cf25b599a66baf087c1ffe340e9bfd1", size = 146231, upload-time = "2025-05-02T08:33:02.081Z" },
+ 58 |     { url = "https://files.pythonhosted.org/packages/e2/28/ffc026b26f441fc67bd21ab7f03b313ab3fe46714a14b516f931abe1a2d8/charset_normalizer-3.4.2-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6c9379d65defcab82d07b2a9dfbfc2e95bc8fe0ebb1b176a3190230a3ef0e07c", size = 148243, upload-time = "2025-05-02T08:33:04.063Z" },
+ 59 |     { url = "https://files.pythonhosted.org/packages/c0/0f/9abe9bd191629c33e69e47c6ef45ef99773320e9ad8e9cb08b8ab4a8d4cb/charset_normalizer-3.4.2-cp313-cp313-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:e635b87f01ebc977342e2697d05b56632f5f879a4f15955dfe8cef2448b51691", size = 150442, upload-time = "2025-05-02T08:33:06.418Z" },
+ 60 |     { url = "https://files.pythonhosted.org/packages/67/7c/a123bbcedca91d5916c056407f89a7f5e8fdfce12ba825d7d6b9954a1a3c/charset_normalizer-3.4.2-cp313-cp313-musllinux_1_2_aarch64.whl", hash = "sha256:1c95a1e2902a8b722868587c0e1184ad5c55631de5afc0eb96bc4b0d738092c0", size = 145147, upload-time = "2025-05-02T08:33:08.183Z" },
+ 61 |     { url = "https://files.pythonhosted.org/packages/ec/fe/1ac556fa4899d967b83e9893788e86b6af4d83e4726511eaaad035e36595/charset_normalizer-3.4.2-cp313-cp313-musllinux_1_2_i686.whl", hash = "sha256:ef8de666d6179b009dce7bcb2ad4c4a779f113f12caf8dc77f0162c29d20490b", size = 153057, upload-time = "2025-05-02T08:33:09.986Z" },
+ 62 |     { url = "https://files.pythonhosted.org/packages/2b/ff/acfc0b0a70b19e3e54febdd5301a98b72fa07635e56f24f60502e954c461/charset_normalizer-3.4.2-cp313-cp313-musllinux_1_2_ppc64le.whl", hash = "sha256:32fc0341d72e0f73f80acb0a2c94216bd704f4f0bce10aedea38f30502b271ff", size = 156454, upload-time = "2025-05-02T08:33:11.814Z" },
+ 63 |     { url = "https://files.pythonhosted.org/packages/92/08/95b458ce9c740d0645feb0e96cea1f5ec946ea9c580a94adfe0b617f3573/charset_normalizer-3.4.2-cp313-cp313-musllinux_1_2_s390x.whl", hash = "sha256:289200a18fa698949d2b39c671c2cc7a24d44096784e76614899a7ccf2574b7b", size = 154174, upload-time = "2025-05-02T08:33:13.707Z" },
+ 64 |     { url = "https://files.pythonhosted.org/packages/78/be/8392efc43487ac051eee6c36d5fbd63032d78f7728cb37aebcc98191f1ff/charset_normalizer-3.4.2-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:4a476b06fbcf359ad25d34a057b7219281286ae2477cc5ff5e3f70a246971148", size = 149166, upload-time = "2025-05-02T08:33:15.458Z" },
+ 65 |     { url = "https://files.pythonhosted.org/packages/44/96/392abd49b094d30b91d9fbda6a69519e95802250b777841cf3bda8fe136c/charset_normalizer-3.4.2-cp313-cp313-win32.whl", hash = "sha256:aaeeb6a479c7667fbe1099af9617c83aaca22182d6cf8c53966491a0f1b7ffb7", size = 98064, upload-time = "2025-05-02T08:33:17.06Z" },
+ 66 |     { url = "https://files.pythonhosted.org/packages/e9/b0/0200da600134e001d91851ddc797809e2fe0ea72de90e09bec5a2fbdaccb/charset_normalizer-3.4.2-cp313-cp313-win_amd64.whl", hash = "sha256:aa6af9e7d59f9c12b33ae4e9450619cf2488e2bbe9b44030905877f0b2324980", size = 105641, upload-time = "2025-05-02T08:33:18.753Z" },
+ 67 |     { url = "https://files.pythonhosted.org/packages/20/94/c5790835a017658cbfabd07f3bfb549140c3ac458cfc196323996b10095a/charset_normalizer-3.4.2-py3-none-any.whl", hash = "sha256:7f56930ab0abd1c45cd15be65cc741c28b1c9a34876ce8c17a2fa107810c0af0", size = 52626, upload-time = "2025-05-02T08:34:40.053Z" },
+ 68 | ]
+ 69 | 
+ 70 | [[package]]
+ 71 | name = "click"
+ 72 | version = "8.2.1"
+ 73 | source = { registry = "https://pypi.org/simple" }
+ 74 | dependencies = [
+ 75 |     { name = "colorama", marker = "sys_platform == 'win32'" },
+ 76 | ]
+ 77 | sdist = { url = "https://files.pythonhosted.org/packages/60/6c/8ca2efa64cf75a977a0d7fac081354553ebe483345c734fb6b6515d96bbc/click-8.2.1.tar.gz", hash = "sha256:27c491cc05d968d271d5a1db13e3b5a184636d9d930f148c50b038f0d0646202", size = 286342, upload-time = "2025-05-20T23:19:49.832Z" }
+ 78 | wheels = [
+ 79 |     { url = "https://files.pythonhosted.org/packages/85/32/10bb5764d90a8eee674e9dc6f4db6a0ab47c8c4d0d83c27f7c39ac415a4d/click-8.2.1-py3-none-any.whl", hash = "sha256:61a3265b914e850b85317d0b3109c7f8cd35a670f963866005d6ef1d5175a12b", size = 102215, upload-time = "2025-05-20T23:19:47.796Z" },
+ 80 | ]
+ 81 | 
+ 82 | [[package]]
+ 83 | name = "colorama"
+ 84 | version = "0.4.6"
+ 85 | source = { registry = "https://pypi.org/simple" }
+ 86 | sdist = { url = "https://files.pythonhosted.org/packages/d8/53/6f443c9a4a8358a93a6792e2acffb9d9d5cb0a5cfd8802644b7b1c9a02e4/colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44", size = 27697, upload-time = "2022-10-25T02:36:22.414Z" }
+ 87 | wheels = [
+ 88 |     { url = "https://files.pythonhosted.org/packages/d1/d6/3965ed04c63042e047cb6a3e6ed1a63a35087b6a609aa3a15ed8ac56c221/colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6", size = 25335, upload-time = "2022-10-25T02:36:20.889Z" },
+ 89 | ]
+ 90 | 
+ 91 | [[package]]
+ 92 | name = "context-engineering-template"
+ 93 | version = "0.0.0"
+ 94 | source = { editable = "." }
+ 95 | 
+ 96 | [package.dev-dependencies]
+ 97 | dev = [
+ 98 |     { name = "mypy" },
+ 99 |     { name = "ruff" },
+100 | ]
+101 | docs = [
+102 |     { name = "griffe" },
+103 |     { name = "mkdocs" },
+104 |     { name = "mkdocs-awesome-pages-plugin" },
+105 |     { name = "mkdocs-gen-files" },
+106 |     { name = "mkdocs-literate-nav" },
+107 |     { name = "mkdocs-material" },
+108 |     { name = "mkdocs-section-index" },
+109 |     { name = "mkdocstrings", extra = ["python"] },
+110 | ]
+111 | 
+112 | [package.metadata]
+113 | 
+114 | [package.metadata.requires-dev]
+115 | dev = [
+116 |     { name = "mypy", specifier = ">=1.16.0" },
+117 |     { name = "ruff", specifier = ">=0.11.12" },
+118 | ]
+119 | docs = [
+120 |     { name = "griffe", specifier = ">=1.5.1" },
+121 |     { name = "mkdocs", specifier = ">=1.6.1" },
+122 |     { name = "mkdocs-awesome-pages-plugin", specifier = ">=2.9.3" },
+123 |     { name = "mkdocs-gen-files", specifier = ">=0.5.0" },
+124 |     { name = "mkdocs-literate-nav", specifier = ">=0.6.1" },
+125 |     { name = "mkdocs-material", specifier = ">=9.5.44" },
+126 |     { name = "mkdocs-section-index", specifier = ">=0.3.8" },
+127 |     { name = "mkdocstrings", extras = ["python"], specifier = ">=0.27.0" },
+128 | ]
+129 | test = []
+130 | 
+131 | [[package]]
+132 | name = "ghp-import"
+133 | version = "2.1.0"
+134 | source = { registry = "https://pypi.org/simple" }
+135 | dependencies = [
+136 |     { name = "python-dateutil" },
+137 | ]
+138 | sdist = { url = "https://files.pythonhosted.org/packages/d9/29/d40217cbe2f6b1359e00c6c307bb3fc876ba74068cbab3dde77f03ca0dc4/ghp-import-2.1.0.tar.gz", hash = "sha256:9c535c4c61193c2df8871222567d7fd7e5014d835f97dc7b7439069e2413d343", size = 10943, upload-time = "2022-05-02T15:47:16.11Z" }
+139 | wheels = [
+140 |     { url = "https://files.pythonhosted.org/packages/f7/ec/67fbef5d497f86283db54c22eec6f6140243aae73265799baaaa19cd17fb/ghp_import-2.1.0-py3-none-any.whl", hash = "sha256:8337dd7b50877f163d4c0289bc1f1c7f127550241988d568c1db512c4324a619", size = 11034, upload-time = "2022-05-02T15:47:14.552Z" },
+141 | ]
+142 | 
+143 | [[package]]
+144 | name = "griffe"
+145 | version = "1.7.3"
+146 | source = { registry = "https://pypi.org/simple" }
+147 | dependencies = [
+148 |     { name = "colorama" },
+149 | ]
+150 | sdist = { url = "https://files.pythonhosted.org/packages/a9/3e/5aa9a61f7c3c47b0b52a1d930302992229d191bf4bc76447b324b731510a/griffe-1.7.3.tar.gz", hash = "sha256:52ee893c6a3a968b639ace8015bec9d36594961e156e23315c8e8e51401fa50b", size = 395137, upload-time = "2025-04-23T11:29:09.147Z" }
+151 | wheels = [
+152 |     { url = "https://files.pythonhosted.org/packages/58/c6/5c20af38c2a57c15d87f7f38bee77d63c1d2a3689f74fefaf35915dd12b2/griffe-1.7.3-py3-none-any.whl", hash = "sha256:c6b3ee30c2f0f17f30bcdef5068d6ab7a2a4f1b8bf1a3e74b56fffd21e1c5f75", size = 129303, upload-time = "2025-04-23T11:29:07.145Z" },
+153 | ]
+154 | 
+155 | [[package]]
+156 | name = "idna"
+157 | version = "3.10"
+158 | source = { registry = "https://pypi.org/simple" }
+159 | sdist = { url = "https://files.pythonhosted.org/packages/f1/70/7703c29685631f5a7590aa73f1f1d3fa9a380e654b86af429e0934a32f7d/idna-3.10.tar.gz", hash = "sha256:12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9", size = 190490, upload-time = "2024-09-15T18:07:39.745Z" }
+160 | wheels = [
+161 |     { url = "https://files.pythonhosted.org/packages/76/c6/c88e154df9c4e1a2a66ccf0005a88dfb2650c1dffb6f5ce603dfbd452ce3/idna-3.10-py3-none-any.whl", hash = "sha256:946d195a0d259cbba61165e88e65941f16e9b36ea6ddb97f00452bae8b1287d3", size = 70442, upload-time = "2024-09-15T18:07:37.964Z" },
+162 | ]
+163 | 
+164 | [[package]]
+165 | name = "jinja2"
+166 | version = "3.1.6"
+167 | source = { registry = "https://pypi.org/simple" }
+168 | dependencies = [
+169 |     { name = "markupsafe" },
+170 | ]
+171 | sdist = { url = "https://files.pythonhosted.org/packages/df/bf/f7da0350254c0ed7c72f3e33cef02e048281fec7ecec5f032d4aac52226b/jinja2-3.1.6.tar.gz", hash = "sha256:0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d", size = 245115, upload-time = "2025-03-05T20:05:02.478Z" }
+172 | wheels = [
+173 |     { url = "https://files.pythonhosted.org/packages/62/a1/3d680cbfd5f4b8f15abc1d571870c5fc3e594bb582bc3b64ea099db13e56/jinja2-3.1.6-py3-none-any.whl", hash = "sha256:85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67", size = 134899, upload-time = "2025-03-05T20:05:00.369Z" },
+174 | ]
+175 | 
+176 | [[package]]
+177 | name = "markdown"
+178 | version = "3.8.2"
+179 | source = { registry = "https://pypi.org/simple" }
+180 | sdist = { url = "https://files.pythonhosted.org/packages/d7/c2/4ab49206c17f75cb08d6311171f2d65798988db4360c4d1485bd0eedd67c/markdown-3.8.2.tar.gz", hash = "sha256:247b9a70dd12e27f67431ce62523e675b866d254f900c4fe75ce3dda62237c45", size = 362071, upload-time = "2025-06-19T17:12:44.483Z" }
+181 | wheels = [
+182 |     { url = "https://files.pythonhosted.org/packages/96/2b/34cc11786bc00d0f04d0f5fdc3a2b1ae0b6239eef72d3d345805f9ad92a1/markdown-3.8.2-py3-none-any.whl", hash = "sha256:5c83764dbd4e00bdd94d85a19b8d55ccca20fe35b2e678a1422b380324dd5f24", size = 106827, upload-time = "2025-06-19T17:12:42.994Z" },
+183 | ]
+184 | 
+185 | [[package]]
+186 | name = "markupsafe"
+187 | version = "3.0.2"
+188 | source = { registry = "https://pypi.org/simple" }
+189 | sdist = { url = "https://files.pythonhosted.org/packages/b2/97/5d42485e71dfc078108a86d6de8fa46db44a1a9295e89c5d6d4a06e23a62/markupsafe-3.0.2.tar.gz", hash = "sha256:ee55d3edf80167e48ea11a923c7386f4669df67d7994554387f84e7d8b0a2bf0", size = 20537, upload-time = "2024-10-18T15:21:54.129Z" }
+190 | wheels = [
+191 |     { url = "https://files.pythonhosted.org/packages/83/0e/67eb10a7ecc77a0c2bbe2b0235765b98d164d81600746914bebada795e97/MarkupSafe-3.0.2-cp313-cp313-macosx_10_13_universal2.whl", hash = "sha256:ba9527cdd4c926ed0760bc301f6728ef34d841f405abf9d4f959c478421e4efd", size = 14274, upload-time = "2024-10-18T15:21:24.577Z" },
+192 |     { url = "https://files.pythonhosted.org/packages/2b/6d/9409f3684d3335375d04e5f05744dfe7e9f120062c9857df4ab490a1031a/MarkupSafe-3.0.2-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:f8b3d067f2e40fe93e1ccdd6b2e1d16c43140e76f02fb1319a05cf2b79d99430", size = 12352, upload-time = "2024-10-18T15:21:25.382Z" },
+193 |     { url = "https://files.pythonhosted.org/packages/d2/f5/6eadfcd3885ea85fe2a7c128315cc1bb7241e1987443d78c8fe712d03091/MarkupSafe-3.0.2-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:569511d3b58c8791ab4c2e1285575265991e6d8f8700c7be0e88f86cb0672094", size = 24122, upload-time = "2024-10-18T15:21:26.199Z" },
+194 |     { url = "https://files.pythonhosted.org/packages/0c/91/96cf928db8236f1bfab6ce15ad070dfdd02ed88261c2afafd4b43575e9e9/MarkupSafe-3.0.2-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:15ab75ef81add55874e7ab7055e9c397312385bd9ced94920f2802310c930396", size = 23085, upload-time = "2024-10-18T15:21:27.029Z" },
+195 |     { url = "https://files.pythonhosted.org/packages/c2/cf/c9d56af24d56ea04daae7ac0940232d31d5a8354f2b457c6d856b2057d69/MarkupSafe-3.0.2-cp313-cp313-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:f3818cb119498c0678015754eba762e0d61e5b52d34c8b13d770f0719f7b1d79", size = 22978, upload-time = "2024-10-18T15:21:27.846Z" },
+196 |     { url = "https://files.pythonhosted.org/packages/2a/9f/8619835cd6a711d6272d62abb78c033bda638fdc54c4e7f4272cf1c0962b/MarkupSafe-3.0.2-cp313-cp313-musllinux_1_2_aarch64.whl", hash = "sha256:cdb82a876c47801bb54a690c5ae105a46b392ac6099881cdfb9f6e95e4014c6a", size = 24208, upload-time = "2024-10-18T15:21:28.744Z" },
+197 |     { url = "https://files.pythonhosted.org/packages/f9/bf/176950a1792b2cd2102b8ffeb5133e1ed984547b75db47c25a67d3359f77/MarkupSafe-3.0.2-cp313-cp313-musllinux_1_2_i686.whl", hash = "sha256:cabc348d87e913db6ab4aa100f01b08f481097838bdddf7c7a84b7575b7309ca", size = 23357, upload-time = "2024-10-18T15:21:29.545Z" },
+198 |     { url = "https://files.pythonhosted.org/packages/ce/4f/9a02c1d335caabe5c4efb90e1b6e8ee944aa245c1aaaab8e8a618987d816/MarkupSafe-3.0.2-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:444dcda765c8a838eaae23112db52f1efaf750daddb2d9ca300bcae1039adc5c", size = 23344, upload-time = "2024-10-18T15:21:30.366Z" },
+199 |     { url = "https://files.pythonhosted.org/packages/ee/55/c271b57db36f748f0e04a759ace9f8f759ccf22b4960c270c78a394f58be/MarkupSafe-3.0.2-cp313-cp313-win32.whl", hash = "sha256:bcf3e58998965654fdaff38e58584d8937aa3096ab5354d493c77d1fdd66d7a1", size = 15101, upload-time = "2024-10-18T15:21:31.207Z" },
+200 |     { url = "https://files.pythonhosted.org/packages/29/88/07df22d2dd4df40aba9f3e402e6dc1b8ee86297dddbad4872bd5e7b0094f/MarkupSafe-3.0.2-cp313-cp313-win_amd64.whl", hash = "sha256:e6a2a455bd412959b57a172ce6328d2dd1f01cb2135efda2e4576e8a23fa3b0f", size = 15603, upload-time = "2024-10-18T15:21:32.032Z" },
+201 |     { url = "https://files.pythonhosted.org/packages/62/6a/8b89d24db2d32d433dffcd6a8779159da109842434f1dd2f6e71f32f738c/MarkupSafe-3.0.2-cp313-cp313t-macosx_10_13_universal2.whl", hash = "sha256:b5a6b3ada725cea8a5e634536b1b01c30bcdcd7f9c6fff4151548d5bf6b3a36c", size = 14510, upload-time = "2024-10-18T15:21:33.625Z" },
+202 |     { url = "https://files.pythonhosted.org/packages/7a/06/a10f955f70a2e5a9bf78d11a161029d278eeacbd35ef806c3fd17b13060d/MarkupSafe-3.0.2-cp313-cp313t-macosx_11_0_arm64.whl", hash = "sha256:a904af0a6162c73e3edcb969eeeb53a63ceeb5d8cf642fade7d39e7963a22ddb", size = 12486, upload-time = "2024-10-18T15:21:34.611Z" },
+203 |     { url = "https://files.pythonhosted.org/packages/34/cf/65d4a571869a1a9078198ca28f39fba5fbb910f952f9dbc5220afff9f5e6/MarkupSafe-3.0.2-cp313-cp313t-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:4aa4e5faecf353ed117801a068ebab7b7e09ffb6e1d5e412dc852e0da018126c", size = 25480, upload-time = "2024-10-18T15:21:35.398Z" },
+204 |     { url = "https://files.pythonhosted.org/packages/0c/e3/90e9651924c430b885468b56b3d597cabf6d72be4b24a0acd1fa0e12af67/MarkupSafe-3.0.2-cp313-cp313t-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c0ef13eaeee5b615fb07c9a7dadb38eac06a0608b41570d8ade51c56539e509d", size = 23914, upload-time = "2024-10-18T15:21:36.231Z" },
+205 |     { url = "https://files.pythonhosted.org/packages/66/8c/6c7cf61f95d63bb866db39085150df1f2a5bd3335298f14a66b48e92659c/MarkupSafe-3.0.2-cp313-cp313t-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:d16a81a06776313e817c951135cf7340a3e91e8c1ff2fac444cfd75fffa04afe", size = 23796, upload-time = "2024-10-18T15:21:37.073Z" },
+206 |     { url = "https://files.pythonhosted.org/packages/bb/35/cbe9238ec3f47ac9a7c8b3df7a808e7cb50fe149dc7039f5f454b3fba218/MarkupSafe-3.0.2-cp313-cp313t-musllinux_1_2_aarch64.whl", hash = "sha256:6381026f158fdb7c72a168278597a5e3a5222e83ea18f543112b2662a9b699c5", size = 25473, upload-time = "2024-10-18T15:21:37.932Z" },
+207 |     { url = "https://files.pythonhosted.org/packages/e6/32/7621a4382488aa283cc05e8984a9c219abad3bca087be9ec77e89939ded9/MarkupSafe-3.0.2-cp313-cp313t-musllinux_1_2_i686.whl", hash = "sha256:3d79d162e7be8f996986c064d1c7c817f6df3a77fe3d6859f6f9e7be4b8c213a", size = 24114, upload-time = "2024-10-18T15:21:39.799Z" },
+208 |     { url = "https://files.pythonhosted.org/packages/0d/80/0985960e4b89922cb5a0bac0ed39c5b96cbc1a536a99f30e8c220a996ed9/MarkupSafe-3.0.2-cp313-cp313t-musllinux_1_2_x86_64.whl", hash = "sha256:131a3c7689c85f5ad20f9f6fb1b866f402c445b220c19fe4308c0b147ccd2ad9", size = 24098, upload-time = "2024-10-18T15:21:40.813Z" },
+209 |     { url = "https://files.pythonhosted.org/packages/82/78/fedb03c7d5380df2427038ec8d973587e90561b2d90cd472ce9254cf348b/MarkupSafe-3.0.2-cp313-cp313t-win32.whl", hash = "sha256:ba8062ed2cf21c07a9e295d5b8a2a5ce678b913b45fdf68c32d95d6c1291e0b6", size = 15208, upload-time = "2024-10-18T15:21:41.814Z" },
+210 |     { url = "https://files.pythonhosted.org/packages/4f/65/6079a46068dfceaeabb5dcad6d674f5f5c61a6fa5673746f42a9f4c233b3/MarkupSafe-3.0.2-cp313-cp313t-win_amd64.whl", hash = "sha256:e444a31f8db13eb18ada366ab3cf45fd4b31e4db1236a4448f68778c1d1a5a2f", size = 15739, upload-time = "2024-10-18T15:21:42.784Z" },
+211 | ]
+212 | 
+213 | [[package]]
+214 | name = "mergedeep"
+215 | version = "1.3.4"
+216 | source = { registry = "https://pypi.org/simple" }
+217 | sdist = { url = "https://files.pythonhosted.org/packages/3a/41/580bb4006e3ed0361b8151a01d324fb03f420815446c7def45d02f74c270/mergedeep-1.3.4.tar.gz", hash = "sha256:0096d52e9dad9939c3d975a774666af186eda617e6ca84df4c94dec30004f2a8", size = 4661, upload-time = "2021-02-05T18:55:30.623Z" }
+218 | wheels = [
+219 |     { url = "https://files.pythonhosted.org/packages/2c/19/04f9b178c2d8a15b076c8b5140708fa6ffc5601fb6f1e975537072df5b2a/mergedeep-1.3.4-py3-none-any.whl", hash = "sha256:70775750742b25c0d8f36c55aed03d24c3384d17c951b3175d898bd778ef0307", size = 6354, upload-time = "2021-02-05T18:55:29.583Z" },
+220 | ]
+221 | 
+222 | [[package]]
+223 | name = "mkdocs"
+224 | version = "1.6.1"
+225 | source = { registry = "https://pypi.org/simple" }
+226 | dependencies = [
+227 |     { name = "click" },
+228 |     { name = "colorama", marker = "sys_platform == 'win32'" },
+229 |     { name = "ghp-import" },
+230 |     { name = "jinja2" },
+231 |     { name = "markdown" },
+232 |     { name = "markupsafe" },
+233 |     { name = "mergedeep" },
+234 |     { name = "mkdocs-get-deps" },
+235 |     { name = "packaging" },
+236 |     { name = "pathspec" },
+237 |     { name = "pyyaml" },
+238 |     { name = "pyyaml-env-tag" },
+239 |     { name = "watchdog" },
+240 | ]
+241 | sdist = { url = "https://files.pythonhosted.org/packages/bc/c6/bbd4f061bd16b378247f12953ffcb04786a618ce5e904b8c5a01a0309061/mkdocs-1.6.1.tar.gz", hash = "sha256:7b432f01d928c084353ab39c57282f29f92136665bdd6abf7c1ec8d822ef86f2", size = 3889159, upload-time = "2024-08-30T12:24:06.899Z" }
+242 | wheels = [
+243 |     { url = "https://files.pythonhosted.org/packages/22/5b/dbc6a8cddc9cfa9c4971d59fb12bb8d42e161b7e7f8cc89e49137c5b279c/mkdocs-1.6.1-py3-none-any.whl", hash = "sha256:db91759624d1647f3f34aa0c3f327dd2601beae39a366d6e064c03468d35c20e", size = 3864451, upload-time = "2024-08-30T12:24:05.054Z" },
+244 | ]
+245 | 
+246 | [[package]]
+247 | name = "mkdocs-autorefs"
+248 | version = "1.4.2"
+249 | source = { registry = "https://pypi.org/simple" }
+250 | dependencies = [
+251 |     { name = "markdown" },
+252 |     { name = "markupsafe" },
+253 |     { name = "mkdocs" },
+254 | ]
+255 | sdist = { url = "https://files.pythonhosted.org/packages/47/0c/c9826f35b99c67fa3a7cddfa094c1a6c43fafde558c309c6e4403e5b37dc/mkdocs_autorefs-1.4.2.tar.gz", hash = "sha256:e2ebe1abd2b67d597ed19378c0fff84d73d1dbce411fce7a7cc6f161888b6749", size = 54961, upload-time = "2025-05-20T13:09:09.886Z" }
+256 | wheels = [
+257 |     { url = "https://files.pythonhosted.org/packages/87/dc/fc063b78f4b769d1956319351704e23ebeba1e9e1d6a41b4b602325fd7e4/mkdocs_autorefs-1.4.2-py3-none-any.whl", hash = "sha256:83d6d777b66ec3c372a1aad4ae0cf77c243ba5bcda5bf0c6b8a2c5e7a3d89f13", size = 24969, upload-time = "2025-05-20T13:09:08.237Z" },
+258 | ]
+259 | 
+260 | [[package]]
+261 | name = "mkdocs-awesome-pages-plugin"
+262 | version = "2.10.1"
+263 | source = { registry = "https://pypi.org/simple" }
+264 | dependencies = [
+265 |     { name = "mkdocs" },
+266 |     { name = "natsort" },
+267 |     { name = "wcmatch" },
+268 | ]
+269 | sdist = { url = "https://files.pythonhosted.org/packages/92/e8/6ae9c18d8174a5d74ce4ade7a7f4c350955063968bc41ff1e5833cff4a2b/mkdocs_awesome_pages_plugin-2.10.1.tar.gz", hash = "sha256:cda2cb88c937ada81a4785225f20ef77ce532762f4500120b67a1433c1cdbb2f", size = 16303, upload-time = "2024-12-22T21:13:49.19Z" }
+270 | wheels = [
+271 |     { url = "https://files.pythonhosted.org/packages/73/61/19fc1e9c579dbfd4e8a402748f1d63cab7aabe8f8d91eb0235e45b32d040/mkdocs_awesome_pages_plugin-2.10.1-py3-none-any.whl", hash = "sha256:c6939dbea37383fc3cf8c0a4e892144ec3d2f8a585e16fdc966b34e7c97042a7", size = 15118, upload-time = "2024-12-22T21:13:46.945Z" },
+272 | ]
+273 | 
+274 | [[package]]
+275 | name = "mkdocs-gen-files"
+276 | version = "0.5.0"
+277 | source = { registry = "https://pypi.org/simple" }
+278 | dependencies = [
+279 |     { name = "mkdocs" },
+280 | ]
+281 | sdist = { url = "https://files.pythonhosted.org/packages/48/85/2d634462fd59136197d3126ca431ffb666f412e3db38fd5ce3a60566303e/mkdocs_gen_files-0.5.0.tar.gz", hash = "sha256:4c7cf256b5d67062a788f6b1d035e157fc1a9498c2399be9af5257d4ff4d19bc", size = 7539, upload-time = "2023-04-27T19:48:04.894Z" }
+282 | wheels = [
+283 |     { url = "https://files.pythonhosted.org/packages/e7/0f/1e55b3fd490ad2cecb6e7b31892d27cb9fc4218ec1dab780440ba8579e74/mkdocs_gen_files-0.5.0-py3-none-any.whl", hash = "sha256:7ac060096f3f40bd19039e7277dd3050be9a453c8ac578645844d4d91d7978ea", size = 8380, upload-time = "2023-04-27T19:48:07.059Z" },
+284 | ]
+285 | 
+286 | [[package]]
+287 | name = "mkdocs-get-deps"
+288 | version = "0.2.0"
+289 | source = { registry = "https://pypi.org/simple" }
+290 | dependencies = [
+291 |     { name = "mergedeep" },
+292 |     { name = "platformdirs" },
+293 |     { name = "pyyaml" },
+294 | ]
+295 | sdist = { url = "https://files.pythonhosted.org/packages/98/f5/ed29cd50067784976f25ed0ed6fcd3c2ce9eb90650aa3b2796ddf7b6870b/mkdocs_get_deps-0.2.0.tar.gz", hash = "sha256:162b3d129c7fad9b19abfdcb9c1458a651628e4b1dea628ac68790fb3061c60c", size = 10239, upload-time = "2023-11-20T17:51:09.981Z" }
+296 | wheels = [
+297 |     { url = "https://files.pythonhosted.org/packages/9f/d4/029f984e8d3f3b6b726bd33cafc473b75e9e44c0f7e80a5b29abc466bdea/mkdocs_get_deps-0.2.0-py3-none-any.whl", hash = "sha256:2bf11d0b133e77a0dd036abeeb06dec8775e46efa526dc70667d8863eefc6134", size = 9521, upload-time = "2023-11-20T17:51:08.587Z" },
+298 | ]
+299 | 
+300 | [[package]]
+301 | name = "mkdocs-literate-nav"
+302 | version = "0.6.2"
+303 | source = { registry = "https://pypi.org/simple" }
+304 | dependencies = [
+305 |     { name = "mkdocs" },
+306 | ]
+307 | sdist = { url = "https://files.pythonhosted.org/packages/f6/5f/99aa379b305cd1c2084d42db3d26f6de0ea9bf2cc1d10ed17f61aff35b9a/mkdocs_literate_nav-0.6.2.tar.gz", hash = "sha256:760e1708aa4be86af81a2b56e82c739d5a8388a0eab1517ecfd8e5aa40810a75", size = 17419, upload-time = "2025-03-18T21:53:09.711Z" }
+308 | wheels = [
+309 |     { url = "https://files.pythonhosted.org/packages/8a/84/b5b14d2745e4dd1a90115186284e9ee1b4d0863104011ab46abb7355a1c3/mkdocs_literate_nav-0.6.2-py3-none-any.whl", hash = "sha256:0a6489a26ec7598477b56fa112056a5e3a6c15729f0214bea8a4dbc55bd5f630", size = 13261, upload-time = "2025-03-18T21:53:08.1Z" },
+310 | ]
+311 | 
+312 | [[package]]
+313 | name = "mkdocs-material"
+314 | version = "9.6.15"
+315 | source = { registry = "https://pypi.org/simple" }
+316 | dependencies = [
+317 |     { name = "babel" },
+318 |     { name = "backrefs" },
+319 |     { name = "colorama" },
+320 |     { name = "jinja2" },
+321 |     { name = "markdown" },
+322 |     { name = "mkdocs" },
+323 |     { name = "mkdocs-material-extensions" },
+324 |     { name = "paginate" },
+325 |     { name = "pygments" },
+326 |     { name = "pymdown-extensions" },
+327 |     { name = "requests" },
+328 | ]
+329 | sdist = { url = "https://files.pythonhosted.org/packages/95/c1/f804ba2db2ddc2183e900befe7dad64339a34fa935034e1ab405289d0a97/mkdocs_material-9.6.15.tar.gz", hash = "sha256:64adf8fa8dba1a17905b6aee1894a5aafd966d4aeb44a11088519b0f5ca4f1b5", size = 3951836, upload-time = "2025-07-01T10:14:15.671Z" }
+330 | wheels = [
+331 |     { url = "https://files.pythonhosted.org/packages/1d/30/dda19f0495a9096b64b6b3c07c4bfcff1c76ee0fc521086d53593f18b4c0/mkdocs_material-9.6.15-py3-none-any.whl", hash = "sha256:ac969c94d4fe5eb7c924b6d2f43d7db41159ea91553d18a9afc4780c34f2717a", size = 8716840, upload-time = "2025-07-01T10:14:13.18Z" },
+332 | ]
+333 | 
+334 | [[package]]
+335 | name = "mkdocs-material-extensions"
+336 | version = "1.3.1"
+337 | source = { registry = "https://pypi.org/simple" }
+338 | sdist = { url = "https://files.pythonhosted.org/packages/79/9b/9b4c96d6593b2a541e1cb8b34899a6d021d208bb357042823d4d2cabdbe7/mkdocs_material_extensions-1.3.1.tar.gz", hash = "sha256:10c9511cea88f568257f960358a467d12b970e1f7b2c0e5fb2bb48cab1928443", size = 11847, upload-time = "2023-11-22T19:09:45.208Z" }
+339 | wheels = [
+340 |     { url = "https://files.pythonhosted.org/packages/5b/54/662a4743aa81d9582ee9339d4ffa3c8fd40a4965e033d77b9da9774d3960/mkdocs_material_extensions-1.3.1-py3-none-any.whl", hash = "sha256:adff8b62700b25cb77b53358dad940f3ef973dd6db797907c49e3c2ef3ab4e31", size = 8728, upload-time = "2023-11-22T19:09:43.465Z" },
+341 | ]
+342 | 
+343 | [[package]]
+344 | name = "mkdocs-section-index"
+345 | version = "0.3.10"
+346 | source = { registry = "https://pypi.org/simple" }
+347 | dependencies = [
+348 |     { name = "mkdocs" },
+349 | ]
+350 | sdist = { url = "https://files.pythonhosted.org/packages/93/40/4aa9d3cfa2ac6528b91048847a35f005b97ec293204c02b179762a85b7f2/mkdocs_section_index-0.3.10.tar.gz", hash = "sha256:a82afbda633c82c5568f0e3b008176b9b365bf4bd8b6f919d6eff09ee146b9f8", size = 14446, upload-time = "2025-04-05T20:56:45.387Z" }
+351 | wheels = [
+352 |     { url = "https://files.pythonhosted.org/packages/01/53/76c109e6f822a6d19befb0450c87330b9a6ce52353de6a9dda7892060a1f/mkdocs_section_index-0.3.10-py3-none-any.whl", hash = "sha256:bc27c0d0dc497c0ebaee1fc72839362aed77be7318b5ec0c30628f65918e4776", size = 8796, upload-time = "2025-04-05T20:56:43.975Z" },
+353 | ]
+354 | 
+355 | [[package]]
+356 | name = "mkdocstrings"
+357 | version = "0.29.1"
+358 | source = { registry = "https://pypi.org/simple" }
+359 | dependencies = [
+360 |     { name = "jinja2" },
+361 |     { name = "markdown" },
+362 |     { name = "markupsafe" },
+363 |     { name = "mkdocs" },
+364 |     { name = "mkdocs-autorefs" },
+365 |     { name = "pymdown-extensions" },
+366 | ]
+367 | sdist = { url = "https://files.pythonhosted.org/packages/41/e8/d22922664a627a0d3d7ff4a6ca95800f5dde54f411982591b4621a76225d/mkdocstrings-0.29.1.tar.gz", hash = "sha256:8722f8f8c5cd75da56671e0a0c1bbed1df9946c0cef74794d6141b34011abd42", size = 1212686, upload-time = "2025-03-31T08:33:11.997Z" }
+368 | wheels = [
+369 |     { url = "https://files.pythonhosted.org/packages/98/14/22533a578bf8b187e05d67e2c1721ce10e3f526610eebaf7a149d557ea7a/mkdocstrings-0.29.1-py3-none-any.whl", hash = "sha256:37a9736134934eea89cbd055a513d40a020d87dfcae9e3052c2a6b8cd4af09b6", size = 1631075, upload-time = "2025-03-31T08:33:09.661Z" },
+370 | ]
+371 | 
+372 | [package.optional-dependencies]
+373 | python = [
+374 |     { name = "mkdocstrings-python" },
+375 | ]
+376 | 
+377 | [[package]]
+378 | name = "mkdocstrings-python"
+379 | version = "1.16.12"
+380 | source = { registry = "https://pypi.org/simple" }
+381 | dependencies = [
+382 |     { name = "griffe" },
+383 |     { name = "mkdocs-autorefs" },
+384 |     { name = "mkdocstrings" },
+385 | ]
+386 | sdist = { url = "https://files.pythonhosted.org/packages/bf/ed/b886f8c714fd7cccc39b79646b627dbea84cd95c46be43459ef46852caf0/mkdocstrings_python-1.16.12.tar.gz", hash = "sha256:9b9eaa066e0024342d433e332a41095c4e429937024945fea511afe58f63175d", size = 206065, upload-time = "2025-06-03T12:52:49.276Z" }
+387 | wheels = [
+388 |     { url = "https://files.pythonhosted.org/packages/3b/dd/a24ee3de56954bfafb6ede7cd63c2413bb842cc48eb45e41c43a05a33074/mkdocstrings_python-1.16.12-py3-none-any.whl", hash = "sha256:22ded3a63b3d823d57457a70ff9860d5a4de9e8b1e482876fc9baabaf6f5f374", size = 124287, upload-time = "2025-06-03T12:52:47.819Z" },
+389 | ]
+390 | 
+391 | [[package]]
+392 | name = "mypy"
+393 | version = "1.16.1"
+394 | source = { registry = "https://pypi.org/simple" }
+395 | dependencies = [
+396 |     { name = "mypy-extensions" },
+397 |     { name = "pathspec" },
+398 |     { name = "typing-extensions" },
+399 | ]
+400 | sdist = { url = "https://files.pythonhosted.org/packages/81/69/92c7fa98112e4d9eb075a239caa4ef4649ad7d441545ccffbd5e34607cbb/mypy-1.16.1.tar.gz", hash = "sha256:6bd00a0a2094841c5e47e7374bb42b83d64c527a502e3334e1173a0c24437bab", size = 3324747, upload-time = "2025-06-16T16:51:35.145Z" }
+401 | wheels = [
+402 |     { url = "https://files.pythonhosted.org/packages/28/e3/96964af4a75a949e67df4b95318fe2b7427ac8189bbc3ef28f92a1c5bc56/mypy-1.16.1-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:ddc91eb318c8751c69ddb200a5937f1232ee8efb4e64e9f4bc475a33719de438", size = 11063480, upload-time = "2025-06-16T16:47:56.205Z" },
+403 |     { url = "https://files.pythonhosted.org/packages/f5/4d/cd1a42b8e5be278fab7010fb289d9307a63e07153f0ae1510a3d7b703193/mypy-1.16.1-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:87ff2c13d58bdc4bbe7dc0dedfe622c0f04e2cb2a492269f3b418df2de05c536", size = 10090538, upload-time = "2025-06-16T16:46:43.92Z" },
+404 |     { url = "https://files.pythonhosted.org/packages/c9/4f/c3c6b4b66374b5f68bab07c8cabd63a049ff69796b844bc759a0ca99bb2a/mypy-1.16.1-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:0a7cfb0fe29fe5a9841b7c8ee6dffb52382c45acdf68f032145b75620acfbd6f", size = 11836839, upload-time = "2025-06-16T16:36:28.039Z" },
+405 |     { url = "https://files.pythonhosted.org/packages/b4/7e/81ca3b074021ad9775e5cb97ebe0089c0f13684b066a750b7dc208438403/mypy-1.16.1-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:051e1677689c9d9578b9c7f4d206d763f9bbd95723cd1416fad50db49d52f359", size = 12715634, upload-time = "2025-06-16T16:50:34.441Z" },
+406 |     { url = "https://files.pythonhosted.org/packages/e9/95/bdd40c8be346fa4c70edb4081d727a54d0a05382d84966869738cfa8a497/mypy-1.16.1-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:d5d2309511cc56c021b4b4e462907c2b12f669b2dbeb68300110ec27723971be", size = 12895584, upload-time = "2025-06-16T16:34:54.857Z" },
+407 |     { url = "https://files.pythonhosted.org/packages/5a/fd/d486a0827a1c597b3b48b1bdef47228a6e9ee8102ab8c28f944cb83b65dc/mypy-1.16.1-cp313-cp313-win_amd64.whl", hash = "sha256:4f58ac32771341e38a853c5d0ec0dfe27e18e27da9cdb8bbc882d2249c71a3ee", size = 9573886, upload-time = "2025-06-16T16:36:43.589Z" },
+408 |     { url = "https://files.pythonhosted.org/packages/cf/d3/53e684e78e07c1a2bf7105715e5edd09ce951fc3f47cf9ed095ec1b7a037/mypy-1.16.1-py3-none-any.whl", hash = "sha256:5fc2ac4027d0ef28d6ba69a0343737a23c4d1b83672bf38d1fe237bdc0643b37", size = 2265923, upload-time = "2025-06-16T16:48:02.366Z" },
+409 | ]
+410 | 
+411 | [[package]]
+412 | name = "mypy-extensions"
+413 | version = "1.1.0"
+414 | source = { registry = "https://pypi.org/simple" }
+415 | sdist = { url = "https://files.pythonhosted.org/packages/a2/6e/371856a3fb9d31ca8dac321cda606860fa4548858c0cc45d9d1d4ca2628b/mypy_extensions-1.1.0.tar.gz", hash = "sha256:52e68efc3284861e772bbcd66823fde5ae21fd2fdb51c62a211403730b916558", size = 6343, upload-time = "2025-04-22T14:54:24.164Z" }
+416 | wheels = [
+417 |     { url = "https://files.pythonhosted.org/packages/79/7b/2c79738432f5c924bef5071f933bcc9efd0473bac3b4aa584a6f7c1c8df8/mypy_extensions-1.1.0-py3-none-any.whl", hash = "sha256:1be4cccdb0f2482337c4743e60421de3a356cd97508abadd57d47403e94f5505", size = 4963, upload-time = "2025-04-22T14:54:22.983Z" },
+418 | ]
+419 | 
+420 | [[package]]
+421 | name = "natsort"
+422 | version = "8.4.0"
+423 | source = { registry = "https://pypi.org/simple" }
+424 | sdist = { url = "https://files.pythonhosted.org/packages/e2/a9/a0c57aee75f77794adaf35322f8b6404cbd0f89ad45c87197a937764b7d0/natsort-8.4.0.tar.gz", hash = "sha256:45312c4a0e5507593da193dedd04abb1469253b601ecaf63445ad80f0a1ea581", size = 76575, upload-time = "2023-06-20T04:17:19.925Z" }
+425 | wheels = [
+426 |     { url = "https://files.pythonhosted.org/packages/ef/82/7a9d0550484a62c6da82858ee9419f3dd1ccc9aa1c26a1e43da3ecd20b0d/natsort-8.4.0-py3-none-any.whl", hash = "sha256:4732914fb471f56b5cce04d7bae6f164a592c7712e1c85f9ef585e197299521c", size = 38268, upload-time = "2023-06-20T04:17:17.522Z" },
+427 | ]
+428 | 
+429 | [[package]]
+430 | name = "packaging"
+431 | version = "25.0"
+432 | source = { registry = "https://pypi.org/simple" }
+433 | sdist = { url = "https://files.pythonhosted.org/packages/a1/d4/1fc4078c65507b51b96ca8f8c3ba19e6a61c8253c72794544580a7b6c24d/packaging-25.0.tar.gz", hash = "sha256:d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f", size = 165727, upload-time = "2025-04-19T11:48:59.673Z" }
+434 | wheels = [
+435 |     { url = "https://files.pythonhosted.org/packages/20/12/38679034af332785aac8774540895e234f4d07f7545804097de4b666afd8/packaging-25.0-py3-none-any.whl", hash = "sha256:29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484", size = 66469, upload-time = "2025-04-19T11:48:57.875Z" },
+436 | ]
+437 | 
+438 | [[package]]
+439 | name = "paginate"
+440 | version = "0.5.7"
+441 | source = { registry = "https://pypi.org/simple" }
+442 | sdist = { url = "https://files.pythonhosted.org/packages/ec/46/68dde5b6bc00c1296ec6466ab27dddede6aec9af1b99090e1107091b3b84/paginate-0.5.7.tar.gz", hash = "sha256:22bd083ab41e1a8b4f3690544afb2c60c25e5c9a63a30fa2f483f6c60c8e5945", size = 19252, upload-time = "2024-08-25T14:17:24.139Z" }
+443 | wheels = [
+444 |     { url = "https://files.pythonhosted.org/packages/90/96/04b8e52da071d28f5e21a805b19cb9390aa17a47462ac87f5e2696b9566d/paginate-0.5.7-py2.py3-none-any.whl", hash = "sha256:b885e2af73abcf01d9559fd5216b57ef722f8c42affbb63942377668e35c7591", size = 13746, upload-time = "2024-08-25T14:17:22.55Z" },
+445 | ]
+446 | 
+447 | [[package]]
+448 | name = "pathspec"
+449 | version = "0.12.1"
+450 | source = { registry = "https://pypi.org/simple" }
+451 | sdist = { url = "https://files.pythonhosted.org/packages/ca/bc/f35b8446f4531a7cb215605d100cd88b7ac6f44ab3fc94870c120ab3adbf/pathspec-0.12.1.tar.gz", hash = "sha256:a482d51503a1ab33b1c67a6c3813a26953dbdc71c31dacaef9a838c4e29f5712", size = 51043, upload-time = "2023-12-10T22:30:45Z" }
+452 | wheels = [
+453 |     { url = "https://files.pythonhosted.org/packages/cc/20/ff623b09d963f88bfde16306a54e12ee5ea43e9b597108672ff3a408aad6/pathspec-0.12.1-py3-none-any.whl", hash = "sha256:a0d503e138a4c123b27490a4f7beda6a01c6f288df0e4a8b79c7eb0dc7b4cc08", size = 31191, upload-time = "2023-12-10T22:30:43.14Z" },
+454 | ]
+455 | 
+456 | [[package]]
+457 | name = "platformdirs"
+458 | version = "4.3.8"
+459 | source = { registry = "https://pypi.org/simple" }
+460 | sdist = { url = "https://files.pythonhosted.org/packages/fe/8b/3c73abc9c759ecd3f1f7ceff6685840859e8070c4d947c93fae71f6a0bf2/platformdirs-4.3.8.tar.gz", hash = "sha256:3d512d96e16bcb959a814c9f348431070822a6496326a4be0911c40b5a74c2bc", size = 21362, upload-time = "2025-05-07T22:47:42.121Z" }
+461 | wheels = [
+462 |     { url = "https://files.pythonhosted.org/packages/fe/39/979e8e21520d4e47a0bbe349e2713c0aac6f3d853d0e5b34d76206c439aa/platformdirs-4.3.8-py3-none-any.whl", hash = "sha256:ff7059bb7eb1179e2685604f4aaf157cfd9535242bd23742eadc3c13542139b4", size = 18567, upload-time = "2025-05-07T22:47:40.376Z" },
+463 | ]
+464 | 
+465 | [[package]]
+466 | name = "pygments"
+467 | version = "2.19.2"
+468 | source = { registry = "https://pypi.org/simple" }
+469 | sdist = { url = "https://files.pythonhosted.org/packages/b0/77/a5b8c569bf593b0140bde72ea885a803b82086995367bf2037de0159d924/pygments-2.19.2.tar.gz", hash = "sha256:636cb2477cec7f8952536970bc533bc43743542f70392ae026374600add5b887", size = 4968631, upload-time = "2025-06-21T13:39:12.283Z" }
+470 | wheels = [
+471 |     { url = "https://files.pythonhosted.org/packages/c7/21/705964c7812476f378728bdf590ca4b771ec72385c533964653c68e86bdc/pygments-2.19.2-py3-none-any.whl", hash = "sha256:86540386c03d588bb81d44bc3928634ff26449851e99741617ecb9037ee5ec0b", size = 1225217, upload-time = "2025-06-21T13:39:07.939Z" },
+472 | ]
+473 | 
+474 | [[package]]
+475 | name = "pymdown-extensions"
+476 | version = "10.16"
+477 | source = { registry = "https://pypi.org/simple" }
+478 | dependencies = [
+479 |     { name = "markdown" },
+480 |     { name = "pyyaml" },
+481 | ]
+482 | sdist = { url = "https://files.pythonhosted.org/packages/1a/0a/c06b542ac108bfc73200677309cd9188a3a01b127a63f20cadc18d873d88/pymdown_extensions-10.16.tar.gz", hash = "sha256:71dac4fca63fabeffd3eb9038b756161a33ec6e8d230853d3cecf562155ab3de", size = 853197, upload-time = "2025-06-21T17:56:36.974Z" }
+483 | wheels = [
+484 |     { url = "https://files.pythonhosted.org/packages/98/d4/10bb14004d3c792811e05e21b5e5dcae805aacb739bd12a0540967b99592/pymdown_extensions-10.16-py3-none-any.whl", hash = "sha256:f5dd064a4db588cb2d95229fc4ee63a1b16cc8b4d0e6145c0899ed8723da1df2", size = 266143, upload-time = "2025-06-21T17:56:35.356Z" },
+485 | ]
+486 | 
+487 | [[package]]
+488 | name = "python-dateutil"
+489 | version = "2.9.0.post0"
+490 | source = { registry = "https://pypi.org/simple" }
+491 | dependencies = [
+492 |     { name = "six" },
+493 | ]
+494 | sdist = { url = "https://files.pythonhosted.org/packages/66/c0/0c8b6ad9f17a802ee498c46e004a0eb49bc148f2fd230864601a86dcf6db/python-dateutil-2.9.0.post0.tar.gz", hash = "sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3", size = 342432, upload-time = "2024-03-01T18:36:20.211Z" }
+495 | wheels = [
+496 |     { url = "https://files.pythonhosted.org/packages/ec/57/56b9bcc3c9c6a792fcbaf139543cee77261f3651ca9da0c93f5c1221264b/python_dateutil-2.9.0.post0-py2.py3-none-any.whl", hash = "sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427", size = 229892, upload-time = "2024-03-01T18:36:18.57Z" },
+497 | ]
+498 | 
+499 | [[package]]
+500 | name = "pyyaml"
+501 | version = "6.0.2"
+502 | source = { registry = "https://pypi.org/simple" }
+503 | sdist = { url = "https://files.pythonhosted.org/packages/54/ed/79a089b6be93607fa5cdaedf301d7dfb23af5f25c398d5ead2525b063e17/pyyaml-6.0.2.tar.gz", hash = "sha256:d584d9ec91ad65861cc08d42e834324ef890a082e591037abe114850ff7bbc3e", size = 130631, upload-time = "2024-08-06T20:33:50.674Z" }
+504 | wheels = [
+505 |     { url = "https://files.pythonhosted.org/packages/ef/e3/3af305b830494fa85d95f6d95ef7fa73f2ee1cc8ef5b495c7c3269fb835f/PyYAML-6.0.2-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:efdca5630322a10774e8e98e1af481aad470dd62c3170801852d752aa7a783ba", size = 181309, upload-time = "2024-08-06T20:32:43.4Z" },
+506 |     { url = "https://files.pythonhosted.org/packages/45/9f/3b1c20a0b7a3200524eb0076cc027a970d320bd3a6592873c85c92a08731/PyYAML-6.0.2-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:50187695423ffe49e2deacb8cd10510bc361faac997de9efef88badc3bb9e2d1", size = 171679, upload-time = "2024-08-06T20:32:44.801Z" },
+507 |     { url = "https://files.pythonhosted.org/packages/7c/9a/337322f27005c33bcb656c655fa78325b730324c78620e8328ae28b64d0c/PyYAML-6.0.2-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0ffe8360bab4910ef1b9e87fb812d8bc0a308b0d0eef8c8f44e0254ab3b07133", size = 733428, upload-time = "2024-08-06T20:32:46.432Z" },
+508 |     { url = "https://files.pythonhosted.org/packages/a3/69/864fbe19e6c18ea3cc196cbe5d392175b4cf3d5d0ac1403ec3f2d237ebb5/PyYAML-6.0.2-cp313-cp313-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:17e311b6c678207928d649faa7cb0d7b4c26a0ba73d41e99c4fff6b6c3276484", size = 763361, upload-time = "2024-08-06T20:32:51.188Z" },
+509 |     { url = "https://files.pythonhosted.org/packages/04/24/b7721e4845c2f162d26f50521b825fb061bc0a5afcf9a386840f23ea19fa/PyYAML-6.0.2-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:70b189594dbe54f75ab3a1acec5f1e3faa7e8cf2f1e08d9b561cb41b845f69d5", size = 759523, upload-time = "2024-08-06T20:32:53.019Z" },
+510 |     { url = "https://files.pythonhosted.org/packages/2b/b2/e3234f59ba06559c6ff63c4e10baea10e5e7df868092bf9ab40e5b9c56b6/PyYAML-6.0.2-cp313-cp313-musllinux_1_1_aarch64.whl", hash = "sha256:41e4e3953a79407c794916fa277a82531dd93aad34e29c2a514c2c0c5fe971cc", size = 726660, upload-time = "2024-08-06T20:32:54.708Z" },
+511 |     { url = "https://files.pythonhosted.org/packages/fe/0f/25911a9f080464c59fab9027482f822b86bf0608957a5fcc6eaac85aa515/PyYAML-6.0.2-cp313-cp313-musllinux_1_1_x86_64.whl", hash = "sha256:68ccc6023a3400877818152ad9a1033e3db8625d899c72eacb5a668902e4d652", size = 751597, upload-time = "2024-08-06T20:32:56.985Z" },
+512 |     { url = "https://files.pythonhosted.org/packages/14/0d/e2c3b43bbce3cf6bd97c840b46088a3031085179e596d4929729d8d68270/PyYAML-6.0.2-cp313-cp313-win32.whl", hash = "sha256:bc2fa7c6b47d6bc618dd7fb02ef6fdedb1090ec036abab80d4681424b84c1183", size = 140527, upload-time = "2024-08-06T20:33:03.001Z" },
+513 |     { url = "https://files.pythonhosted.org/packages/fa/de/02b54f42487e3d3c6efb3f89428677074ca7bf43aae402517bc7cca949f3/PyYAML-6.0.2-cp313-cp313-win_amd64.whl", hash = "sha256:8388ee1976c416731879ac16da0aff3f63b286ffdd57cdeb95f3f2e085687563", size = 156446, upload-time = "2024-08-06T20:33:04.33Z" },
+514 | ]
+515 | 
+516 | [[package]]
+517 | name = "pyyaml-env-tag"
+518 | version = "1.1"
+519 | source = { registry = "https://pypi.org/simple" }
+520 | dependencies = [
+521 |     { name = "pyyaml" },
+522 | ]
+523 | sdist = { url = "https://files.pythonhosted.org/packages/eb/2e/79c822141bfd05a853236b504869ebc6b70159afc570e1d5a20641782eaa/pyyaml_env_tag-1.1.tar.gz", hash = "sha256:2eb38b75a2d21ee0475d6d97ec19c63287a7e140231e4214969d0eac923cd7ff", size = 5737, upload-time = "2025-05-13T15:24:01.64Z" }
+524 | wheels = [
+525 |     { url = "https://files.pythonhosted.org/packages/04/11/432f32f8097b03e3cd5fe57e88efb685d964e2e5178a48ed61e841f7fdce/pyyaml_env_tag-1.1-py3-none-any.whl", hash = "sha256:17109e1a528561e32f026364712fee1264bc2ea6715120891174ed1b980d2e04", size = 4722, upload-time = "2025-05-13T15:23:59.629Z" },
+526 | ]
+527 | 
+528 | [[package]]
+529 | name = "requests"
+530 | version = "2.32.4"
+531 | source = { registry = "https://pypi.org/simple" }
+532 | dependencies = [
+533 |     { name = "certifi" },
+534 |     { name = "charset-normalizer" },
+535 |     { name = "idna" },
+536 |     { name = "urllib3" },
+537 | ]
+538 | sdist = { url = "https://files.pythonhosted.org/packages/e1/0a/929373653770d8a0d7ea76c37de6e41f11eb07559b103b1c02cafb3f7cf8/requests-2.32.4.tar.gz", hash = "sha256:27d0316682c8a29834d3264820024b62a36942083d52caf2f14c0591336d3422", size = 135258, upload-time = "2025-06-09T16:43:07.34Z" }
+539 | wheels = [
+540 |     { url = "https://files.pythonhosted.org/packages/7c/e4/56027c4a6b4ae70ca9de302488c5ca95ad4a39e190093d6c1a8ace08341b/requests-2.32.4-py3-none-any.whl", hash = "sha256:27babd3cda2a6d50b30443204ee89830707d396671944c998b5975b031ac2b2c", size = 64847, upload-time = "2025-06-09T16:43:05.728Z" },
+541 | ]
+542 | 
+543 | [[package]]
+544 | name = "ruff"
+545 | version = "0.12.2"
+546 | source = { registry = "https://pypi.org/simple" }
+547 | sdist = { url = "https://files.pythonhosted.org/packages/6c/3d/d9a195676f25d00dbfcf3cf95fdd4c685c497fcfa7e862a44ac5e4e96480/ruff-0.12.2.tar.gz", hash = "sha256:d7b4f55cd6f325cb7621244f19c873c565a08aff5a4ba9c69aa7355f3f7afd3e", size = 4432239, upload-time = "2025-07-03T16:40:19.566Z" }
+548 | wheels = [
+549 |     { url = "https://files.pythonhosted.org/packages/74/b6/2098d0126d2d3318fd5bec3ad40d06c25d377d95749f7a0c5af17129b3b1/ruff-0.12.2-py3-none-linux_armv6l.whl", hash = "sha256:093ea2b221df1d2b8e7ad92fc6ffdca40a2cb10d8564477a987b44fd4008a7be", size = 10369761, upload-time = "2025-07-03T16:39:38.847Z" },
+550 |     { url = "https://files.pythonhosted.org/packages/b1/4b/5da0142033dbe155dc598cfb99262d8ee2449d76920ea92c4eeb9547c208/ruff-0.12.2-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:09e4cf27cc10f96b1708100fa851e0daf21767e9709e1649175355280e0d950e", size = 11155659, upload-time = "2025-07-03T16:39:42.294Z" },
+551 |     { url = "https://files.pythonhosted.org/packages/3e/21/967b82550a503d7c5c5c127d11c935344b35e8c521f52915fc858fb3e473/ruff-0.12.2-py3-none-macosx_11_0_arm64.whl", hash = "sha256:8ae64755b22f4ff85e9c52d1f82644abd0b6b6b6deedceb74bd71f35c24044cc", size = 10537769, upload-time = "2025-07-03T16:39:44.75Z" },
+552 |     { url = "https://files.pythonhosted.org/packages/33/91/00cff7102e2ec71a4890fb7ba1803f2cdb122d82787c7d7cf8041fe8cbc1/ruff-0.12.2-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3eb3a6b2db4d6e2c77e682f0b988d4d61aff06860158fdb413118ca133d57922", size = 10717602, upload-time = "2025-07-03T16:39:47.652Z" },
+553 |     { url = "https://files.pythonhosted.org/packages/9b/eb/928814daec4e1ba9115858adcda44a637fb9010618721937491e4e2283b8/ruff-0.12.2-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:73448de992d05517170fc37169cbca857dfeaeaa8c2b9be494d7bcb0d36c8f4b", size = 10198772, upload-time = "2025-07-03T16:39:49.641Z" },
+554 |     { url = "https://files.pythonhosted.org/packages/50/fa/f15089bc20c40f4f72334f9145dde55ab2b680e51afb3b55422effbf2fb6/ruff-0.12.2-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:3b8b94317cbc2ae4a2771af641739f933934b03555e51515e6e021c64441532d", size = 11845173, upload-time = "2025-07-03T16:39:52.069Z" },
+555 |     { url = "https://files.pythonhosted.org/packages/43/9f/1f6f98f39f2b9302acc161a4a2187b1e3a97634fe918a8e731e591841cf4/ruff-0.12.2-py3-none-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:45fc42c3bf1d30d2008023a0a9a0cfb06bf9835b147f11fe0679f21ae86d34b1", size = 12553002, upload-time = "2025-07-03T16:39:54.551Z" },
+556 |     { url = "https://files.pythonhosted.org/packages/d8/70/08991ac46e38ddd231c8f4fd05ef189b1b94be8883e8c0c146a025c20a19/ruff-0.12.2-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:ce48f675c394c37e958bf229fb5c1e843e20945a6d962cf3ea20b7a107dcd9f4", size = 12171330, upload-time = "2025-07-03T16:39:57.55Z" },
+557 |     { url = "https://files.pythonhosted.org/packages/88/a9/5a55266fec474acfd0a1c73285f19dd22461d95a538f29bba02edd07a5d9/ruff-0.12.2-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:793d8859445ea47591272021a81391350205a4af65a9392401f418a95dfb75c9", size = 11774717, upload-time = "2025-07-03T16:39:59.78Z" },
+558 |     { url = "https://files.pythonhosted.org/packages/87/e5/0c270e458fc73c46c0d0f7cf970bb14786e5fdb88c87b5e423a4bd65232b/ruff-0.12.2-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6932323db80484dda89153da3d8e58164d01d6da86857c79f1961934354992da", size = 11646659, upload-time = "2025-07-03T16:40:01.934Z" },
+559 |     { url = "https://files.pythonhosted.org/packages/b7/b6/45ab96070c9752af37f0be364d849ed70e9ccede07675b0ec4e3ef76b63b/ruff-0.12.2-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:6aa7e623a3a11538108f61e859ebf016c4f14a7e6e4eba1980190cacb57714ce", size = 10604012, upload-time = "2025-07-03T16:40:04.363Z" },
+560 |     { url = "https://files.pythonhosted.org/packages/86/91/26a6e6a424eb147cc7627eebae095cfa0b4b337a7c1c413c447c9ebb72fd/ruff-0.12.2-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:2a4a20aeed74671b2def096bdf2eac610c7d8ffcbf4fb0e627c06947a1d7078d", size = 10176799, upload-time = "2025-07-03T16:40:06.514Z" },
+561 |     { url = "https://files.pythonhosted.org/packages/f5/0c/9f344583465a61c8918a7cda604226e77b2c548daf8ef7c2bfccf2b37200/ruff-0.12.2-py3-none-musllinux_1_2_i686.whl", hash = "sha256:71a4c550195612f486c9d1f2b045a600aeba851b298c667807ae933478fcef04", size = 11241507, upload-time = "2025-07-03T16:40:08.708Z" },
+562 |     { url = "https://files.pythonhosted.org/packages/1c/b7/99c34ded8fb5f86c0280278fa89a0066c3760edc326e935ce0b1550d315d/ruff-0.12.2-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:4987b8f4ceadf597c927beee65a5eaf994c6e2b631df963f86d8ad1bdea99342", size = 11717609, upload-time = "2025-07-03T16:40:10.836Z" },
+563 |     { url = "https://files.pythonhosted.org/packages/51/de/8589fa724590faa057e5a6d171e7f2f6cffe3287406ef40e49c682c07d89/ruff-0.12.2-py3-none-win32.whl", hash = "sha256:369ffb69b70cd55b6c3fc453b9492d98aed98062db9fec828cdfd069555f5f1a", size = 10523823, upload-time = "2025-07-03T16:40:13.203Z" },
+564 |     { url = "https://files.pythonhosted.org/packages/94/47/8abf129102ae4c90cba0c2199a1a9b0fa896f6f806238d6f8c14448cc748/ruff-0.12.2-py3-none-win_amd64.whl", hash = "sha256:dca8a3b6d6dc9810ed8f328d406516bf4d660c00caeaef36eb831cf4871b0639", size = 11629831, upload-time = "2025-07-03T16:40:15.478Z" },
+565 |     { url = "https://files.pythonhosted.org/packages/e2/1f/72d2946e3cc7456bb837e88000eb3437e55f80db339c840c04015a11115d/ruff-0.12.2-py3-none-win_arm64.whl", hash = "sha256:48d6c6bfb4761df68bc05ae630e24f506755e702d4fb08f08460be778c7ccb12", size = 10735334, upload-time = "2025-07-03T16:40:17.677Z" },
+566 | ]
+567 | 
+568 | [[package]]
+569 | name = "six"
+570 | version = "1.17.0"
+571 | source = { registry = "https://pypi.org/simple" }
+572 | sdist = { url = "https://files.pythonhosted.org/packages/94/e7/b2c673351809dca68a0e064b6af791aa332cf192da575fd474ed7d6f16a2/six-1.17.0.tar.gz", hash = "sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81", size = 34031, upload-time = "2024-12-04T17:35:28.174Z" }
+573 | wheels = [
+574 |     { url = "https://files.pythonhosted.org/packages/b7/ce/149a00dd41f10bc29e5921b496af8b574d8413afcd5e30dfa0ed46c2cc5e/six-1.17.0-py2.py3-none-any.whl", hash = "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274", size = 11050, upload-time = "2024-12-04T17:35:26.475Z" },
+575 | ]
+576 | 
+577 | [[package]]
+578 | name = "typing-extensions"
+579 | version = "4.14.1"
+580 | source = { registry = "https://pypi.org/simple" }
+581 | sdist = { url = "https://files.pythonhosted.org/packages/98/5a/da40306b885cc8c09109dc2e1abd358d5684b1425678151cdaed4731c822/typing_extensions-4.14.1.tar.gz", hash = "sha256:38b39f4aeeab64884ce9f74c94263ef78f3c22467c8724005483154c26648d36", size = 107673, upload-time = "2025-07-04T13:28:34.16Z" }
+582 | wheels = [
+583 |     { url = "https://files.pythonhosted.org/packages/b5/00/d631e67a838026495268c2f6884f3711a15a9a2a96cd244fdaea53b823fb/typing_extensions-4.14.1-py3-none-any.whl", hash = "sha256:d1e1e3b58374dc93031d6eda2420a48ea44a36c2b4766a4fdeb3710755731d76", size = 43906, upload-time = "2025-07-04T13:28:32.743Z" },
+584 | ]
+585 | 
+586 | [[package]]
+587 | name = "urllib3"
+588 | version = "2.5.0"
+589 | source = { registry = "https://pypi.org/simple" }
+590 | sdist = { url = "https://files.pythonhosted.org/packages/15/22/9ee70a2574a4f4599c47dd506532914ce044817c7752a79b6a51286319bc/urllib3-2.5.0.tar.gz", hash = "sha256:3fc47733c7e419d4bc3f6b3dc2b4f890bb743906a30d56ba4a5bfa4bbff92760", size = 393185, upload-time = "2025-06-18T14:07:41.644Z" }
+591 | wheels = [
+592 |     { url = "https://files.pythonhosted.org/packages/a7/c2/fe1e52489ae3122415c51f387e221dd0773709bad6c6cdaa599e8a2c5185/urllib3-2.5.0-py3-none-any.whl", hash = "sha256:e6b01673c0fa6a13e374b50871808eb3bf7046c4b125b216f6bf1cc604cff0dc", size = 129795, upload-time = "2025-06-18T14:07:40.39Z" },
+593 | ]
+594 | 
+595 | [[package]]
+596 | name = "watchdog"
+597 | version = "6.0.0"
+598 | source = { registry = "https://pypi.org/simple" }
+599 | sdist = { url = "https://files.pythonhosted.org/packages/db/7d/7f3d619e951c88ed75c6037b246ddcf2d322812ee8ea189be89511721d54/watchdog-6.0.0.tar.gz", hash = "sha256:9ddf7c82fda3ae8e24decda1338ede66e1c99883db93711d8fb941eaa2d8c282", size = 131220, upload-time = "2024-11-01T14:07:13.037Z" }
+600 | wheels = [
+601 |     { url = "https://files.pythonhosted.org/packages/68/98/b0345cabdce2041a01293ba483333582891a3bd5769b08eceb0d406056ef/watchdog-6.0.0-cp313-cp313-macosx_10_13_universal2.whl", hash = "sha256:490ab2ef84f11129844c23fb14ecf30ef3d8a6abafd3754a6f75ca1e6654136c", size = 96480, upload-time = "2024-11-01T14:06:42.952Z" },
+602 |     { url = "https://files.pythonhosted.org/packages/85/83/cdf13902c626b28eedef7ec4f10745c52aad8a8fe7eb04ed7b1f111ca20e/watchdog-6.0.0-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:76aae96b00ae814b181bb25b1b98076d5fc84e8a53cd8885a318b42b6d3a5134", size = 88451, upload-time = "2024-11-01T14:06:45.084Z" },
+603 |     { url = "https://files.pythonhosted.org/packages/fe/c4/225c87bae08c8b9ec99030cd48ae9c4eca050a59bf5c2255853e18c87b50/watchdog-6.0.0-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:a175f755fc2279e0b7312c0035d52e27211a5bc39719dd529625b1930917345b", size = 89057, upload-time = "2024-11-01T14:06:47.324Z" },
+604 |     { url = "https://files.pythonhosted.org/packages/a9/c7/ca4bf3e518cb57a686b2feb4f55a1892fd9a3dd13f470fca14e00f80ea36/watchdog-6.0.0-py3-none-manylinux2014_aarch64.whl", hash = "sha256:7607498efa04a3542ae3e05e64da8202e58159aa1fa4acddf7678d34a35d4f13", size = 79079, upload-time = "2024-11-01T14:06:59.472Z" },
+605 |     { url = "https://files.pythonhosted.org/packages/5c/51/d46dc9332f9a647593c947b4b88e2381c8dfc0942d15b8edc0310fa4abb1/watchdog-6.0.0-py3-none-manylinux2014_armv7l.whl", hash = "sha256:9041567ee8953024c83343288ccc458fd0a2d811d6a0fd68c4c22609e3490379", size = 79078, upload-time = "2024-11-01T14:07:01.431Z" },
+606 |     { url = "https://files.pythonhosted.org/packages/d4/57/04edbf5e169cd318d5f07b4766fee38e825d64b6913ca157ca32d1a42267/watchdog-6.0.0-py3-none-manylinux2014_i686.whl", hash = "sha256:82dc3e3143c7e38ec49d61af98d6558288c415eac98486a5c581726e0737c00e", size = 79076, upload-time = "2024-11-01T14:07:02.568Z" },
+607 |     { url = "https://files.pythonhosted.org/packages/ab/cc/da8422b300e13cb187d2203f20b9253e91058aaf7db65b74142013478e66/watchdog-6.0.0-py3-none-manylinux2014_ppc64.whl", hash = "sha256:212ac9b8bf1161dc91bd09c048048a95ca3a4c4f5e5d4a7d1b1a7d5752a7f96f", size = 79077, upload-time = "2024-11-01T14:07:03.893Z" },
+608 |     { url = "https://files.pythonhosted.org/packages/2c/3b/b8964e04ae1a025c44ba8e4291f86e97fac443bca31de8bd98d3263d2fcf/watchdog-6.0.0-py3-none-manylinux2014_ppc64le.whl", hash = "sha256:e3df4cbb9a450c6d49318f6d14f4bbc80d763fa587ba46ec86f99f9e6876bb26", size = 79078, upload-time = "2024-11-01T14:07:05.189Z" },
+609 |     { url = "https://files.pythonhosted.org/packages/62/ae/a696eb424bedff7407801c257d4b1afda455fe40821a2be430e173660e81/watchdog-6.0.0-py3-none-manylinux2014_s390x.whl", hash = "sha256:2cce7cfc2008eb51feb6aab51251fd79b85d9894e98ba847408f662b3395ca3c", size = 79077, upload-time = "2024-11-01T14:07:06.376Z" },
+610 |     { url = "https://files.pythonhosted.org/packages/b5/e8/dbf020b4d98251a9860752a094d09a65e1b436ad181faf929983f697048f/watchdog-6.0.0-py3-none-manylinux2014_x86_64.whl", hash = "sha256:20ffe5b202af80ab4266dcd3e91aae72bf2da48c0d33bdb15c66658e685e94e2", size = 79078, upload-time = "2024-11-01T14:07:07.547Z" },
+611 |     { url = "https://files.pythonhosted.org/packages/07/f6/d0e5b343768e8bcb4cda79f0f2f55051bf26177ecd5651f84c07567461cf/watchdog-6.0.0-py3-none-win32.whl", hash = "sha256:07df1fdd701c5d4c8e55ef6cf55b8f0120fe1aef7ef39a1c6fc6bc2e606d517a", size = 79065, upload-time = "2024-11-01T14:07:09.525Z" },
+612 |     { url = "https://files.pythonhosted.org/packages/db/d9/c495884c6e548fce18a8f40568ff120bc3a4b7b99813081c8ac0c936fa64/watchdog-6.0.0-py3-none-win_amd64.whl", hash = "sha256:cbafb470cf848d93b5d013e2ecb245d4aa1c8fd0504e863ccefa32445359d680", size = 79070, upload-time = "2024-11-01T14:07:10.686Z" },
+613 |     { url = "https://files.pythonhosted.org/packages/33/e8/e40370e6d74ddba47f002a32919d91310d6074130fe4e17dabcafc15cbf1/watchdog-6.0.0-py3-none-win_ia64.whl", hash = "sha256:a1914259fa9e1454315171103c6a30961236f508b9b623eae470268bbcc6a22f", size = 79067, upload-time = "2024-11-01T14:07:11.845Z" },
+614 | ]
+615 | 
+616 | [[package]]
+617 | name = "wcmatch"
+618 | version = "10.1"
+619 | source = { registry = "https://pypi.org/simple" }
+620 | dependencies = [
+621 |     { name = "bracex" },
+622 | ]
+623 | sdist = { url = "https://files.pythonhosted.org/packages/79/3e/c0bdc27cf06f4e47680bd5803a07cb3dfd17de84cde92dd217dcb9e05253/wcmatch-10.1.tar.gz", hash = "sha256:f11f94208c8c8484a16f4f48638a85d771d9513f4ab3f37595978801cb9465af", size = 117421, upload-time = "2025-06-22T19:14:02.49Z" }
+624 | wheels = [
+625 |     { url = "https://files.pythonhosted.org/packages/eb/d8/0d1d2e9d3fabcf5d6840362adcf05f8cf3cd06a73358140c3a97189238ae/wcmatch-10.1-py3-none-any.whl", hash = "sha256:5848ace7dbb0476e5e55ab63c6bbd529745089343427caa5537f230cc01beb8a", size = 39854, upload-time = "2025-06-22T19:14:00.978Z" },
+626 | ]
+627 | 
 
 
 --------------------------------------------------------------------------------
