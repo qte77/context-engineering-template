@@ -1,7 +1,5 @@
 # Feature description for: [ Initial template for new features ]
 
-As put forward by [context-engineering-intro](https://github.com/coleam00/context-engineering-intro).
-
 ## FEATURE
 
 [Insert your feature here]
