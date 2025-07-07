@@ -1,3 +1,5 @@
+
+
 ├── .claude
     ├── commands
     │   ├── execute-prp.md
@@ -759,7 +761,9 @@
  78 |           # current=$(git show -s --format=%ci HEAD)
  79 |           # previous=$(git show -s --format=%ci HEAD~1)
  80 |           # git diff --name-only HEAD^ HEAD >> $GITHUB_STEP_SUMMARY
- 81 |           version_tag_regex="^v[0-9]+\.[0-9]+\.[0-9]+$" # v0.0.0 
+ 81 |           version_tag_regex="^v[0-9]+\.[0-9]+\.[0-9]+
+
+quot; # v0.0.0 
  82 |           tags=$(git tag --sort=-version:refname | \
  83 |             grep -E "${version_tag_regex}" || echo "")
  84 | 
@@ -1200,10 +1204,12 @@
 26 | 
 27 | ## [Unreleased]
 28 | 
-29 | ### Added
+29 | ## [0.0.1] - 2025-07-07
 30 | 
-31 | - Initial template containing templates for PRP
+31 | ### Added
 32 | 
+33 | - Initial template containing templates for PRP
+34 | 
 
 
 --------------------------------------------------------------------------------
@@ -1923,11 +1929,11 @@
  27 | 	echo "Starting Claude Code PRP runner ..."
  28 | 	dest_file=$(firstword $(strip $(1)))
  29 | 	dest_cmd=$(firstword $(strip $(2)))
- 30 | 	if [ -z "$${dest_file}" ]; then
+ 30 | 	if [ -z "${dest_file}" ]; then
  31 | 		echo "Error: ARGS for PRP filename is empty. Please provide a PRP filename."
  32 | 		exit 1
  33 | 	fi
- 34 | 	case "$${dest_cmd}" in
+ 34 | 	case "${dest_cmd}" in
  35 | 		start)
  36 | 			dest_cmd=$(PRP_CLAUDE_GEN_CMD)
  37 | 			dest_path=$(FEAT_DEF_PATH);;
@@ -1935,12 +1941,12 @@
  39 | 			dest_cmd=$(PRP_CLAUDE_EXE_CMD)
  40 | 			dest_path=$(PRP_DEF_PATH);;
  41 | 		*)
- 42 |     		echo "Unknown command: $${dest_cmd}. Exiting ..."
+ 42 |     		echo "Unknown command: ${dest_cmd}. Exiting ..."
  43 |     		exit 1;;
  44 | 	esac
- 45 | 	dest_cmd="/project:$${dest_cmd} $${dest_path}/$${dest_file}"
- 46 | 	echo "Executing command '$${dest_cmd}' ..."
- 47 | 	claude -p "$${dest_cmd}" 2>&1
+ 45 | 	dest_cmd="/project:${dest_cmd} ${dest_path}/${dest_file}"
+ 46 | 	echo "Executing command '${dest_cmd}' ..."
+ 47 | 	claude -p "${dest_cmd}" 2>&1
  48 | 	claude -p "/cost" 2>&1
  49 | endef
  50 | 
@@ -1967,24 +1973,24 @@
  71 | 	echo "Setting up claude code ..."
  72 | 	npm install -g @anthropic-ai/claude-code
  73 | 	claude config set --global preferredNotifChannel terminal_bell
- 74 | 	echo "npm version: $$(npm --version)"
+ 74 | 	echo "npm version: $(npm --version)"
  75 | 	claude --version
  76 | 
  77 | 
  78 | export_env_file:  # Read ENV_FILE and export k=v to env
- 79 | 	while IFS='=' read -r key value || [ -n "$${key}" ]; do
- 80 | 		case "$${key}" in
+ 79 | 	while IFS='=' read -r key value || [ -n "${key}" ]; do
+ 80 | 		case "${key}" in
  81 | 			''|\#*) continue ;;
  82 | 		esac
- 83 | 		value=$$(echo "$${value}" | sed -e 's/^"//' -e 's/"$$//')
- 84 | 		export "$${key}=$${value}"
+ 83 | 		value=$(echo "${value}" | sed -e 's/^"//' -e 's/"$//')
+ 84 | 		export "${key}=${value}"
  85 | 	done < .env
  86 | 
  87 | 
  88 | output_unset_env_sh:  ## Unset app environment variables
  89 | 	uf="./unset_env.sh"
- 90 | 	echo "Outputing '$${uf}' ..."
- 91 | 	printenv | awk -F= '/_API_KEY=/ {print "unset " $$1}' > $$uf
+ 90 | 	echo "Outputing '${uf}' ..."
+ 91 | 	printenv | awk -F= '/_API_KEY=/ {print "unset " $1}' > $uf
  92 | 
  93 | 
  94 | # MARK: context engineering
@@ -2027,11 +2033,11 @@
 131 | 	echo "Usage: make [recipe]"
 132 | 	echo "Recipes:"
 133 | 	awk '/^[a-zA-Z0-9_-]+:.*?##/ {
-134 | 		helpMessage = match($$0, /## (.*)/)
+134 | 		helpMessage = match($0, /## (.*)/)
 135 | 		if (helpMessage) {
-136 | 			recipe = $$1
+136 | 			recipe = $1
 137 | 			sub(/:/, "", recipe)
-138 | 			printf "  \033[36m%-20s\033[0m %s\n", recipe, substr($$0, RSTART + 3, RLENGTH)
+138 | 			printf "  \033[36m%-20s\033[0m %s\n", recipe, substr($0, RSTART + 3, RLENGTH)
 139 | 		}
 140 | 	}' $(MAKEFILE_LIST)
 141 | 
@@ -2045,7 +2051,7 @@
  3 | This project aims to implement a template for context engineering with coding agents. As suggested by several resources, including [context-engineering-intro](https://github.com/coleam00/context-engineering-intro), [The rise of "context engineering"](https://blog.langchain.com/the-rise-of-context-engineering/), [Context Engineering](https://blog.langchain.com/context-engineering-for-agents/) and somewhat [He Built 40 Startups Using Just Prompts — Here’s His System](https://youtu.be/CIAu6WeckQ0).
  4 | 
  5 | [![License](https://img.shields.io/badge/license-GNUGPLv3-green.svg)](LICENSE)
- 6 | ![Version](https://img.shields.io/badge/version-0.0.0-58f4c2)
+ 6 | ![Version](https://img.shields.io/badge/version-0.0.1-58f4c2)
  7 | [![CodeQL](https://github.com/qte77/context-engineering-template/actions/workflows/codeql.yaml/badge.svg)](https://github.com/qte77/context-engineering-template/actions/workflows/codeql.yaml)
  8 | [![CodeFactor](https://www.codefactor.io/repository/github/qte77/context-engineering-template/badge)](https://www.codefactor.io/repository/github/qte77/context-engineering-template)
  9 | [![ruff](https://github.com/qte77/context-engineering-template/actions/workflows/ruff.yaml/badge.svg)](https://github.com/qte77/context-engineering-template/actions/workflows/ruff.yaml)
@@ -2129,7 +2135,7 @@
 --------------------------------------------------------------------------------
 /assets/images/sequence_diagram.png:
 --------------------------------------------------------------------------------
-https://raw.githubusercontent.com/qte77/context-engineering-template/8cbe69d12e4b61c3e7e376f47d7fd74b78af55b8/assets/images/sequence_diagram.png
+https://raw.githubusercontent.com/qte77/context-engineering-template/d65448419d88c2be19af1bab0729c0d1a2996deb/assets/images/sequence_diagram.png
 
 
 --------------------------------------------------------------------------------
@@ -2519,7 +2525,7 @@ https://raw.githubusercontent.com/qte77/context-engineering-template/8cbe69d12e4
   3 | build-backend = "hatchling.build"
   4 | 
   5 | [project]
-  6 | version = "0.0.0"
+  6 | version = "0.0.1"
   7 | name = "context-engineering-template"
   8 | description = "Assess the effectiveness of agentic AI systems across various use cases focusing on agnostic metrics that measure core agentic capabilities."
   9 | authors = [
@@ -2619,7 +2625,7 @@ https://raw.githubusercontent.com/qte77/context-engineering-template/8cbe69d12e4
 103 | ]
 104 | 
 105 | [tool.bumpversion]
-106 | current_version = "0.0.0"
+106 | current_version = "0.0.1"
 107 | parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
 108 | serialize = ["{major}.{minor}.{patch}"]
 109 | commit = true
@@ -2665,7 +2671,7 @@ https://raw.githubusercontent.com/qte77/context-engineering-template/8cbe69d12e4
 --------------------------------------------------------------------------------
 1 | """Defines the application version."""
 2 | 
-3 | __version__ = "0.0.0"
+3 | __version__ = "0.0.1"
 4 | 
 
 
@@ -3321,3 +3327,4 @@ https://raw.githubusercontent.com/qte77/context-engineering-template/8cbe69d12e4
 
 
 --------------------------------------------------------------------------------
+
