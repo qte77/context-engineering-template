@@ -27,7 +27,7 @@ These examples cover correct usage and malformed inputs to validate tool respons
 * [random module (Python)](https://docs.python.org/3/library/random.html): For rolling dice.
 * \[MCP Protocol Overview (proprietary/internal if applicable)] or general protocol documentation, if using a specific spec.
 
-Additional context from [context-engineering-intro](https://github.com/qte/context-engineering-template) will inform message structure and processing strategy.
+Additional context from [context-engineering-intro](https://github.com/qte77/context-engineering-template) will inform message structure and processing strategy.
 
 ## OTHER CONSIDERATIONS
 
