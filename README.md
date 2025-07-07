@@ -2,7 +2,7 @@
 
 This project aims to implement a template for context engineering with coding agents. As suggested by several resources, including [context-engineering-intro](https://github.com/coleam00/context-engineering-intro), [The rise of "context engineering"](https://blog.langchain.com/the-rise-of-context-engineering/), [Context Engineering](https://blog.langchain.com/context-engineering-for-agents/) and somewhat [He Built 40 Startups Using Just Prompts — Here’s His System](https://youtu.be/CIAu6WeckQ0).
 
-[![License](https://img.shields.io/badge/license-BSD3Clause-green.svg)](LICENSE.md)
+[![License](https://img.shields.io/badge/license-GNUGPLv3-green.svg)](LICENSE)
 ![Version](https://img.shields.io/badge/version-0.0.0-58f4c2)
 [![CodeQL](https://github.com/qte77/context-engineering-template/actions/workflows/codeql.yaml/badge.svg)](https://github.com/qte77/context-engineering-template/actions/workflows/codeql.yaml)
 [![CodeFactor](https://www.codefactor.io/repository/github/qte77/context-engineering-template/badge)](https://www.codefactor.io/repository/github/qte77/context-engineering-template)
@@ -33,12 +33,18 @@ Let the Coding Agent do the heavy lifting. Build code base from top to bottom: D
 
 <details>
   <summary>Show Sequence Diagram</summary>
-  <img src="assets/images/sequence_diagram.png#gh-light-mode-only" alt="Sequence Diagram" title="Sequence Diagram" width="60%" />
+  <a href="assets/images/sequence_diagram.png">
+    <img src="assets/images/sequence_diagram.png#gh-light-mode-only" alt="Sequence Diagram" title="Sequence Diagram" width="111%" />
+  </a>
+  <a href="assets/images/sequence_diagram.png">
+    <img src="assets/images/sequence_diagram.png#gh-dark-mode-only" alt="Sequence Diagram" title="Sequence Diagram" width="111%" />
+  </a>
 </details>
 
 ## Setup
 
-`make setup_python_claude`
+1. `make setup_python_claude`
+2. If .env to be used: `make export_env_file`
 
 ## Usage
 
@@ -46,11 +52,11 @@ Let the Coding Agent do the heavy lifting. Build code base from top to bottom: D
 2. Describe desired feature in `/context/features/feature_XXX.md`, like shown in [feature_base.md](/context/templates/feature_base.md).
 3. Place optional examples into [/context/examples](/context/examples).
 4. Let the Product Requirements Prompt (PRP) be generated:
-  - In Claude Code CLI: `/generate-prp feature_XXX.md`
-  - or: `make prp_gen_claude "ARGS=feature_XXX.md"`
+   - In Claude Code CLI: `/generate-prp feature_XXX.md`
+   - or: `make prp_gen_claude "ARGS=feature_XXX.md"`
 5. Let the feature be implemented based on the PRP:
-  - In Claude Code CLI: `/execute-prp feature_XXX.md`
-  - or: `make prp_exe_claude "ARGS=feature_XXX.md"`
+   - In Claude Code CLI: `/execute-prp feature_XXX.md`
+   - or: `make prp_exe_claude "ARGS=feature_XXX.md"`
 
 ### Configuration
 
@@ -74,4 +80,4 @@ GITHUB_API_KEY="ghp_xyz"
 ## TODO
 
 - Implement business process as discussed in [He Built 40 Startups Using Just Prompts — Here’s His System](https://youtu.be/CIAu6WeckQ0)
-- Refine `AGENTS.md` to let the agent not do bulk but incremental changes, also implement tests (red > green > blue) first, then 
+- Refine `AGENTS.md` to let the agent not do bulk but incremental changes, also implement tests first, then code and iterate until functional (red > green > blue).

@@ -1,4 +1,3 @@
----
 name: bump-my-version
 
 on:
@@ -55,8 +54,8 @@ jobs:
       - name: Set git cfg and create branch
         id: create_branch
         run: |
-          git config user.email "bumped@qte77.gha"
-          git config user.name "bump-my-version"
+          git config user.email "github-actions@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
           git checkout -b "${{ env.BRANCH_NEW }}"
           echo "branch_new=${{ env.BRANCH_NEW }}" >> $GITHUB_OUTPUT
 
@@ -100,4 +99,3 @@ jobs:
     with:
       branch_to_summarize: ${{ needs.bump_my_version.outputs.branch_new }}
       summary_data: ${{ needs.bump_my_version.outputs.summary_data }}
-...

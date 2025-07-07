@@ -17,6 +17,9 @@ PRP_CLAUDE_GEN_CMD := generate-prp
 PRP_CLAUDE_EXE_CMD := execute-prp
 
 
+# MARK: setup
+
+
 # construct the full paths and execute Claude Code commands
 # TODO switch folder by function called ()
 # TODO Claude Code non-interactive headless mode tee to CLI
@@ -48,7 +51,7 @@ endef
 
 setup_python_claude:  # Set up environment and install Claude Code CLI
 	$(MAKE) -s setup_dev
-	$(MAKR) -s export_env_file
+	$(MAKE) -s export_env_file
 	$(MAKE) -s setup_claude_code
 
 
@@ -72,14 +75,6 @@ setup_claude_code:  ## Setup Claude Code CLI, node.js and npm have to be present
 	claude --version
 
 
-prp_gen_claude:  ## generates the PRP from the file passed in "ARGS=file"
-	$(call CLAUDE_PRP_RUNNER, $(ARGS), "generate")
-
-
-prp_exe_claude:  ## executes the PRP from the file passed in "ARGS=file"
-	$(call CLAUDE_PRP_RUNNER, $(ARGS), "execute")
-
-
 export_env_file:  # Read ENV_FILE and export k=v to env
 	while IFS='=' read -r key value || [ -n "$${key}" ]; do
 		case "$${key}" in
@@ -88,6 +83,26 @@ export_env_file:  # Read ENV_FILE and export k=v to env
 		value=$$(echo "$${value}" | sed -e 's/^"//' -e 's/"$$//')
 		export "$${key}=$${value}"
 	done < .env
+
+
+output_unset_env_sh:  ## Unset app environment variables
+	uf="./unset_env.sh"
+	echo "Outputing '$${uf}' ..."
+	printenv | awk -F= '/_API_KEY=/ {print "unset " $$1}' > $$uf
+
+
+# MARK: context engineering
+
+
+prp_gen_claude:  ## generates the PRP from the file passed in "ARGS=file"
+	$(call CLAUDE_PRP_RUNNER, $(ARGS), "generate")
+
+
+prp_exe_claude:  ## executes the PRP from the file passed in "ARGS=file"
+	$(call CLAUDE_PRP_RUNNER, $(ARGS), "execute")
+
+
+# MARK: code quality
 
 
 ruff:  ## Lint: Format and check with ruff
@@ -108,10 +123,7 @@ check_types:  ## Check for static typing errors
 	uv run mypy $(APP_PATH)
 
 
-output_unset_app_env_sh:  ## Unset app environment variables
-	uf="./unset_env.sh"
-	echo "Outputing '$${uf}' ..."
-	printenv | awk -F= '/_API_KEY=/ {print "unset " $$1}' > $$uf
+# MARK: help
 
 
 # TODO add stackoverflow source
