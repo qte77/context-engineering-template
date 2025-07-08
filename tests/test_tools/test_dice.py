@@ -2,8 +2,8 @@
 
 import pytest
 
-from src.mcp_server.tools.dice import DiceRollTool
 from src.mcp_server.tools.base import ValidationToolError
+from src.mcp_server.tools.dice import DiceRollTool
 
 
 class TestDiceRollTool:

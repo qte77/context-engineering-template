@@ -133,7 +133,9 @@ class ToolForms:
                     request_payload={"tool": tool_name, "arguments": arguments},
                     response_payload=result,
                     success=result.get("success", False),
-                    error_message=result.get("error") if not result.get("success", False) else None,
+                    error_message=result.get("error")
+                    if not result.get("success", False)
+                    else None,
                     execution_time=execution_time,
                 )
 
@@ -145,7 +147,9 @@ class ToolForms:
                     st.success(f"✅ {tool_name} executed successfully!")
                     st.json(result)
                 else:
-                    st.error(f"❌ {tool_name} failed: {result.get('error', 'Unknown error')}")
+                    st.error(
+                        f"❌ {tool_name} failed: {result.get('error', 'Unknown error')}"
+                    )
 
                 st.rerun()
 

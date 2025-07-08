@@ -20,7 +20,7 @@ class ConnectionManager:
         if st.session_state.gui_session.connected:
             st.success("✅ Connected to MCP Server")
             st.write(f"Server: {st.session_state.gui_session.server_path}")
-            tools = ', '.join(st.session_state.gui_session.available_tools)
+            tools = ", ".join(st.session_state.gui_session.available_tools)
             st.write(f"Available Tools: {tools}")
 
             # Health check button
@@ -50,16 +50,18 @@ class ConnectionManager:
                 # Create connection manager if it doesn't exist
                 if "mcp_connection_manager" not in st.session_state:
                     st.session_state.mcp_connection_manager = MCPConnectionManager()
-                
+
                 manager = st.session_state.mcp_connection_manager
-                
+
                 # Connect to server
                 success = manager.connect(server_path)
-                
+
                 if success:
                     st.session_state.gui_session.connected = True
                     st.session_state.gui_session.server_path = server_path
-                    st.session_state.gui_session.available_tools = manager.available_tools
+                    st.session_state.gui_session.available_tools = (
+                        manager.available_tools
+                    )
 
                     st.success("Connected successfully!")
                     st.rerun()
@@ -76,7 +78,7 @@ class ConnectionManager:
             try:
                 manager = st.session_state.mcp_connection_manager
                 manager.disconnect()
-                
+
                 st.session_state.gui_session.connected = False
                 st.session_state.gui_session.available_tools = []
                 st.success("Disconnected successfully!")
@@ -91,7 +93,7 @@ class ConnectionManager:
             try:
                 manager = st.session_state.mcp_connection_manager
                 health = manager.health_check()
-                
+
                 if health:
                     st.success("Health check passed!")
                 else:

@@ -55,7 +55,7 @@ class HistoryManager:
                     st.write(f"**Execution Time:** {interaction.execution_time:.2f}s")
 
             with col2:
-                timestamp_str = interaction.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+                timestamp_str = interaction.timestamp.strftime("%Y-%m-%d %H:%M:%S")
                 st.write(f"**Timestamp:** {timestamp_str}")
                 if interaction.error_message:
                     st.write(f"**Error:** {interaction.error_message}")

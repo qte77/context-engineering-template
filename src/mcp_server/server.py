@@ -5,15 +5,15 @@ import sys
 from pathlib import Path
 from typing import Any
 
-# Add project root to Python path
-project_root = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(project_root))
-
 from mcp.server.fastmcp import FastMCP
 
 from src.mcp_server.tools.date_time import DateTimeTool
 from src.mcp_server.tools.dice import DiceRollTool
 from src.mcp_server.tools.weather import WeatherTool
+
+# Add project root to Python path
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

@@ -2,31 +2,32 @@
 
 import asyncio
 import threading
-from typing import Any, Awaitable, Callable, TypeVar
+from collections.abc import Awaitable
+from typing import TypeVar
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 def run_async(coro: Awaitable[T]) -> T:
     """Run an async function in Streamlit context.
-    
+
     This handles the case where Streamlit might already have an event loop running.
-    
+
     Args:
         coro: The coroutine to run
-        
+
     Returns:
         The result of the coroutine
     """
     try:
         # Try to get the current event loop
-        loop = asyncio.get_running_loop()
-        
+        # loop = asyncio.get_running_loop()
+
         # If we're already in an event loop, we need to run in a new thread
         # with its own event loop
         result = None
         exception = None
-        
+
         def run_in_new_loop():
             nonlocal result, exception
             try:
@@ -38,15 +39,15 @@ def run_async(coro: Awaitable[T]) -> T:
                     new_loop.close()
             except Exception as e:
                 exception = e
-        
+
         thread = threading.Thread(target=run_in_new_loop)
         thread.start()
         thread.join()
-        
+
         if exception:
             raise exception
         return result
-        
+
     except RuntimeError:
         # No event loop running, can use asyncio.run directly
         return asyncio.run(coro)
@@ -54,12 +55,12 @@ def run_async(coro: Awaitable[T]) -> T:
 
 class AsyncContextManager:
     """Helper to manage async context across multiple calls."""
-    
+
     def __init__(self):
         self._client = None
         self._loop = None
         self._thread = None
-        
+
     def run_async(self, coro: Awaitable[T]) -> T:
         """Run async function maintaining context."""
         return run_async(coro)

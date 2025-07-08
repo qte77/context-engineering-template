@@ -1,11 +1,15 @@
 """Tests for the weather tool."""
 
-import pytest
 from unittest.mock import AsyncMock, patch
-import httpx
 
+import httpx
+import pytest
+
+from src.mcp_server.tools.base import (
+    ExternalServiceError,
+    ToolError,
+)
 from src.mcp_server.tools.weather import WeatherTool
-from src.mcp_server.tools.base import ValidationToolError, ExternalServiceError, ToolError
 from tests.fixtures.mcp_messages import WeatherAPIFixtures
 
 
@@ -73,7 +77,7 @@ class TestWeatherTool:
             temperature=18.5, weather_code=2, wind_speed=12.3, humidity=65.0
         )
 
-        with patch.object(weather_tool, 'make_request', return_value=mock_response):
+        with patch.object(weather_tool, "make_request", return_value=mock_response):
             result = await weather_tool.execute(location="San Francisco")
 
             assert result.location == "San Francisco"
@@ -87,7 +91,7 @@ class TestWeatherTool:
         """Test successful weather retrieval using coordinates."""
         mock_response = WeatherAPIFixtures.current_weather_response()
 
-        with patch.object(weather_tool, 'make_request', return_value=mock_response):
+        with patch.object(weather_tool, "make_request", return_value=mock_response):
             result = await weather_tool.execute(location="37.7749,-122.4194")
 
             assert result.location == "37.7749,-122.4194"
@@ -113,7 +117,9 @@ class TestWeatherTool:
     @pytest.mark.asyncio
     async def test_execute_api_timeout(self, weather_tool):
         """Test handling of API timeout."""
-        with patch.object(weather_tool, 'make_request', side_effect=httpx.TimeoutException("Timeout")):
+        with patch.object(
+            weather_tool, "make_request", side_effect=httpx.TimeoutException("Timeout")
+        ):
             with pytest.raises(ExternalServiceError) as exc_info:
                 await weather_tool.execute(location="San Francisco")
 
@@ -125,10 +131,10 @@ class TestWeatherTool:
         error = httpx.HTTPStatusError(
             "500 Server Error",
             request=httpx.Request("GET", "http://test"),
-            response=httpx.Response(500, text="Server Error")
+            response=httpx.Response(500, text="Server Error"),
         )
 
-        with patch.object(weather_tool, 'make_request', side_effect=error):
+        with patch.object(weather_tool, "make_request", side_effect=error):
             with pytest.raises(ExternalServiceError) as exc_info:
                 await weather_tool.execute(location="San Francisco")
 
@@ -139,7 +145,9 @@ class TestWeatherTool:
         """Test handling of incomplete API data."""
         incomplete_response = {"current": {"time": "2025-07-07T14:30:00Z"}}
 
-        with patch.object(weather_tool, 'make_request', return_value=incomplete_response):
+        with patch.object(
+            weather_tool, "make_request", return_value=incomplete_response
+        ):
             with pytest.raises(ExternalServiceError) as exc_info:
                 await weather_tool.execute(location="San Francisco")
 
@@ -150,7 +158,9 @@ class TestWeatherTool:
         """Test handling of missing current weather data."""
         no_current_response = {"forecast": {}}
 
-        with patch.object(weather_tool, 'make_request', return_value=no_current_response):
+        with patch.object(
+            weather_tool, "make_request", return_value=no_current_response
+        ):
             with pytest.raises(ExternalServiceError) as exc_info:
                 await weather_tool.execute(location="San Francisco")
 
@@ -166,7 +176,7 @@ class TestWeatherTool:
             condition="Partly cloudy",
             wind_speed=12.3,
             humidity=65.0,
-            timestamp="2025-07-07T14:30:00Z"
+            timestamp="2025-07-07T14:30:00Z",
         )
 
         formatted = weather_tool.format_result(response)
@@ -188,7 +198,7 @@ class TestWeatherTool:
             condition="Clear sky",
             wind_speed=10.0,
             humidity=None,
-            timestamp=None
+            timestamp=None,
         )
 
         formatted = weather_tool.format_result(response)
@@ -203,7 +213,7 @@ class TestWeatherTool:
         """Test safe_execute returns proper success format."""
         mock_response = WeatherAPIFixtures.current_weather_response()
 
-        with patch.object(weather_tool, 'make_request', return_value=mock_response):
+        with patch.object(weather_tool, "make_request", return_value=mock_response):
             result = await weather_tool.safe_execute(location="San Francisco")
 
             assert "content" in result
@@ -231,8 +241,8 @@ class TestWeatherTool:
         # Mock the HTTP client
         mock_client = AsyncMock()
         weather_tool._http_client = mock_client
-        
+
         await weather_tool.cleanup()
-        
+
         mock_client.aclose.assert_called_once()
         assert weather_tool._http_client is None

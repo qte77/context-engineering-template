@@ -1,10 +1,11 @@
 """Tests for the MCP server integration."""
 
-import pytest
 from unittest.mock import AsyncMock, patch
 
-from src.mcp_server.server import dice_tool, weather_tool, datetime_tool, cleanup_server
-from tests.fixtures.mcp_messages import MCPMessageFixtures, WeatherAPIFixtures
+import pytest
+
+from src.mcp_server.server import cleanup_server, datetime_tool, dice_tool, weather_tool
+from tests.fixtures.mcp_messages import WeatherAPIFixtures
 
 
 class TestMCPServerIntegration:
@@ -31,7 +32,7 @@ class TestMCPServerIntegration:
 
         mock_response = WeatherAPIFixtures.current_weather_response()
 
-        with patch.object(weather_tool, 'make_request', return_value=mock_response):
+        with patch.object(weather_tool, "make_request", return_value=mock_response):
             result = await get_weather(location="San Francisco")
 
             assert "content" in result
@@ -136,7 +137,7 @@ class TestMCPServerIntegration:
     @pytest.mark.asyncio
     async def test_mcp_tool_docstrings(self):
         """Test that MCP tool functions have proper docstrings."""
-        from src.mcp_server.server import roll_dice, get_weather, get_date
+        from src.mcp_server.server import get_date, get_weather, roll_dice
 
         assert roll_dice.__doc__ is not None
         assert "dice" in roll_dice.__doc__.lower()
@@ -153,7 +154,7 @@ class TestMCPServerIntegration:
     @pytest.mark.asyncio
     async def test_all_tools_return_proper_format(self):
         """Test that all tools return the expected MCP response format."""
-        from src.mcp_server.server import roll_dice, get_date
+        from src.mcp_server.server import get_date, roll_dice
 
         # Test dice tool
         dice_result = await roll_dice(notation="1d6")
@@ -180,7 +181,7 @@ class TestMCPServerIntegration:
 
         mock_response = WeatherAPIFixtures.current_weather_response()
 
-        with patch.object(weather_tool, 'make_request', return_value=mock_response):
+        with patch.object(weather_tool, "make_request", return_value=mock_response):
             result = await get_weather(location="37.7749,-122.4194")
 
             assert "content" in result

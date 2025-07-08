@@ -1,12 +1,13 @@
 """Tests for the date/time tool."""
 
-import pytest
 import zoneinfo
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import patch
 
+import pytest
+
+from src.mcp_server.tools.base import ToolError, ValidationToolError
 from src.mcp_server.tools.date_time import DateTimeTool
-from src.mcp_server.tools.base import ValidationToolError, ToolError
 
 
 class TestDateTimeTool:
@@ -20,13 +21,13 @@ class TestDateTimeTool:
     def test_parse_timezone_utc(self, datetime_tool):
         """Test parsing UTC timezone."""
         tz = datetime_tool.parse_timezone("UTC")
-        assert tz == timezone.utc
+        assert tz == UTC
 
         tz = datetime_tool.parse_timezone("utc")
-        assert tz == timezone.utc
+        assert tz == UTC
 
         tz = datetime_tool.parse_timezone("GMT")
-        assert tz == timezone.utc
+        assert tz == UTC
 
     def test_parse_timezone_iana(self, datetime_tool):
         """Test parsing IANA timezone names."""
@@ -59,8 +60,8 @@ class TestDateTimeTool:
     @pytest.mark.asyncio
     async def test_execute_utc(self, datetime_tool):
         """Test execution with UTC timezone."""
-        with patch('src.mcp_server.tools.date_time.datetime') as mock_datetime:
-            mock_now = datetime(2025, 7, 7, 14, 30, 25, tzinfo=timezone.utc)
+        with patch("src.mcp_server.tools.date_time.datetime") as mock_datetime:
+            mock_now = datetime(2025, 7, 7, 14, 30, 25, tzinfo=UTC)
             mock_datetime.now.return_value = mock_now
             mock_datetime.fromisoformat = datetime.fromisoformat
 
@@ -73,7 +74,7 @@ class TestDateTimeTool:
     @pytest.mark.asyncio
     async def test_execute_iana_timezone(self, datetime_tool):
         """Test execution with IANA timezone."""
-        with patch('src.mcp_server.tools.date_time.datetime') as mock_datetime:
+        with patch("src.mcp_server.tools.date_time.datetime") as mock_datetime:
             ny_tz = zoneinfo.ZoneInfo("America/New_York")
             mock_now = datetime(2025, 7, 7, 10, 30, 25, tzinfo=ny_tz)
             mock_datetime.now.return_value = mock_now
@@ -88,7 +89,7 @@ class TestDateTimeTool:
     @pytest.mark.asyncio
     async def test_execute_alias(self, datetime_tool):
         """Test execution with timezone alias."""
-        with patch('src.mcp_server.tools.date_time.datetime') as mock_datetime:
+        with patch("src.mcp_server.tools.date_time.datetime") as mock_datetime:
             ny_tz = zoneinfo.ZoneInfo("America/New_York")
             mock_now = datetime(2025, 7, 7, 10, 30, 25, tzinfo=ny_tz)
             mock_datetime.now.return_value = mock_now
@@ -102,8 +103,8 @@ class TestDateTimeTool:
     @pytest.mark.asyncio
     async def test_execute_default_timezone(self, datetime_tool):
         """Test execution with default timezone (UTC)."""
-        with patch('src.mcp_server.tools.date_time.datetime') as mock_datetime:
-            mock_now = datetime(2025, 7, 7, 14, 30, 25, tzinfo=timezone.utc)
+        with patch("src.mcp_server.tools.date_time.datetime") as mock_datetime:
+            mock_now = datetime(2025, 7, 7, 14, 30, 25, tzinfo=UTC)
             mock_datetime.now.return_value = mock_now
             mock_datetime.fromisoformat = datetime.fromisoformat
 
@@ -133,9 +134,7 @@ class TestDateTimeTool:
         from src.mcp_server.models import DateTimeResponse
 
         response = DateTimeResponse(
-            datetime="2025-07-07T14:30:25+00:00",
-            timezone="UTC",
-            timestamp=1720360225.0
+            datetime="2025-07-07T14:30:25+00:00", timezone="UTC", timestamp=1720360225.0
         )
 
         formatted = datetime_tool.format_result(response)
@@ -153,9 +152,7 @@ class TestDateTimeTool:
 
         # Monday
         response = DateTimeResponse(
-            datetime="2025-07-07T14:30:25+00:00",
-            timezone="UTC",
-            timestamp=1720360225.0
+            datetime="2025-07-07T14:30:25+00:00", timezone="UTC", timestamp=1720360225.0
         )
 
         formatted = datetime_tool.format_result(response)
@@ -166,9 +163,7 @@ class TestDateTimeTool:
         from src.mcp_server.models import DateTimeResponse
 
         response = DateTimeResponse(
-            datetime="invalid-datetime",
-            timezone="UTC",
-            timestamp=1720360225.0
+            datetime="invalid-datetime", timezone="UTC", timestamp=1720360225.0
         )
 
         formatted = datetime_tool.format_result(response)
@@ -182,8 +177,8 @@ class TestDateTimeTool:
     @pytest.mark.asyncio
     async def test_safe_execute_success(self, datetime_tool):
         """Test safe_execute returns proper success format."""
-        with patch('src.mcp_server.tools.date_time.datetime') as mock_datetime:
-            mock_now = datetime(2025, 7, 7, 14, 30, 25, tzinfo=timezone.utc)
+        with patch("src.mcp_server.tools.date_time.datetime") as mock_datetime:
+            mock_now = datetime(2025, 7, 7, 14, 30, 25, tzinfo=UTC)
             mock_datetime.now.return_value = mock_now
             mock_datetime.fromisoformat = datetime.fromisoformat
 
@@ -221,7 +216,7 @@ class TestDateTimeTool:
     @pytest.mark.asyncio
     async def test_timezone_case_insensitive(self, datetime_tool):
         """Test timezone aliases are case insensitive."""
-        with patch('src.mcp_server.tools.date_time.datetime') as mock_datetime:
+        with patch("src.mcp_server.tools.date_time.datetime") as mock_datetime:
             ny_tz = zoneinfo.ZoneInfo("America/New_York")
             mock_now = datetime(2025, 7, 7, 10, 30, 25, tzinfo=ny_tz)
             mock_datetime.now.return_value = mock_now
@@ -235,8 +230,8 @@ class TestDateTimeTool:
     @pytest.mark.asyncio
     async def test_whitespace_handling(self, datetime_tool):
         """Test timezone input with whitespace is handled correctly."""
-        with patch('src.mcp_server.tools.date_time.datetime') as mock_datetime:
-            mock_now = datetime(2025, 7, 7, 14, 30, 25, tzinfo=timezone.utc)
+        with patch("src.mcp_server.tools.date_time.datetime") as mock_datetime:
+            mock_now = datetime(2025, 7, 7, 14, 30, 25, tzinfo=UTC)
             mock_datetime.now.return_value = mock_now
             mock_datetime.fromisoformat = datetime.fromisoformat
 

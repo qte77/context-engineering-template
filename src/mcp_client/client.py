@@ -15,7 +15,7 @@ class MCPClient:
 
     def __init__(self, server_path: str):
         """Initialize MCP client.
-        
+
         Args:
             server_path: Path to the MCP server script
         """
@@ -35,14 +35,14 @@ class MCPClient:
 
     async def connect(self) -> None:
         """Connect to MCP server.
-        
+
         Raises:
             FileNotFoundError: If server script doesn't exist
             ConnectionError: If connection fails
             ValueError: If server script type is not supported
         """
         logger.info(f"Connecting to MCP server: {self.server_path}")
-        
+
         try:
             await self.transport.connect()
             self._connected = True
@@ -63,16 +63,16 @@ class MCPClient:
         self, tool_name: str, arguments: dict[str, Any]
     ) -> ClientToolResult:
         """Invoke a tool on the connected server.
-        
+
         Args:
             tool_name: Name of the tool to invoke
             arguments: Arguments to pass to the tool
-            
+
         Returns:
             ClientToolResult with success status and result or error
         """
         logger.info(f"Invoking tool: {tool_name} with arguments: {arguments}")
-        
+
         # Check if connected
         if not self.connected:
             error_msg = "Not connected to server"
@@ -82,9 +82,9 @@ class MCPClient:
                 result=None,
                 error=error_msg,
                 tool_name=tool_name,
-                arguments=arguments
+                arguments=arguments,
             )
-        
+
         # Check if tool is available
         if tool_name not in self.available_tools:
             error_msg = (
@@ -97,13 +97,13 @@ class MCPClient:
                 result=None,
                 error=error_msg,
                 tool_name=tool_name,
-                arguments=arguments
+                arguments=arguments,
             )
-        
+
         try:
             # Call the tool through transport
             result = await self.transport.call_tool(tool_name, arguments)
-            
+
             # Process the result
             logger.info(f"Tool '{tool_name}' executed successfully")
             return ClientToolResult(
@@ -111,9 +111,9 @@ class MCPClient:
                 result=result,
                 error=None,
                 tool_name=tool_name,
-                arguments=arguments
+                arguments=arguments,
             )
-            
+
         except Exception as e:
             error_msg = f"Tool execution failed: {str(e)}"
             logger.error(error_msg)
@@ -122,18 +122,18 @@ class MCPClient:
                 result=None,
                 error=error_msg,
                 tool_name=tool_name,
-                arguments=arguments
+                arguments=arguments,
             )
 
     async def health_check(self) -> bool:
         """Check if connection is healthy.
-        
+
         Returns:
             True if connection is healthy, False otherwise
         """
         if not self.connected:
             return False
-        
+
         return await self.transport.health_check()
 
     async def __aenter__(self) -> "MCPClient":
@@ -148,14 +148,17 @@ class MCPClient:
 
 class MCPClientError(Exception):
     """Base exception for MCP client errors."""
+
     pass
 
 
 class MCPConnectionError(MCPClientError):
     """Raised when connection to MCP server fails."""
+
     pass
 
 
 class MCPToolError(MCPClientError):
     """Raised when tool execution fails."""
+
     pass

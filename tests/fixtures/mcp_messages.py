@@ -1,13 +1,15 @@
 """Test fixtures for MCP messages and responses."""
 
-from typing import Any, Dict
+from typing import Any
 
 
 class MCPMessageFixtures:
     """Collection of MCP message fixtures for testing."""
 
     @staticmethod
-    def tool_call_request(tool_name: str, arguments: Dict[str, Any], request_id: int = 1) -> Dict[str, Any]:
+    def tool_call_request(
+        tool_name: str, arguments: dict[str, Any], request_id: int = 1
+    ) -> dict[str, Any]:
         """Create a standard MCP tool call request."""
         return {
             "jsonrpc": "2.0",
@@ -20,7 +22,7 @@ class MCPMessageFixtures:
         }
 
     @staticmethod
-    def success_response(content: Any, request_id: int = 1) -> Dict[str, Any]:
+    def success_response(content: Any, request_id: int = 1) -> dict[str, Any]:
         """Create a successful MCP response."""
         return {
             "jsonrpc": "2.0",
@@ -37,7 +39,7 @@ class MCPMessageFixtures:
         }
 
     @staticmethod
-    def error_response(error_message: str, request_id: int = 1) -> Dict[str, Any]:
+    def error_response(error_message: str, request_id: int = 1) -> dict[str, Any]:
         """Create an error MCP response."""
         return {
             "jsonrpc": "2.0",
@@ -63,7 +65,7 @@ class WeatherAPIFixtures:
         weather_code: int = 0,
         wind_speed: float = 10.0,
         humidity: float = 65.0,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Create a mock Open-Meteo API response."""
         return {
             "current": {
@@ -83,7 +85,7 @@ class WeatherAPIFixtures:
         }
 
     @staticmethod
-    def api_error_response(status_code: int = 500) -> Dict[str, Any]:
+    def api_error_response(status_code: int = 500) -> dict[str, Any]:
         """Create a mock API error response."""
         return {
             "error": True,
