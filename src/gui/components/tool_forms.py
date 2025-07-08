@@ -7,7 +7,7 @@ import time
 
 import streamlit as st
 
-from ..models.gui_models import GUIInteraction
+from src.gui.models.gui_models import GUIInteraction
 
 logger = logging.getLogger(__name__)
 
