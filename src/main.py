@@ -18,7 +18,34 @@ def setup_logging(level: str = "INFO") -> None:
     )
 
 
-async def main() -> None:
+async def run_client_async(args) -> int:
+    """Run the MCP client in async mode."""
+    # Create client CLI and run it
+    cli = MCPClientCLI()
+    
+    # Build client arguments from parsed args
+    client_args = [
+        '--server', args.server,
+        '--log-level', args.log_level,
+        '--timeout', str(args.timeout)
+    ]
+    
+    if args.tool:
+        client_args.append(args.tool)
+        
+        # Add tool-specific arguments
+        if args.tool == 'roll_dice':
+            client_args.extend(['--notation', args.notation])
+        elif args.tool == 'get_weather':
+            client_args.extend(['--location', args.location])
+        elif args.tool == 'get_date':
+            client_args.extend(['--timezone', args.timezone])
+    
+    # Run the client
+    return await cli.run(client_args)
+
+
+def main() -> None:
     """Main entry point for MCP applications."""
     parser = argparse.ArgumentParser(
         description="MCP Server and Client with dice, weather, and date/time tools",
@@ -164,29 +191,8 @@ Examples:
             run_server()
         elif args.mode == 'client':
             logger.info("Starting MCP Client application")
-            # Create client CLI and run it
-            cli = MCPClientCLI()
-            
-            # Build client arguments from parsed args
-            client_args = [
-                '--server', args.server,
-                '--log-level', args.log_level,
-                '--timeout', str(args.timeout)
-            ]
-            
-            if args.tool:
-                client_args.append(args.tool)
-                
-                # Add tool-specific arguments
-                if args.tool == 'roll_dice':
-                    client_args.extend(['--notation', args.notation])
-                elif args.tool == 'get_weather':
-                    client_args.extend(['--location', args.location])
-                elif args.tool == 'get_date':
-                    client_args.extend(['--timezone', args.timezone])
-            
-            # Run the client
-            exit_code = await cli.run(client_args)
+            # Run client in async mode
+            exit_code = run(run_client_async(args))
             sys.exit(exit_code)
         elif args.mode == 'gui':
             logger.info("Starting Streamlit GUI application")
@@ -221,4 +227,4 @@ Examples:
 
 
 if __name__ == "__main__":
-    run(main())
+    main()
