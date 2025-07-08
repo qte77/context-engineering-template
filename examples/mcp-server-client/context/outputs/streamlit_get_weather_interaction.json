@@ -1,0 +1,34 @@
+{
+  "interaction_type": "streamlit_gui",
+  "tool_name": "get_weather",
+  "timestamp": "2024-01-15T10:32:00Z",
+  "request": {
+    "method": "tool_invocation",
+    "parameters": {
+      "tool": "get_weather",
+      "arguments": {
+        "location": "San Francisco"
+      }
+    }
+  },
+  "response": {
+    "success": true,
+    "result": {
+      "location": "San Francisco, CA",
+      "temperature": "18°C",
+      "condition": "Partly cloudy",
+      "humidity": "65%",
+      "wind": "12 mph NW"
+    },
+    "tool_name": "get_weather",
+    "arguments": {
+      "location": "San Francisco"
+    }
+  },
+  "execution_time": 0.45,
+  "gui_state": {
+    "connected": true,
+    "server_path": "src/mcp_server/server.py",
+    "available_tools": ["roll_dice", "get_weather", "get_date"]
+  }
+}

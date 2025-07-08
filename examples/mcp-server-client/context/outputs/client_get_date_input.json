@@ -1,0 +1,40 @@
+{
+  "description": "Simple client input format for get_date tool",
+  "cli_command": "python -m src.main client --server src/mcp_server/server.py get_date --timezone UTC",
+  "expected_input": {
+    "tool": "get_date",
+    "arguments": {
+      "timezone": "UTC"
+    }
+  },
+  "expected_output_format": {
+    "success": true,
+    "tool_name": "get_date",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "🕐 **Current Date & Time**\n📅 Date: **2025-07-07** (Monday)\n⏰ Time: **14:30:25**\n🌍 Timezone: **UTC**\n📋 ISO 8601: `2025-07-07T14:30:25+00:00`\n🔢 Unix Timestamp: `1720360225`"
+        }
+      ]
+    }
+  },
+  "examples": [
+    {
+      "timezone": "America/New_York",
+      "description": "Get Eastern Time"
+    },
+    {
+      "timezone": "Europe/London",
+      "description": "Get London time"
+    },
+    {
+      "timezone": "Asia/Tokyo",
+      "description": "Get Tokyo time"
+    },
+    {
+      "timezone": "pst",
+      "description": "Get Pacific Time using alias"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "description": "Example request and response for the roll_dice tool",
+  "request": {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "roll_dice",
+      "arguments": {
+        "notation": "3d6"
+      }
+    },
+    "id": 1
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "🎲 Rolled 3d6: [4, 2, 6] = **12**"
+        }
+      ],
+      "isError": false
+    }
+  },
+  "examples": {
+    "valid_requests": [
+      {
+        "notation": "1d20",
+        "description": "Single twenty-sided die"
+      },
+      {
+        "notation": "2d6",
+        "description": "Two six-sided dice"
+      },
+      {
+        "notation": "4d10",
+        "description": "Four ten-sided dice"
+      }
+    ],
+    "invalid_requests": [
+      {
+        "notation": "d6",
+        "error": "Invalid dice notation: 'd6'. Expected format: 'XdY' (e.g., '2d6', '1d20')"
+      },
+      {
+        "notation": "0d6",
+        "error": "Dice count must be greater than 0"
+      },
+      {
+        "notation": "101d6",
+        "error": "Dice count must not exceed 100"
+      },
+      {
+        "notation": "1d0",
+        "error": "Number of sides must be greater than 0"
+      },
+      {
+        "notation": "abc",
+        "error": "Invalid dice notation: 'abc'. Expected format: 'XdY' (e.g., '2d6', '1d20')"
+      }
+    ]
+  }
+}

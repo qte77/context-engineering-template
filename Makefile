@@ -4,13 +4,14 @@
 
 .SILENT:
 .ONESHELL:
-.PHONY: all setup_python_claude setup_dev setup_prod setup_claude_code prp_gen_claude prp_exe_claude ruff test_all check_types coverage_all output_unset_app_env_sh help
+.PHONY: all setup_python_claude setup_dev setup_prod setup_claude_code prp_gen_claude prp_exe_claude ruff test_all check_types coverage_all output_unset_app_env_sh run_example_gui run_example_server run_example_client help
 .DEFAULT_GOAL := help
 
 
 ENV_FILE := .env
 SRC_PATH := src
 APP_PATH := $(SRC_PATH)
+EXAMPLES_PATH := examples/mcp-server-client
 FEAT_DEF_PATH := /context/features
 PRP_DEF_PATH := /context/PRPs
 PRP_CLAUDE_GEN_CMD := generate-prp
@@ -121,6 +122,19 @@ coverage_all:  ## Get test coverage
 
 check_types:  ## Check for static typing errors
 	uv run mypy $(APP_PATH)
+
+
+# MARK: run
+
+
+run_example_gui:  ## Launch MCP server-client example GUI
+	$(MAKE) -C $(EXAMPLES_PATH) run_gui
+
+run_example_server:  ## Run MCP server-client example server
+	$(MAKE) -C $(EXAMPLES_PATH) run_server
+
+run_example_client:  ## Run MCP server-client example client
+	$(MAKE) -C $(EXAMPLES_PATH) run_client ARGS="$(ARGS)"
 
 
 # MARK: help

@@ -1,0 +1,40 @@
+{
+  "description": "Error handling example for invalid tool",
+  "cli_command": "python -m src.main client --server src/mcp_server/server.py invalid_tool --arg value",
+  "expected_input": {
+    "tool": "invalid_tool",
+    "arguments": {
+      "arg": "value"
+    }
+  },
+  "expected_output_format": {
+    "success": false,
+    "tool_name": "invalid_tool",
+    "error": "Tool 'invalid_tool' not available. Available tools: ['roll_dice', 'get_weather', 'get_date']",
+    "arguments": {
+      "arg": "value"
+    }
+  },
+  "error_scenarios": [
+    {
+      "scenario": "Tool not available",
+      "tool": "nonexistent_tool",
+      "expected_error": "Tool 'nonexistent_tool' not available"
+    },
+    {
+      "scenario": "Server not running",
+      "server_path": "./nonexistent_server.py",
+      "expected_error": "Server script not found"
+    },
+    {
+      "scenario": "Invalid server path",
+      "server_path": "/dev/null",
+      "expected_error": "Failed to connect to server"
+    },
+    {
+      "scenario": "Connection timeout",
+      "timeout": 1,
+      "expected_error": "Connection timeout"
+    }
+  ]
+}

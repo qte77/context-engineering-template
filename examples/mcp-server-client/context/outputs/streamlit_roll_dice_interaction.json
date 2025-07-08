@@ -1,0 +1,32 @@
+{
+  "interaction_type": "streamlit_gui",
+  "tool_name": "roll_dice",
+  "timestamp": "2024-01-15T10:30:00Z",
+  "request": {
+    "method": "tool_invocation",
+    "parameters": {
+      "tool": "roll_dice",
+      "arguments": {
+        "notation": "2d6"
+      }
+    }
+  },
+  "response": {
+    "success": true,
+    "result": {
+      "values": [3, 5],
+      "total": 8,
+      "notation": "2d6"
+    },
+    "tool_name": "roll_dice",
+    "arguments": {
+      "notation": "2d6"
+    }
+  },
+  "execution_time": 0.15,
+  "gui_state": {
+    "connected": true,
+    "server_path": "src/mcp_server/server.py",
+    "available_tools": ["roll_dice", "get_weather", "get_date"]
+  }
+}

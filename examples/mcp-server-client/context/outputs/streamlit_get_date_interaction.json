@@ -1,0 +1,33 @@
+{
+  "interaction_type": "streamlit_gui",
+  "tool_name": "get_date",
+  "timestamp": "2024-01-15T10:34:00Z",
+  "request": {
+    "method": "tool_invocation",
+    "parameters": {
+      "tool": "get_date",
+      "arguments": {
+        "timezone": "America/New_York"
+      }
+    }
+  },
+  "response": {
+    "success": true,
+    "result": {
+      "datetime": "2024-01-15T05:34:15-05:00",
+      "timezone": "America/New_York",
+      "formatted": "Monday, January 15, 2024 at 5:34:15 AM EST",
+      "unix_timestamp": 1705313655
+    },
+    "tool_name": "get_date",
+    "arguments": {
+      "timezone": "America/New_York"
+    }
+  },
+  "execution_time": 0.12,
+  "gui_state": {
+    "connected": true,
+    "server_path": "src/mcp_server/server.py",
+    "available_tools": ["roll_dice", "get_weather", "get_date"]
+  }
+}
