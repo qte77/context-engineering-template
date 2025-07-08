@@ -37,16 +37,19 @@ class MCPTransport:
         
         # Determine server type and command
         if self.server_path.endswith('.py'):
-            command = "python"
+            # Use uv run python for proper environment
+            command = "uv"
+            args = ["run", "python", self.server_path]
         elif self.server_path.endswith('.js'):
             command = "node"
+            args = [self.server_path]
         else:
             raise ValueError(f"Unsupported server script type: {self.server_path}")
         
         # Create server parameters
         server_params = StdioServerParameters(
             command=command,
-            args=[self.server_path],
+            args=args,
             env=None
         )
         

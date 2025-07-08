@@ -121,10 +121,26 @@ class ToolForms:
                 # Time execution for performance metrics
                 start_time = time.time()
 
-                # Use existing MCP client
-                result = asyncio.run(
-                    st.session_state.mcp_client.invoke_tool(tool_name, arguments)
-                )
+                # Use existing MCP client - handle async in Streamlit
+                try:
+                    loop = asyncio.get_running_loop()
+                    import threading
+                    import concurrent.futures
+                    
+                    def run_in_thread():
+                        return asyncio.run(
+                            st.session_state.mcp_client.invoke_tool(tool_name, arguments)
+                        )
+                    
+                    with concurrent.futures.ThreadPoolExecutor() as executor:
+                        future = executor.submit(run_in_thread)
+                        result = future.result()  # Wait for completion
+                        
+                except RuntimeError:
+                    # No event loop running, use asyncio.run
+                    result = asyncio.run(
+                        st.session_state.mcp_client.invoke_tool(tool_name, arguments)
+                    )
 
                 execution_time = time.time() - start_time
 

@@ -50,7 +50,24 @@ class ConnectionManager:
             with st.spinner("Connecting to server..."):
                 # Handle async in Streamlit
                 client = MCPClient(server_path)
-                asyncio.run(client.connect())
+                
+                # Check if there's already an event loop running
+                try:
+                    loop = asyncio.get_running_loop()
+                    # If there's already a loop, we need to use a different approach
+                    import threading
+                    import concurrent.futures
+                    
+                    def run_in_thread():
+                        return asyncio.run(client.connect())
+                    
+                    with concurrent.futures.ThreadPoolExecutor() as executor:
+                        future = executor.submit(run_in_thread)
+                        future.result()  # Wait for completion
+                        
+                except RuntimeError:
+                    # No event loop running, use asyncio.run
+                    asyncio.run(client.connect())
 
                 st.session_state.mcp_client = client
                 st.session_state.gui_session.connected = True
@@ -68,7 +85,23 @@ class ConnectionManager:
         """Disconnect from MCP server."""
         if st.session_state.mcp_client:
             try:
-                asyncio.run(st.session_state.mcp_client.disconnect())
+                # Handle async in Streamlit
+                try:
+                    loop = asyncio.get_running_loop()
+                    import threading
+                    import concurrent.futures
+                    
+                    def run_in_thread():
+                        return asyncio.run(st.session_state.mcp_client.disconnect())
+                    
+                    with concurrent.futures.ThreadPoolExecutor() as executor:
+                        future = executor.submit(run_in_thread)
+                        future.result()  # Wait for completion
+                        
+                except RuntimeError:
+                    # No event loop running, use asyncio.run
+                    asyncio.run(st.session_state.mcp_client.disconnect())
+                
                 st.session_state.mcp_client = None
                 st.session_state.gui_session.connected = False
                 st.session_state.gui_session.available_tools = []
@@ -82,7 +115,23 @@ class ConnectionManager:
         """Perform health check on connection."""
         if st.session_state.mcp_client:
             try:
-                health = asyncio.run(st.session_state.mcp_client.health_check())
+                # Handle async in Streamlit
+                try:
+                    loop = asyncio.get_running_loop()
+                    import threading
+                    import concurrent.futures
+                    
+                    def run_in_thread():
+                        return asyncio.run(st.session_state.mcp_client.health_check())
+                    
+                    with concurrent.futures.ThreadPoolExecutor() as executor:
+                        future = executor.submit(run_in_thread)
+                        health = future.result()  # Wait for completion
+                        
+                except RuntimeError:
+                    # No event loop running, use asyncio.run
+                    health = asyncio.run(st.session_state.mcp_client.health_check())
+                
                 if health:
                     st.success("Health check passed!")
                 else:
