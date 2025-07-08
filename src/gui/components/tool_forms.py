@@ -1,6 +1,5 @@
 """Tool-specific form components for MCP tools."""
 
-import asyncio
 import logging
 import re
 import time
@@ -112,7 +111,7 @@ class ToolForms:
 
     def _execute_tool(self, tool_name: str, arguments: dict[str, str]) -> None:
         """Execute tool and update GUI state."""
-        if not st.session_state.mcp_client:
+        if "mcp_connection_manager" not in st.session_state:
             st.error("Not connected to server")
             return
 
@@ -121,26 +120,9 @@ class ToolForms:
                 # Time execution for performance metrics
                 start_time = time.time()
 
-                # Use existing MCP client - handle async in Streamlit
-                try:
-                    loop = asyncio.get_running_loop()
-                    import threading
-                    import concurrent.futures
-                    
-                    def run_in_thread():
-                        return asyncio.run(
-                            st.session_state.mcp_client.invoke_tool(tool_name, arguments)
-                        )
-                    
-                    with concurrent.futures.ThreadPoolExecutor() as executor:
-                        future = executor.submit(run_in_thread)
-                        result = future.result()  # Wait for completion
-                        
-                except RuntimeError:
-                    # No event loop running, use asyncio.run
-                    result = asyncio.run(
-                        st.session_state.mcp_client.invoke_tool(tool_name, arguments)
-                    )
+                # Use connection manager
+                manager = st.session_state.mcp_connection_manager
+                result = manager.invoke_tool(tool_name, arguments)
 
                 execution_time = time.time() - start_time
 
@@ -149,9 +131,9 @@ class ToolForms:
                     tool_name=tool_name,
                     arguments=arguments,
                     request_payload={"tool": tool_name, "arguments": arguments},
-                    response_payload=result.model_dump(),
-                    success=result.success,
-                    error_message=result.error if not result.success else None,
+                    response_payload=result,
+                    success=result.get("success", False),
+                    error_message=result.get("error") if not result.get("success", False) else None,
                     execution_time=execution_time,
                 )
 
@@ -159,11 +141,11 @@ class ToolForms:
                 st.session_state.gui_session.interaction_history.append(interaction)
 
                 # Display result
-                if result.success:
+                if result.get("success", False):
                     st.success(f"✅ {tool_name} executed successfully!")
-                    st.json(result.model_dump())
+                    st.json(result)
                 else:
-                    st.error(f"❌ {tool_name} failed: {result.error}")
+                    st.error(f"❌ {tool_name} failed: {result.get('error', 'Unknown error')}")
 
                 st.rerun()
 
