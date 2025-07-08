@@ -85,7 +85,7 @@ Build a production-ready MCP client in Python that:
   section: MCPRequest, MCPResponse, and tool-specific models
   critical: Exact JSON-RPC 2.0 message structure and validation rules
   
-- file: /workspaces/context-engineering-template/context/examples/
+- file: /workspaces/context-engineering-template/context/examples/outputs
   why: Example request/response patterns for all tools
   section: roll_dice_example.json, get_weather_example.json, get_date_example.json
   critical: Exact JSON-RPC message format with method "tools/call"
@@ -123,7 +123,7 @@ Build a production-ready MCP client in Python that:
 │   ├── __init__.py
 │   └── test_mcp_server.py       # Existing server tests
 └── context/
-    └── examples/
+    └── examples/outputs
         ├── roll_dice_example.json     # Tool invocation examples
         ├── get_weather_example.json   # Tool invocation examples
         └── get_date_example.json      # Tool invocation examples
@@ -152,7 +152,7 @@ Build a production-ready MCP client in Python that:
 │   ├── test_mcp_client.py       # NEW - Client tests
 │   └── test_cli.py              # NEW - CLI interface tests
 └── context/
-    └── examples/
+    └── examples/outputs
         ├── client_roll_dice_input.json    # Simple input format
         ├── client_get_weather_input.json  # Simple input format
         ├── client_get_date_input.json     # Simple input format
@@ -286,7 +286,7 @@ MODIFY src/main.py:
   - MAINTAIN async pattern
 
 Task 6: Create Simple Input Examples
-CREATE context/examples/client_*.json:
+CREATE context/examples/outputs/client_*.json:
   - GENERATE simple input format examples
   - INCLUDE error case example (invalid tool)
   - FOLLOW format from feature specification

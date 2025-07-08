@@ -136,7 +136,7 @@ Build a production-ready MCP server in Python that:
 │       ├── __init__.py
 │       └── mcp_messages.py     # Test message fixtures
 ├── context/
-│   └── examples/
+│   └── examples/outputs
 │       ├── roll_dice_example.json      # Example request/response
 │       ├── get_weather_example.json    # Example request/response
 │       └── get_date_example.json       # Example request/response
@@ -268,7 +268,7 @@ MODIFY src/main.py:
   - PRESERVE existing async pattern
 
 Task 8: Create Example Files
-CREATE context/examples/*.json:
+CREATE context/examples/outputs/*.json:
   - GENERATE realistic request/response examples
   - INCLUDE both success and error cases
   - FOLLOW exact JSON structure from feature requirements

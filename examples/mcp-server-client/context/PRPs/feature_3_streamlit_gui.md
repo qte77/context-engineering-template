@@ -90,7 +90,7 @@ Build a production-ready Streamlit GUI that:
   section: server.py and tools/ directory for tool interfaces
   critical: Exact tool parameters and response formats
   
-- file: /workspaces/context-engineering-template/context/examples/
+- file: /workspaces/context-engineering-template/context/examples/outputs
   why: Example request/response patterns and expected formats
   section: client_*.json files for input validation patterns
   critical: GUI input validation should match CLI patterns
@@ -139,7 +139,7 @@ Build a production-ready Streamlit GUI that:
 │   ├── test_mcp_server.py       # Server tests
 │   └── test_cli.py              # CLI tests (patterns to follow)
 └── context/
-    └── examples/
+    └── examples/outputs
         ├── client_roll_dice_input.json     # Input format examples
         ├── client_get_weather_input.json   # Input format examples
         ├── client_get_date_input.json      # Input format examples
@@ -178,7 +178,7 @@ Build a production-ready Streamlit GUI that:
 │   ├── test_cli.py              # Existing (unchanged)
 │   └── test_gui.py              # NEW - GUI component tests
 └── context/
-    └── examples/
+    └── examples/outputs
         ├── streamlit_roll_dice_interaction.json    # GUI interaction examples
         ├── streamlit_get_weather_interaction.json  # GUI interaction examples
         ├── streamlit_get_date_interaction.json     # GUI interaction examples
@@ -346,7 +346,7 @@ MODIFY src/main.py:
   - MAINTAIN async pattern compatibility
 
 Task 9: Create Example Interaction Files
-CREATE context/examples/streamlit_*.json:
+CREATE context/examples/outputs/streamlit_*.json:
   - GENERATE example GUI interaction patterns
   - INCLUDE successful tool execution examples
   - PROVIDE error handling scenarios
