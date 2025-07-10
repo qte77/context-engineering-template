@@ -23,7 +23,7 @@
     "deny": [
       "Bash(mv:*)",
       "Bash(rm:*)",
-      "Edit(CLAUDE.md"
+      "Edit(CLAUDE.md)"
     ]
   }
 }
