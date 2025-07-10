@@ -3,16 +3,16 @@
 import sys
 from pathlib import Path
 
-# Add project root to Python path
-project_root = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(project_root))
-
 import streamlit as st
 
 from src.gui.components.connection import ConnectionManager
 from src.gui.components.history import HistoryManager
 from src.gui.components.tool_forms import ToolForms
 from src.gui.models.gui_models import GUISession
+
+# Add project root to Python path
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
 
 
 def main() -> None:
