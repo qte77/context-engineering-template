@@ -76,12 +76,6 @@ setup_claude_code:  ## Setup Claude Code CLI, node.js and npm have to be present
 	claude --version
 
 
-setup_example_mcp:  ## Setup Claude Code CLI, node.js and npm have to be present
-	echo "Setting up example MCP environment ..."
-	pip install uv -q
-	cd examples/mcp-server-client && uv sync --all-groups
-
-
 export_env_file:  # Read ENV_FILE and export k=v to env
 	while IFS='=' read -r key value || [ -n "$${key}" ]; do
 		case "$${key}" in
