@@ -1,0 +1,83 @@
+{
+  "description": "Example request and response for the get_weather tool",
+  "request": {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "get_weather",
+      "arguments": {
+        "location": "San Francisco"
+      }
+    },
+    "id": 2
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "🌤️ **Weather for San Francisco**\n🌡️ Temperature: **18.5°C**\n☁️ Condition: **Partly cloudy**\n💨 Wind Speed: **12.3 km/h**\n💧 Humidity: **65%**\n🕐 Updated: 2025-07-07 14:30 UTC"
+        }
+      ],
+      "isError": false
+    }
+  },
+  "examples": {
+    "valid_requests": [
+      {
+        "location": "London",
+        "description": "Weather for London city"
+      },
+      {
+        "location": "New York",
+        "description": "Weather for New York city"
+      },
+      {
+        "location": "37.7749,-122.4194",
+        "description": "Weather using coordinates (San Francisco)"
+      },
+      {
+        "location": "Tokyo",
+        "description": "Weather for Tokyo city"
+      }
+    ],
+    "invalid_requests": [
+      {
+        "location": "Unknown City",
+        "error": "Unknown location: 'Unknown City'. Please use coordinates (lat,lon) or one of: berlin, beijing, cairo, chicago, lagos, london, los angeles, madrid, miami, moscow, mumbai, new york, paris, rome, san francisco, seattle, sydney, tokyo, toronto, vancouver"
+      },
+      {
+        "location": "",
+        "error": "Location cannot be empty"
+      },
+      {
+        "location": "999,999",
+        "error": "Unknown location: '999,999'. Please use coordinates (lat,lon) or one of: [city list]"
+      }
+    ]
+  },
+  "supported_cities": [
+    "San Francisco",
+    "New York", 
+    "London",
+    "Paris",
+    "Tokyo",
+    "Sydney",
+    "Los Angeles",
+    "Chicago",
+    "Miami",
+    "Seattle",
+    "Vancouver",
+    "Toronto",
+    "Berlin",
+    "Rome",
+    "Madrid",
+    "Moscow",
+    "Beijing",
+    "Mumbai",
+    "Cairo",
+    "Lagos"
+  ]
+}

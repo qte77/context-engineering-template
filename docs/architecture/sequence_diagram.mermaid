@@ -1,0 +1,21 @@
+sequenceDiagram
+    participant User
+    participant feature_DESC_XXX.md
+    participant ClaudeCode
+    participant generate-prp.md
+    participant feature_PRP_XXX.md
+    participant execute-prp.md
+    participant AI Coding Agent
+
+    User->>/context/features/feature_DESC_XXX.md: Describes feature
+    User->>ClaudeCode: Runs /generate-prp.md /context/features/feature_DESC_XXX.md
+    ClaudeCode->>generate-prp.md: Executes command
+    generate-prp.md->>AI Coding Agent: Reads /context/features/feature_DESC_XXX.md, codebase, and web
+    AI Coding Agent-->>generate-prp.md: Researches codebase, docs, and examples
+    generate-prp.md->>/context/features/feature_PRP_XXX.md: Generates PRP
+    ClaudeCode->>User: PRP saved in /context/PRPs/feature_PRP_XXX.md
+    User->>ClaudeCode: Runs /execute-prp /context/PRPs/feature_PRP_XXX.md
+    ClaudeCode->>execute-prp.md: Executes command
+    execute-prp.md->>AI Coding Agent: Reads /context/PRPs/feature_PRP_XXX.md and CLAUDE.md
+    AI Coding Agent->>AI Coding Agent: Creates implementation plan, executes, validates, and iterates
+    AI Coding Agent-->>User: Implements feature

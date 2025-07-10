@@ -1,0 +1,36 @@
+{
+  "description": "Simple client input format for get_weather tool",
+  "cli_command": "python -m src.main client --server src/mcp_server/server.py get_weather --location 'San Francisco'",
+  "expected_input": {
+    "tool": "get_weather",
+    "arguments": {
+      "location": "San Francisco"
+    }
+  },
+  "expected_output_format": {
+    "success": true,
+    "tool_name": "get_weather",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "🌤️ **Weather for San Francisco**\n🌡️ Temperature: **18.5°C**\n☁️ Condition: **Partly cloudy**\n💨 Wind Speed: **12.3 km/h**\n💧 Humidity: **65%**\n🕐 Updated: 2025-07-07 14:30 UTC"
+        }
+      ]
+    }
+  },
+  "examples": [
+    {
+      "location": "London",
+      "description": "Get weather for London"
+    },
+    {
+      "location": "New York",
+      "description": "Get weather for New York"
+    },
+    {
+      "location": "37.7749,-122.4194",
+      "description": "Get weather using coordinates"
+    }
+  ]
+}

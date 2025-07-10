@@ -1,0 +1,15 @@
+{
+  "name": "setup_python_claude",
+  "image": "mcr.microsoft.com/vscode/devcontainers/python:3.13",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "anthropic.claude-code"
+      ]
+    }
+  },
+  "postCreateCommand": "make setup_python_claude"
+}
