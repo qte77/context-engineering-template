@@ -76,6 +76,12 @@ setup_claude_code:  ## Setup Claude Code CLI, node.js and npm have to be present
 	claude --version
 
 
+setup_example_mcp:  ## Setup Claude Code CLI, node.js and npm have to be present
+	echo "Setting up example MCP environment ..."
+	pip install uv -q
+	cd examples/mcp-server-client && uv sync --all-groups
+
+
 export_env_file:  # Read ENV_FILE and export k=v to env
 	while IFS='=' read -r key value || [ -n "$${key}" ]; do
 		case "$${key}" in
@@ -128,13 +134,13 @@ check_types:  ## Check for static typing errors
 
 
 run_example_gui:  ## Launch MCP server-client example GUI
-	$(MAKE) -C $(EXAMPLES_PATH) run_gui
+	unset VIRTUAL_ENV && $(MAKE) -C $(EXAMPLES_PATH) run_gui
 
 run_example_server:  ## Run MCP server-client example server
-	$(MAKE) -C $(EXAMPLES_PATH) run_server
+	unset VIRTUAL_ENV && $(MAKE) -C $(EXAMPLES_PATH) run_server
 
 run_example_client:  ## Run MCP server-client example client
-	$(MAKE) -C $(EXAMPLES_PATH) run_client ARGS="$(ARGS)"
+	unset VIRTUAL_ENV && $(MAKE) -C $(EXAMPLES_PATH) run_client ARGS="$(ARGS)"
 
 
 # MARK: help

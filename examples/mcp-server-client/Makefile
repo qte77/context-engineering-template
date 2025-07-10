@@ -40,7 +40,7 @@ check_types:  ## Check for static typing errors
 # MARK: run
 
 run_gui:  ## Launch Streamlit GUI
-	uv run python -m src.main gui
+	uv run python -m src.main gui $(ARGS)
 
 run_server:  ## Run MCP server
 	uv run python -m src.main server
