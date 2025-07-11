@@ -2,6 +2,12 @@
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.hatch.build.targets.wheel]
+only-include = ["/README.md"]
+
+[tool.hatch.build.targets.sdist]
+include = ["/README.md", "/Makefile"]
+
 [project]
 version = "0.0.2"
 name = "context-engineering-template"
@@ -34,12 +40,6 @@ docs = [
 [tool.uv]
 package = true
 exclude-newer = "2025-07-06T00:00:00Z"
-
-[tool.hatch.build.targets.wheel]
-only-include = ["/README.md"]
-
-[tool.hatch.build.targets.sdist]
-include = ["/README.md", "/Makefile", "/tests"]
 
 [tool.ruff]
 target-version = "py313"
