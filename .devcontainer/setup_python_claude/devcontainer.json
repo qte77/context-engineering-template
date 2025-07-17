@@ -7,9 +7,10 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "anthropic.claude-code"
+        "anthropic.claude-code",
+        "google.geminicodeassist"
       ]
     }
   },
-  "postCreateCommand": "make setup_python_claude"
+  "postCreateCommand": "make setup_python_cli"
 }

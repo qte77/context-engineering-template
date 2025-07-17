@@ -21,39 +21,12 @@ PRP_CLAUDE_EXE_CMD := execute-prp
 # MARK: setup
 
 
-# construct the full paths and execute Claude Code commands
-# TODO switch folder by function called ()
-# TODO Claude Code non-interactive headless mode tee to CLI
-define CLAUDE_PRP_RUNNER
-	echo "Starting Claude Code PRP runner ..."
-	dest_file=$(firstword $(strip $(1)))
-	dest_cmd=$(firstword $(strip $(2)))
-	if [ -z "$${dest_file}" ]; then
-		echo "Error: ARGS for PRP filename is empty. Please provide a PRP filename."
-		exit 1
-	fi
-	case "$${dest_cmd}" in
-		start)
-			dest_cmd=$(PRP_CLAUDE_GEN_CMD)
-			dest_path=$(FEAT_DEF_PATH);;
-  		stop)
-			dest_cmd=$(PRP_CLAUDE_EXE_CMD)
-			dest_path=$(PRP_DEF_PATH);;
-		*)
-    		echo "Unknown command: $${dest_cmd}. Exiting ..."
-    		exit 1;;
-	esac
-	dest_cmd="/project:$${dest_cmd} $${dest_path}/$${dest_file}"
-	echo "Executing command '$${dest_cmd}' ..."
-	claude -p "$${dest_cmd}" 2>&1
-	claude -p "/cost" 2>&1
-endef
-
-
-setup_python_claude:  # Set up environment and install Claude Code CLI
+setup_python_cli:  ## Set up environment and install Claude Code CLI
+	echo "Starting setup ..."
+	echo "npm version: $$(npm --version)"
 	$(MAKE) -s setup_dev
-	$(MAKE) -s export_env_file
-	$(MAKE) -s setup_claude_code
+	$(MAKE) -s setup_claude_cli
+	$(MAKE) -s setup_gemini_cli
 
 
 setup_dev:  ## Install uv and deps, Download and start Ollama 
@@ -68,22 +41,17 @@ setup_prod:  ## Install uv and deps, Download and start Ollama
 	uv sync --frozen
 
 
-setup_claude_code:  ## Setup Claude Code CLI, node.js and npm have to be present
-	echo "Setting up claude code ..."
+setup_claude_cli:  ## Setup Claude Code CLI, node.js and npm have to be present
+	echo "Setting up Claude Code CLI ..."
 	npm install -g @anthropic-ai/claude-code
 	claude config set --global preferredNotifChannel terminal_bell
-	echo "npm version: $$(npm --version)"
-	claude --version
+	echo "Claude Code CLI version: $$(claude --version)"
 
 
-export_env_file:  # Read ENV_FILE and export k=v to env
-	while IFS='=' read -r key value || [ -n "$${key}" ]; do
-		case "$${key}" in
-			''|\#*) continue ;;
-		esac
-		value=$$(echo "$${value}" | sed -e 's/^"//' -e 's/"$$//')
-		export "$${key}=$${value}"
-	done < .env
+setup_gemini_cli:  ## Setup Gemini CLI, node.js and npm have to be present
+	echo "Setting up Gemini CLI ..."
+	npm install -g @google/gemini-cli
+	echo "Gemini CLI version: $$(gemini --version)"
 
 
 output_unset_env_sh:  ## Unset app environment variables
@@ -137,7 +105,7 @@ run_example_client:  ## Run MCP server-client example client
 	unset VIRTUAL_ENV && $(MAKE) -C $(EXAMPLES_PATH) run_client ARGS="$(ARGS)"
 
 
-# MARK: help
+# MARK: auxiliary
 
 
 # TODO add stackoverflow source
@@ -152,3 +120,32 @@ help:  ## Displays this message with available recipes
 			printf "  \033[36m%-20s\033[0m %s\n", recipe, substr($$0, RSTART + 3, RLENGTH)
 		}
 	}' $(MAKEFILE_LIST)
+
+
+# construct the full paths and execute Claude Code commands
+# TODO switch folder by function called ()
+# TODO Claude Code non-interactive headless mode tee to CLI
+define CLAUDE_PRP_RUNNER
+	echo "Starting Claude Code PRP runner ..."
+	dest_file=$(firstword $(strip $(1)))
+	dest_cmd=$(firstword $(strip $(2)))
+	if [ -z "$${dest_file}" ]; then
+		echo "Error: ARGS for PRP filename is empty. Please provide a PRP filename."
+		exit 1
+	fi
+	case "$${dest_cmd}" in
+		start)
+			dest_cmd=$(PRP_CLAUDE_GEN_CMD)
+			dest_path=$(FEAT_DEF_PATH);;
+  		stop)
+			dest_cmd=$(PRP_CLAUDE_EXE_CMD)
+			dest_path=$(PRP_DEF_PATH);;
+		*)
+    		echo "Unknown command: $${dest_cmd}. Exiting ..."
+    		exit 1;;
+	esac
+	dest_cmd="/project:$${dest_cmd} $${dest_path}/$${dest_file}"
+	echo "Executing command '$${dest_cmd}' ..."
+	claude -p "$${dest_cmd}" 2>&1
+	claude -p "/cost" 2>&1
+endef
