@@ -1,0 +1,100 @@
+{
+  "description": "Example request and response for the get_date tool",
+  "request": {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "get_date",
+      "arguments": {
+        "timezone": "UTC"
+      }
+    },
+    "id": 3
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "id": 3,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "🕐 **Current Date & Time**\n📅 Date: **2025-07-07** (Monday)\n⏰ Time: **14:30:25**\n🌍 Timezone: **UTC**\n📋 ISO 8601: `2025-07-07T14:30:25+00:00`\n🔢 Unix Timestamp: `1720360225`"
+        }
+      ],
+      "isError": false
+    }
+  },
+  "examples": {
+    "valid_requests": [
+      {
+        "timezone": "UTC",
+        "description": "Coordinated Universal Time"
+      },
+      {
+        "timezone": "America/New_York",
+        "description": "Eastern Time"
+      },
+      {
+        "timezone": "America/Los_Angeles",
+        "description": "Pacific Time"
+      },
+      {
+        "timezone": "Europe/London",
+        "description": "British Time"
+      },
+      {
+        "timezone": "Asia/Tokyo",
+        "description": "Japan Standard Time"
+      },
+      {
+        "timezone": "est",
+        "description": "Eastern Time alias"
+      },
+      {
+        "timezone": "pst",
+        "description": "Pacific Time alias"
+      }
+    ],
+    "invalid_requests": [
+      {
+        "timezone": "Invalid/Timezone",
+        "error": "Invalid timezone: 'Invalid/Timezone'. Common timezones: UTC, America/New_York, America/Los_Angeles, America/Chicago, Europe/London, Europe/Paris, Asia/Tokyo, Australia/Sydney. Aliases: utc, gmt, est, pst, cst, mst, edt, pdt, cdt, mdt, bst, cet, jst, aest. Use IANA timezone names (e.g., 'America/New_York') or aliases."
+      },
+      {
+        "timezone": "",
+        "error": "Timezone cannot be empty"
+      }
+    ]
+  },
+  "supported_timezones": {
+    "aliases": {
+      "utc": "UTC",
+      "gmt": "UTC", 
+      "est": "America/New_York",
+      "pst": "America/Los_Angeles",
+      "cst": "America/Chicago",
+      "mst": "America/Denver",
+      "edt": "America/New_York",
+      "pdt": "America/Los_Angeles",
+      "cdt": "America/Chicago",
+      "mdt": "America/Denver",
+      "bst": "Europe/London",
+      "cet": "Europe/Paris",
+      "jst": "Asia/Tokyo",
+      "aest": "Australia/Sydney"
+    },
+    "common_iana_zones": [
+      "UTC",
+      "America/New_York",
+      "America/Los_Angeles", 
+      "America/Chicago",
+      "America/Denver",
+      "Europe/London",
+      "Europe/Paris",
+      "Europe/Berlin",
+      "Asia/Tokyo",
+      "Asia/Shanghai",
+      "Australia/Sydney"
+    ]
+  }
+}

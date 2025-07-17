@@ -1,0 +1,36 @@
+{
+  "description": "Simple client input format for roll_dice tool",
+  "cli_command": "python -m src.main client --server src/mcp_server/server.py roll_dice --notation 2d6",
+  "expected_input": {
+    "tool": "roll_dice",
+    "arguments": {
+      "notation": "2d6"
+    }
+  },
+  "expected_output_format": {
+    "success": true,
+    "tool_name": "roll_dice",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "🎲 Rolled 2d6: [3, 5] = **8**"
+        }
+      ]
+    }
+  },
+  "examples": [
+    {
+      "notation": "1d20",
+      "description": "Roll a 20-sided die"
+    },
+    {
+      "notation": "3d6",
+      "description": "Roll three 6-sided dice"
+    },
+    {
+      "notation": "2d10",
+      "description": "Roll two 10-sided dice"
+    }
+  ]
+}
