@@ -1,29 +1,38 @@
 {
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
+    "DISABLE_TELEMETRY": "1"
+  },
   "permissions": {
     "allow": [
       "Bash(cat:*)",
+      "Bash(date:*)",
       "Bash(find:*)",
       "Bash(git:diff*)",
       "Bash(git:log*)",
       "Bash(git:status*)",
       "Bash(grep:*)",
       "Bash(ls:*)",
+      "Bash(make:*)",
       "Bash(mkdir:*)",
       "Bash(source:*)",
       "Bash(touch:*)",
       "Bash(tree:*)",
-      "Bash(uv:run*)", 
+      "Bash(uv sync:*)",
+      "Bash(uv run mypy:*)",
+      "Bash(uv run pytest:*)",
       "Edit(AGENTS.md)",
       "Edit(docs/**/*.md)",
       "Edit(src/**/*.py)",
       "Edit(src/**/*.json)",
       "Edit(tests/**/*.py)",
+      "WebFetch(domain:github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md)",
       "WebFetch(domain:docs.anthropic.com)"
     ],
     "deny": [
       "Bash(mv:*)",
       "Bash(rm:*)",
-      "Edit(CLAUDE.md"
+      "Edit(CLAUDE.md)"
     ]
   }
 }
