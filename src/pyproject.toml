@@ -3,23 +3,35 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-version = "0.0.2"
-name = "context-engineering-template"
-description = "Assess the effectiveness of coding agents with context, mcp, custom commands and sub agents."
+version = "0.0.1"
+name = "mcp-server-client-demo"
+description = "Demonstrates a MCP server-client infrastructure deveoped with Claude Code CLI using context and custom commands."
 authors = [
     {name = "qte77", email = "qte@77.gh"}
 ]
 readme = "README.md"
-requires-python = ">=3.13.*"
+requires-python = ">=3.13"
 license = "bsd-3-clause"
-dependencies = []
+dependencies = [
+    "mcp[cli]>=1.10.0",
+    "httpx>=0.25.0",
+    "pydantic>=2.0.0",
+    "streamlit>=1.28.0",
+]
 
-[project.urls]
-Documentation = "https://qte77.github.io/context-engineering-template/"
+# [project.urls]
+# Documentation = ""
 
 [dependency-groups]
-dev = []
-test = []
+dev = [
+    "mypy>=1.16.0",
+    "ruff>=0.11.12",
+]
+test = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-httpx>=0.28.0",
+]
 docs = [
     "griffe>=1.5.1",
     "mkdocs>=1.6.1",
@@ -108,7 +120,7 @@ omit = [
 ]
 
 [tool.bumpversion]
-current_version = "0.0.2"
+current_version = "0.0.1"
 parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
 serialize = ["{major}.{minor}.{patch}"]
 commit = true

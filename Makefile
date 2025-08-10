@@ -4,7 +4,7 @@
 
 .SILENT:
 .ONESHELL:
-.PHONY: all setup_python_claude setup_dev setup_prod setup_claude_code prp_gen_claude prp_exe_claude ruff test_all check_types coverage_all output_unset_app_env_sh run_example_gui run_example_server run_example_client help
+.PHONY: all setup_dev setup_prod setup_uv setup_claude_code frp_gen_claude frp_exe_claude ruff test_all check_types coverage_all output_unset_app_env_sh run_example_gui run_example_server run_example_client run_example_full help
 .DEFAULT_GOAL := help
 
 
@@ -13,32 +13,32 @@ SRC_PATH := src
 APP_PATH := $(SRC_PATH)
 EXAMPLES_PATH := examples/mcp-server-client
 FEAT_DEF_PATH := /context/features
-PRP_DEF_PATH := /context/PRPs
-PRP_CLAUDE_GEN_CMD := generate-prp
-PRP_CLAUDE_EXE_CMD := execute-prp
+FRP_DEF_PATH := /context/FRPs
+FRP_CLAUDE_GEN_CMD := generate-frp
+FRP_CLAUDE_EXE_CMD := execute-frp
 
 
-# MARK: setup
+# MARK: claude commands
 
 
 # construct the full paths and execute Claude Code commands
 # TODO switch folder by function called ()
 # TODO Claude Code non-interactive headless mode tee to CLI
-define CLAUDE_PRP_RUNNER
-	echo "Starting Claude Code PRP runner ..."
+define CLAUDE_FRP_RUNNER
+	echo "Starting Claude Code FRP runner ..."
 	dest_file=$(firstword $(strip $(1)))
 	dest_cmd=$(firstword $(strip $(2)))
 	if [ -z "$${dest_file}" ]; then
-		echo "Error: ARGS for PRP filename is empty. Please provide a PRP filename."
+		echo "Error: ARGS for FRP filename is empty. Please provide a FRP filename."
 		exit 1
 	fi
 	case "$${dest_cmd}" in
 		start)
-			dest_cmd=$(PRP_CLAUDE_GEN_CMD)
+			dest_cmd=$(FRP_CLAUDE_GEN_CMD)
 			dest_path=$(FEAT_DEF_PATH);;
   		stop)
-			dest_cmd=$(PRP_CLAUDE_EXE_CMD)
-			dest_path=$(PRP_DEF_PATH);;
+			dest_cmd=$(FRP_CLAUDE_EXE_CMD)
+			dest_path=$(FRP_DEF_PATH);;
 		*)
     		echo "Unknown command: $${dest_cmd}. Exiting ..."
     		exit 1;;
@@ -50,40 +50,41 @@ define CLAUDE_PRP_RUNNER
 endef
 
 
-setup_python_claude:  # Set up environment and install Claude Code CLI
-	$(MAKE) -s setup_dev
-	$(MAKE) -s export_env_file
-	$(MAKE) -s setup_claude_code
+# MARK: setup
 
 
-setup_dev:  ## Install uv and deps, Download and start Ollama 
+setup_dev:  ## Install dependencies, Download and start Ollama 
 	echo "Setting up dev environment ..."
-	pip install uv -q
-	uv sync --all-groups
+	# TODO uncomment if python is needed
+	# echo $(python --version)
+	# $(MAKE) -s setup_uv
+	# uv sync --all-groups
+	echo "npm version: $$(npm --version)"
+	$(MAKE) -s setup_claude_code
+	$(MAKE) -s setup_gemini_cli
 
 
-setup_prod:  ## Install uv and deps, Download and start Ollama 
+setup_prod:  ## Install dependencies, Download and start Ollama 
 	echo "Setting up prod environment ..."
-	pip install uv -q
+	$(MAKE) -s setup_uv
 	uv sync --frozen
 
 
+setup_uv:  ## Install uv
+	echo "Installing uv ..."
+	pip install uv -q
+	echo $(uv --version)
+
+
 setup_claude_code:  ## Setup Claude Code CLI, node.js and npm have to be present
-	echo "Setting up claude code ..."
-	npm install -g @anthropic-ai/claude-code
-	claude config set --global preferredNotifChannel terminal_bell
-	echo "npm version: $$(npm --version)"
-	claude --version
+	echo "Setting up Claude Code CLI ..."
+	npm install -gs @anthropic-ai/claude-code
+	echo "Claude Code CLI version: $$(claude --version)"
 
-
-export_env_file:  # Read ENV_FILE and export k=v to env
-	while IFS='=' read -r key value || [ -n "$${key}" ]; do
-		case "$${key}" in
-			''|\#*) continue ;;
-		esac
-		value=$$(echo "$${value}" | sed -e 's/^"//' -e 's/"$$//')
-		export "$${key}=$${value}"
-	done < .env
+setup_gemini_cli:  ## Setup Gemini CLI, node.js and npm have to be present
+	echo "Setting up Gemini CLI ..."
+	npm install -gs @google/gemini-cli
+	echo "Gemini CLI version: $$(gemini --version)"
 
 
 output_unset_env_sh:  ## Unset app environment variables
@@ -95,12 +96,12 @@ output_unset_env_sh:  ## Unset app environment variables
 # MARK: context engineering
 
 
-prp_gen_claude:  ## generates the PRP from the file passed in "ARGS=file"
-	$(call CLAUDE_PRP_RUNNER, $(ARGS), "generate")
+frp_gen_claude:  ## generates the FRP from the file passed in "ARGS=file"
+	$(call CLAUDE_FRP_RUNNER, $(ARGS), "generate")
 
 
-prp_exe_claude:  ## executes the PRP from the file passed in "ARGS=file"
-	$(call CLAUDE_PRP_RUNNER, $(ARGS), "execute")
+frp_exe_claude:  ## executes the FRP from the file passed in "ARGS=file"
+	$(call CLAUDE_FRP_RUNNER, $(ARGS), "execute")
 
 
 # MARK: code quality
@@ -130,11 +131,17 @@ check_types:  ## Check for static typing errors
 run_example_gui:  ## Launch MCP server-client example GUI
 	$(MAKE) -C $(EXAMPLES_PATH) run_gui
 
+
 run_example_server:  ## Run MCP server-client example server
 	$(MAKE) -C $(EXAMPLES_PATH) run_server
 
+
 run_example_client:  ## Run MCP server-client example client
 	$(MAKE) -C $(EXAMPLES_PATH) run_client ARGS="$(ARGS)"
+
+
+run_example_full: ## Run MCP server-client example with Docker Compose
+	$(MAKE) -C $(EXAMPLES_PATH) run_full ARGS="$(ARGS)"
 
 
 # MARK: help
