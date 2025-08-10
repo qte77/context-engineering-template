@@ -1,43 +1,69 @@
 # Execute Feature Requirements Prompt (FRP)
 
-Implement a feature using the template FRP file and the feature desciption file provided by the user.
+Implement a feature using the FRP file provided.
 
-- Extract only the filename and extension from `$ARGUMENTS` into `$FILE_NAME`. Append extension `.md` if necessary.
-- Use the paths defined in `context/config/paths.md`
-- Important ! Write your outputs from CLI in real-time to the log file `<timestamp>_Claude_ExecFRP_${FILE_NAME}` in `$CTX_LOGS_PATH`. Also include your internal thinking steps. Use the configured time stamp formatting.
-- `CTX_FRP_FILE = ${CTX_FRP_PATH}/${FILE_NAME}`
+## Rules
+
+- Extract filename from `$ARGUMENTS` into `$FILE_NAME` (append `.md` if needed)
+- Write outputs to log file using AGENTS.md timestamp format `<timestamp>_Claude_ExecFRP_${FILE_NAME}` in `$CTX_LOGS_PATH` (for future agent and human analysis)
+- Use TodoWrite tool to track implementation progress
+- Input FRP: `$CTX_FRP_PATH/$FILE_NAME`
 
 ## Execution Process
 
-1. **Load FRP**
-   - Read the specified `$CTX_FRP_FILE`
+1. **Load and Validate FRP**
+   - Read the specified FRP file
    - Understand all context and requirements
-   - Follow all instructions in the FRP and extend the research if needed
-   - Ensure you have all needed context to implement the FRP fully
-   - Do more web searches and codebase exploration as needed
+   - Apply AGENTS.md Quality Evaluation Framework to assess readiness
+   - **Research Policy**: Focus on execution; extend research only if significant gaps discovered during implementation. See [Failure Recovery](#failure-recovery).
 
-2. **ULTRATHINK**
-   - Think hard before you execute the plan. Create a comprehensive plan addressing all requirements.
-   - Break down complex tasks into smaller, manageable steps using your todos tools.
-   - Use the TodoWrite tool to create and track your implementation plan.
-   - Identify implementation patterns from existing code to follow.
+2. **Plan Implementation**
+   - Apply AGENTS.md Quality Evaluation Framework to assess FRP readiness
+   - Create comprehensive TodoWrite plan addressing all FRP requirements
+   - Break down into manageable steps following AGENTS.md BDD approach
+   - Identify patterns from existing codebase to follow
 
-3. **Execute the plan**
-   - Execute the FRP
-   - Implement all the code
+3. **Implement Features**
+   - Follow TodoWrite plan step-by-step
+   - Mark tasks as in_progress/completed as you work
+   - Create tests first (BDD/TDD approach per AGENTS.md)
+   - Implement minimal viable solution then iterate
 
-4. **Validate**
-   - Run each validation command
-   - Fix any failures
-   - Re-run until all pass
+4. **Validate Implementation**
+   - Use AGENTS.md unified command reference with error recovery
+   - Fix failures following project patterns
+   - Update TodoWrite and log progress
 
-5. **Complete**
-   - Ensure all checklist items done
-   - Run final validation suite
-   - Report completion status
-   - Read the FRP again to ensure you have implemented everything
+5. **Final Verification**
+   - Complete all FRP checklist items
+   - Verify against AGENTS.md Quality Evaluation Framework
+   - Mark TodoWrite tasks as completed
+   - Log completion status
 
-6. **Reference the FRP**
-   - You can always reference the FRP again if needed
+## Escalation
 
-Note: If validation fails, use error patterns in FRP to fix and retry.
+Use AGENTS.md Decision Framework if:
+
+- FRP requirements conflict with AGENTS.md
+- Implementation requires architectural changes
+- Critical context is missing
+
+## Failure Recovery
+
+**If implementation fails despite good FRP:**
+
+1. **Analyze Failure**
+   - Review logs and error messages
+   - Identify specific failure points
+   - Document findings in TodoWrite
+
+2. **Iterative Improvement**
+   - Update FRP with new learnings (mark as "execution-discovered gaps")
+   - Adjust implementation approach
+   - Re-run AGENTS.md Quality Evaluation Framework
+
+3. **Escalate if Persistent**
+   - Use AGENTS.md Decision Framework
+   - Document architectural or requirement issues
+   - **Report Research Gaps**: If significant research gaps caused failure, document for future FRP generation improvement
+   - Request human guidance

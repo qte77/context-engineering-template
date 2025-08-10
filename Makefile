@@ -4,7 +4,7 @@
 
 .SILENT:
 .ONESHELL:
-.PHONY: all setup_dev setup_prod setup_uv setup_claude_code frp_gen_claude frp_exe_claude ruff test_all check_types coverage_all output_unset_app_env_sh run_example_gui run_example_server run_example_client run_example_full help
+.PHONY: all setup_dev setup_prod setup_uv setup_claude_code frp_gen_claude frp_exe_claude ruff test_all test_hypothesis_verbose test_hypothesis_quick test_hypothesis_thorough test_single test_debug check_types coverage_all output_unset_app_env_sh run_example_gui run_example_server run_example_client run_example_full help
 .DEFAULT_GOAL := help
 
 
@@ -55,10 +55,9 @@ endef
 
 setup_dev:  ## Install dependencies, Download and start Ollama 
 	echo "Setting up dev environment ..."
-	# TODO uncomment if python is needed
-	# echo $(python --version)
-	# $(MAKE) -s setup_uv
-	# uv sync --all-groups
+	echo $(python --version)
+	$(MAKE) -s setup_uv
+	uv sync --all-groups
 	echo "npm version: $$(npm --version)"
 	$(MAKE) -s setup_claude_code
 	$(MAKE) -s setup_gemini_cli
@@ -104,7 +103,7 @@ frp_exe_claude:  ## executes the FRP from the file passed in "ARGS=file"
 	$(call CLAUDE_FRP_RUNNER, $(ARGS), "execute")
 
 
-# MARK: code quality
+# MARK: sanity
 
 
 ruff:  ## Lint: Format and check with ruff
@@ -112,17 +111,64 @@ ruff:  ## Lint: Format and check with ruff
 	uv run ruff check --fix
 
 
-test_all:  ## Run all tests
-	uv run pytest
-
-
-coverage_all:  ## Get test coverage
-	uv run coverage run -m pytest || true
-	uv run coverage report -m
-
-
 check_types:  ## Check for static typing errors
 	uv run mypy $(APP_PATH)
+
+
+# MARK: tests
+
+
+test_all:  ## Run all hypothesis property-based tests
+	for test_file in tests/test_*.py; do \
+		echo "Running $$test_file..."; \
+		uv run python "$$test_file" || exit 1; \
+	done
+
+
+test_hypothesis_verbose:  ## Run hypothesis tests with verbose output
+	for test_file in tests/test_*.py; do \
+		echo "Running $$test_file with verbose output..."; \
+		HYPOTHESIS_VERBOSITY=verbose uv run python "$$test_file" || exit 1; \
+	done
+
+
+test_hypothesis_quick:  ## Run hypothesis tests with fewer examples (quick)
+	for test_file in tests/test_*.py; do \
+		echo "Running $$test_file (quick mode)..."; \
+		HYPOTHESIS_MAX_EXAMPLES=10 uv run python "$$test_file" || exit 1; \
+	done
+
+
+test_hypothesis_thorough:  ## Run hypothesis tests with many examples (thorough)
+	for test_file in tests/test_*.py; do \
+		echo "Running $$test_file (thorough mode)..."; \
+		HYPOTHESIS_MAX_EXAMPLES=1000 uv run python "$$test_file" || exit 1; \
+	done
+
+
+test_single:  ## Run a single hypothesis test file (usage: make test_single FILE=test_example.py)
+	@if [ -z "$(FILE)" ]; then \
+		echo "Error: FILE parameter is required. Usage: make test_single FILE=test_example.py"; \
+		exit 1; \
+	fi
+	echo "Running tests/$(FILE)..."
+	uv run python "tests/$(FILE)"
+
+
+test_debug:  ## Run hypothesis tests with debug statistics
+	for test_file in tests/test_*.py; do \
+		echo "Running $$test_file with debug info..."; \
+		HYPOTHESIS_VERBOSITY=debug uv run python "$$test_file" || exit 1; \
+	done
+
+
+coverage_all:  ## Get test coverage with hypothesis tests
+	uv run coverage erase
+	for test_file in tests/test_*.py; do \
+		echo "Running $$test_file with coverage..."; \
+		uv run coverage run -a "$$test_file" || true; \
+	done
+	uv run coverage report -m
 
 
 # MARK: run

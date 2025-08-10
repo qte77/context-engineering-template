@@ -24,6 +24,7 @@ dev = [
 ]
 test = [
     "hypothesis>=6.137.0",
+    "coverage>=7.6.0",
 ]
 docs = [
     "griffe>=1.5.1",
@@ -74,6 +75,56 @@ convention = "google"
 max_examples = 100
 deadline = 5000
 suppress_health_check = ["too_slow"]
+verbosity = "normal"
+print_blob = true
+report_multiple_bugs = false
+
+[tool.hypothesis.profiles.dev]
+max_examples = 10
+verbosity = "normal"
+deadline = 1000
+
+[tool.hypothesis.profiles.debug]
+max_examples = 10
+verbosity = "verbose"
+print_blob = true
+deadline = 10000
+
+[tool.hypothesis.profiles.ci]
+max_examples = 1000
+verbosity = "normal"
+deadline = 10000
+report_multiple_bugs = true
+
+[tool.hypothesis.profiles.thorough]
+max_examples = 10000
+verbosity = "normal"
+deadline = 60000
+
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*/__pycache__/*"
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod"
+]
+show_missing = true
+skip_covered = false
+skip_empty = false
 
 [tool.bumpversion]
 current_version = "0.0.1"
