@@ -1,0 +1,84 @@
+' GitHub Dark Theme (Primer)
+' Sourced from: https://github.com/primer/github-vscode-theme
+<style>
+  document {
+    BackgroundColor #0D1117
+  }
+  root {
+    BackgroundColor #0D1117
+  }
+  title {
+    FontColor #C9D1D9
+  }
+  legend {
+    BackgroundColor #161B22
+    LineColor #8B949E
+    FontColor #C9D1D9
+  }
+  actor, person {
+    BackgroundColor #161B22
+    LineColor #8B949E
+    FontColor #C9D1D9
+  }
+  participant, system, system_ext {
+    BackgroundColor #161B22
+    LineColor #8B949E
+    FontColor #C9D1D9
+  }
+  database, container, containerdb {
+    BackgroundColor #161B22
+    LineColor #8B949E
+    FontColor #C9D1D9
+  }
+  entity {
+    BackgroundColor #161B22
+    LineColor #8B949E
+    FontColor #C9D1D9
+  }
+  rectangle, system_boundary {
+    BackgroundColor #0D1117
+    LineColor #30363D
+    FontColor #C9D1D9
+    shadowing false
+  }
+  note {
+    BackgroundColor #161B22
+    LineColor #30363D
+    FontColor #C9D1D9
+  }
+  arrow {
+    LineColor #58A6FF
+    FontColor #C9D1D9
+  }
+  lifeLine {
+    LineColor #8B949E
+  }
+  activity {
+    BackgroundColor #161B22
+    LineColor #8B949E
+    FontColor #C9D1D9
+    BorderColor #30363D
+  }
+  diamond {
+    BackgroundColor #161B22
+    LineColor #8B949E
+    FontColor #C9D1D9
+  }
+</style>
+
+skinparam sequence {
+    LifeLineBackgroundColor #161B22
+    GroupBorderColor #30363D
+    GroupFontColor #C9D1D9
+    GroupHeaderFontColor #C9D1D9
+    GroupBackgroundColor #161B22
+}
+
+skinparam activity {
+    StartColor #3FB950
+    StopColor #F85149
+}
+
+skinparam ConditionEndStyle diamond
+skinparam ParticipantPadding 20
+skinparam BoxPadding 20

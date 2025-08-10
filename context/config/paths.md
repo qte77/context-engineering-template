@@ -18,6 +18,9 @@ Note: Update this file according to project needs.
 - `CTX_EXAMPLES_PATH = ${CONTEXT_PATH}/examples`
 - `CTX_FEATURES_PATH = ${CONTEXT_PATH}/features`
 - `CTX_LOGS_PATH = ${CONTEXT_PATH}/logs`
+- `CTX_BUSINESS_INPUTS_PATH = ${CONTEXT_PATH}/business_inputs`: Contains initial business input documents for BRD generation.
+- `CTX_BRD_PATH = ${CONTEXT_PATH}/BRDs`: Contains the business requirements definition files.
+- `CTX_PRD_PATH = ${CONTEXT_PATH}/PRDs`: Contains the product requirements document files.
 - `CTX_FRP_PATH = ${CONTEXT_PATH}/FRPs`: Contains the generated feature requirements prompt files.
 - `CTX_TEMPLATES_PATH = ${CONTEXT_PATH}/templates`
 
@@ -27,6 +30,10 @@ Note: Update this file according to project needs.
 
 ### Important files
 
+- `CTX_BUSINESS_INPUT_TEMPLATE = ${CTX_TEMPLATES_PATH}/business_input_base.md`: Template for initial business information input.
+- `CTX_BRD_TEMPLATE = ${CTX_TEMPLATES_PATH}/brd_base.md`: Template for creating business requirements definitions.
+- `CTX_PRD_TEMPLATE = ${CTX_TEMPLATES_PATH}/prd_base.md`: Template for creating product requirements documents.
+- `CTX_FRP_TEMPLATE = ${CTX_TEMPLATES_PATH}/frp_base.md`: Template for creating feature requirements prompts.
 - `CHANGELOG_PATH = CHANGELOG.md`: Contains the most important changes made in each version of the project.
 - `LLMSTXT_PATH = ${DOCS_PATH}/llms.txt`: Contains the flattened project, i.e., the structure and content of the project in one text file to be ingested by LLMs. Might not reflect the current project state depending on update strategy.
 - `PRD_PATH = ${DOCS_PATH}/PRD.md`: Contains the product requirements definitions for this project.

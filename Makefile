@@ -4,7 +4,7 @@
 
 .SILENT:
 .ONESHELL:
-.PHONY: all setup_dev setup_prod setup_uv setup_claude_code frp_gen_claude frp_exe_claude ruff test_all test_hypothesis_verbose test_hypothesis_quick test_hypothesis_thorough test_single test_debug check_types coverage_all output_unset_app_env_sh run_example_gui run_example_server run_example_client run_example_full help
+.PHONY: all setup_dev setup_prod setup_uv setup_claude_code setup_plantuml brd_gen_claude prd_gen_claude frp_gen_claude frp_exe_claude frp_gen_legacy_claude frp_exe_legacy_claude run_puml_interactive run_puml_single ruff test_all test_hypothesis_verbose test_hypothesis_quick test_hypothesis_thorough test_single test_debug check_types coverage_all output_unset_app_env_sh run_example_gui run_example_server run_example_client run_example_full help
 .DEFAULT_GOAL := help
 
 
@@ -12,10 +12,19 @@ ENV_FILE := .env
 SRC_PATH := src
 APP_PATH := $(SRC_PATH)
 EXAMPLES_PATH := examples/mcp-server-client
+
+# Context engineering paths
+BRD_DEF_PATH := context/BRDs
+PRD_DEF_PATH := context/PRDs
 FEAT_DEF_PATH := context/features
 FRP_DEF_PATH := context/FRPs
-FRP_CLAUDE_GEN_CMD := generate-frp
+
+# Claude commands
+BRD_CLAUDE_GEN_CMD := generate-brd
+PRD_CLAUDE_GEN_CMD := generate-prd-from-brd
+FRP_CLAUDE_GEN_CMD := generate-frp-from-prd
 FRP_CLAUDE_EXE_CMD := execute-frp
+FRP_CLAUDE_LEGACY_GEN_CMD := generate-frp
 
 
 # MARK: claude commands
@@ -33,10 +42,10 @@ define CLAUDE_FRP_RUNNER
 		exit 1
 	fi
 	case "$${dest_cmd}" in
-		start)
-			dest_cmd=$(FRP_CLAUDE_GEN_CMD)
+		generate)
+			dest_cmd=$(FRP_CLAUDE_LEGACY_GEN_CMD)
 			dest_path=$(FEAT_DEF_PATH);;
-  		stop)
+  		execute)
 			dest_cmd=$(FRP_CLAUDE_EXE_CMD)
 			dest_path=$(FRP_DEF_PATH);;
 		*)
@@ -86,6 +95,13 @@ setup_gemini_cli:  ## Setup Gemini CLI, node.js and npm have to be present
 	echo "Gemini CLI version: $$(gemini --version)"
 
 
+setup_plantuml:  ## Setup PlantUML with docker, $(PLANTUML_SCRIPT) and $(PLANTUML_CONTAINER)
+	echo "Setting up PlantUML docker ..."
+	chmod +x $(PLANTUML_SCRIPT)
+	docker pull $(PLANTUML_CONTAINER)
+	echo "PlantUML docker version: $$(docker run --rm $(PLANTUML_CONTAINER) --version)"
+
+
 output_unset_env_sh:  ## Unset app environment variables
 	uf="./unset_env.sh"
 	echo "Outputing '$${uf}' ..."
@@ -94,16 +110,74 @@ output_unset_env_sh:  ## Unset app environment variables
 
 # MARK: context engineering
 
+# Business-driven workflow (new)
+brd_gen_claude:  ## Generate BRD from business input "ARGS=project_name.md"
+	echo "Starting BRD generation ..."
+	dest_file=$(firstword $(strip $(ARGS)))
+	if [ -z "$${dest_file}" ]; then
+		echo "Error: ARGS for project filename is empty. Please provide a project filename."
+		exit 1
+	fi
+	echo "Executing BRD generation for $${dest_file} ..."
+	claude -p "/project:$(BRD_CLAUDE_GEN_CMD) $${dest_file}" 2>&1
+	claude -p "/cost" 2>&1
 
-frp_gen_claude:  ## generates the FRP from the file passed in "ARGS=file"
+prd_gen_claude:  ## Generate PRD from BRD "ARGS=project_name.md"
+	echo "Starting PRD generation ..."
+	dest_file=$(firstword $(strip $(ARGS)))
+	if [ -z "$${dest_file}" ]; then
+		echo "Error: ARGS for project filename is empty. Please provide a project filename."
+		exit 1
+	fi
+	echo "Executing PRD generation for $${dest_file} ..."
+	claude -p "/project:$(PRD_CLAUDE_GEN_CMD) $${dest_file}" 2>&1
+	claude -p "/cost" 2>&1
+
+frp_gen_claude:  ## Generate feature FRP from PRD "ARGS=project_name.md feature_name"
+	echo "Starting FRP generation ..."
+	project_file=$(firstword $(strip $(ARGS)))
+	feature_name=$(word 2, $(strip $(ARGS)))
+	if [ -z "$${project_file}" ] || [ -z "$${feature_name}" ]; then
+		echo "Error: Need both project filename and feature name. Usage: ARGS=\"project.md feature_name\""
+		exit 1
+	fi
+	echo "Executing FRP generation for project $${project_file}, feature $${feature_name} ..."
+	claude -p "/project:$(FRP_CLAUDE_GEN_CMD) $${project_file} $${feature_name}" 2>&1
+	claude -p "/cost" 2>&1
+
+frp_exe_claude:  ## Execute FRP implementation "ARGS=project_feature.md"
+	echo "Starting FRP execution ..."
+	dest_file=$(firstword $(strip $(ARGS)))
+	if [ -z "$${dest_file}" ]; then
+		echo "Error: ARGS for FRP filename is empty. Please provide a FRP filename."
+		exit 1
+	fi
+	echo "Executing FRP implementation for $${dest_file} ..."
+	claude -p "/project:$(FRP_CLAUDE_EXE_CMD) $${dest_file}" 2>&1
+	claude -p "/cost" 2>&1
+
+# Legacy workflow (backward compatibility)
+frp_gen_legacy_claude:  ## generates the legacy FRP from feature file "ARGS=feature.md"
 	$(call CLAUDE_FRP_RUNNER, $(ARGS), "generate")
 
-
-frp_exe_claude:  ## executes the FRP from the file passed in "ARGS=file"
+frp_exe_legacy_claude:  ## executes the legacy FRP "ARGS=feature.md"
 	$(call CLAUDE_FRP_RUNNER, $(ARGS), "execute")
 
 
-# MARK: sanity
+# MARK: run plantuml
+
+
+run_puml_interactive:  ## Generate a themed diagram from a PlantUML file interactively.
+	# https://github.com/plantuml/plantuml-server
+	# plantuml/plantuml-server:tomcat
+	docker run -d -p 8080:8080 "$(PLANTUML_CONTAINER)"
+
+run_puml_single:  ## Generate a themed diagram from a PlantUML file.
+	$(PLANTUML_SCRIPT) "$(INPUT_FILE)" "$(STYLE)" "$(OUTPUT_PATH)" \
+		"$(CHECK_ONLY)" "$(PLANTUML_CONTAINER)"
+
+
+# MARK: code sanity
 
 
 ruff:  ## Lint: Format and check with ruff

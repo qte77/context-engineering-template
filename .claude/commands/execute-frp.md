@@ -8,12 +8,16 @@ Implement a feature using the FRP file provided.
 - Write outputs to log file using AGENTS.md timestamp format `<timestamp>_Claude_ExecFRP_${FILE_NAME}` in `$CTX_LOGS_PATH` (for future agent and human analysis)
 - Use TodoWrite tool to track implementation progress
 - Input FRP: `$CTX_FRP_PATH/$FILE_NAME`
+- Reference PRD: Look for corresponding PRD in `$CTX_PRD_PATH` for additional context
+- Reference BRD: Look for corresponding BRD in `$CTX_BRD_PATH` for business alignment
 
 ## Execution Process
 
 1. **Load and Validate FRP**
    - Read the specified FRP file
-   - Understand all context and requirements
+   - Load corresponding PRD for product context (if available)
+   - Load corresponding BRD for business alignment (if available)
+   - Understand all context and requirements across BRD → PRD → FRP chain
    - Apply AGENTS.md Quality Evaluation Framework to assess readiness
    - **Research Policy**: Focus on execution; extend research only if significant gaps discovered during implementation. See [Failure Recovery](#failure-recovery).
 

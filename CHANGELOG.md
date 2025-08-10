@@ -26,6 +26,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Complete BRD → PRD → FRP workflow for business-driven development
+- Business input document templates with multiple input approaches
+- Product Requirements Document (PRD) generation from BRD
+- Feature-specific FRP generation from PRD with business context traceability
+- Make targets for new workflow commands (brd_gen_claude, prd_gen_claude, frp_gen_claude)
+- Comprehensive business input template with stakeholder, market, and risk analysis
+- Multiple BRD input methods: business input document, interactive session, partial completion
+- Example AI assistant business input and BRD demonstrating complete workflow
+- Enhanced sequence diagrams showing both new and legacy workflows with input options
+- docs/usage-guide.md - Detailed workflow instructions and configuration
+- docs/examples.md - Complete examples, best practices, and troubleshooting  
+- context/business_inputs/ directory for initial business information
+- context/BRDs/ directory for business requirements definitions
+- context/PRDs/ directory for product requirements documents
+
+### Changed
+
+- Restructured README.md for clarity (reduced from 262 to 63 lines)
+- Updated paths.md with new BRD, PRD, and business input paths
+- Enhanced execute-frp command to reference PRD and BRD context for full traceability
+- Legacy Makefile recipes renamed for clarity (frp_gen_legacy_claude, frp_exe_legacy_claude)
+
 ## [0.0.1] - 2025-07-07
 
 ### Added

@@ -1,0 +1,84 @@
+' GitHub Light Theme (Primer)
+' Sourced from: https://github.com/primer/github-vscode-theme
+<style>
+  document {
+    BackgroundColor #FFFFFF
+  }
+  root {
+    BackgroundColor #FFFFFF
+  }
+  title {
+    FontColor #24292F
+  }
+  legend {
+    BackgroundColor #F6F8FA
+    LineColor #57606A
+    FontColor #24292F
+  }
+  actor, person {
+    BackgroundColor #F6F8FA
+    LineColor #57606A
+    FontColor #24292F
+  }
+  participant, system, system_ext {
+    BackgroundColor #F6F8FA
+    LineColor #57606A
+    FontColor #24292F
+  }
+  database, container, containerdb {
+    BackgroundColor #F6F8FA
+    LineColor #57606A
+    FontColor #24292F
+  }
+  entity {
+    BackgroundColor #F6F8FA
+    LineColor #57606A
+    FontColor #24292F
+  }
+  rectangle, system_boundary {
+    BackgroundColor #FFFFFF
+    LineColor #D0D7DE
+    FontColor #24292F
+    shadowing false
+  }
+  note {
+    BackgroundColor #F6F8FA
+    LineColor #D0D7DE
+    FontColor #24292F
+  }
+  arrow {
+    LineColor #0969DA
+    FontColor #24292F
+  }
+  lifeLine {
+    LineColor #57606A
+  }
+  activity {
+    BackgroundColor #F6F8FA
+    LineColor #57606A
+    FontColor #24292F
+    BorderColor #D0D7DE
+  }
+  diamond {
+    BackgroundColor #F6F8FA
+    LineColor #57606A
+    FontColor #24292F
+  }
+</style>
+
+skinparam sequence {
+    LifeLineBackgroundColor #F6F8FA
+    GroupBorderColor #D0D7DE
+    GroupFontColor #24292F
+    GroupHeaderFontColor #24292F
+    GroupBackgroundColor #F6F8FA
+}
+
+skinparam activity {
+    StartColor #2DA44E
+    StopColor #CF222E
+}
+
+skinparam ConditionEndStyle diamond
+skinparam ParticipantPadding 20
+skinparam BoxPadding 20
