@@ -9,7 +9,6 @@ description = "Assess the effectiveness of agentic AI systems across various use
 authors = [
     {name = "qte77", email = "qte@77.gh"}
 ]
-readme = "README.md"
 requires-python = "==3.13.*"
 license = "bsd-3-clause"
 dependencies = [
@@ -48,10 +47,10 @@ package = true
 exclude-newer = "2025-07-06T00:00:00Z"
 
 [tool.hatch.build.targets.wheel]
-only-include = ["/README.md"]
+packages = ["src"]
 
 [tool.hatch.build.targets.sdist]
-include = ["/README.md", "/Makefile", "/tests"]
+include = ["/src"]
 
 [tool.ruff]
 target-version = "py313"

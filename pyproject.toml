@@ -10,7 +10,7 @@ authors = [
     {name = "qte77", email = "qte@77.gh"}
 ]
 readme = "README.md"
-requires-python = ">=3.13.*"
+requires-python = ">=3.13"
 license = "bsd-3-clause"
 dependencies = []
 
@@ -18,8 +18,13 @@ dependencies = []
 Documentation = "https://qte77.github.io/context-engineering-template/"
 
 [dependency-groups]
-dev = []
-test = []
+dev = [
+    "pyright>=1.1.403",
+    "ruff>=0.11.12",
+]
+test = [
+    "hypothesis>=6.137.0",
+]
 docs = [
     "griffe>=1.5.1",
     "mkdocs>=1.6.1",
@@ -31,9 +36,12 @@ docs = [
     "mkdocstrings[python]>=0.27.0",
 ]
 
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
 [tool.uv]
 package = true
-exclude-newer = "2025-07-06T00:00:00Z"
+exclude-newer = "2025-08-10T00:00:00Z"
 
 [tool.ruff]
 target-version = "py313"
@@ -62,50 +70,10 @@ known-first-party = ["src", "tests"]
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
-[tool.mypy]
-python_version = "3.13"
-strict = true
-disallow_untyped_defs = true
-disallow_any_generics = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_return_any = true
-warn_unreachable = true
-show_error_codes = true
-namespace_packages = true
-explicit_package_bases = true
-mypy_path = "src"
-
-[tool.pytest.ini_options]
-addopts = "--strict-markers"
-# "function", "class", "module", "package", "session"
-asyncio_default_fixture_loop_scope = "function"
-pythonpath = ["src"]
-testpaths = ["tests/"]
-
-[tool.coverage]
-[tool.coverage.run]
-include = [
-    "tests/**/*.py",
-]
-# omit = []
-# branch = true
-
-[tool.coverage.report]
-show_missing = true
-exclude_lines = [
-    # 'pragma: no cover',
-    'raise AssertionError',
-    'raise NotImplementedError',
-]
-omit = [
-    'env/*',
-    'venv/*',
-    '.venv/*',
-    '*/virtualenv/*',
-    '*/virtualenvs/*',
-    '*/tests/*',
-]
+[tool.hypothesis]
+max_examples = 100
+deadline = 5000
+suppress_health_check = ["too_slow"]
 
 [tool.bumpversion]
 current_version = "0.0.2"
