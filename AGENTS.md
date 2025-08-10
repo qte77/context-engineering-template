@@ -1,6 +1,6 @@
-# Agent instructions for `Agents-eval` repository
+# Agent instructions for Context Engineering Template
 
-This file is intended to serve as an entrypoint for AI coding agents, to provide baselines and guardrails concerning this project and as a tool for communication between humans and coding agents. As proposed by [agentsmd.net](https://agentsmd.net/) and used by [wandb weave AGENTS.md](https://github.com/wandb/weave/blob/master/AGENTS.md).
+This file is intended to serve as an entrypoint for AI coding agents, to provide baselines and guardrails concerning this context engineering template project and as a tool for communication between humans and coding agents. As proposed by [agentsmd.net](https://agentsmd.net/) and used by [wandb weave AGENTS.md](https://github.com/wandb/weave/blob/master/AGENTS.md).
 
 ## Table of Contents
 
@@ -44,7 +44,7 @@ This eliminates the need to repeatedly read `paths.md` for every variable lookup
 
 ## Core Rules & AI Behavior
 
-- Use the paths and structure defined in $DEFAULT_PATHS_MD (located at context/config/paths.md).
+- Use the paths and structure defined in context/config/paths.md.
 - Aim for Software Development Lifecycle (SDLC) principles like maintainability, modularity, reusability, and adaptability for coding agents and humans alike
 - Adhere to a Behavior Driven Development (BDD) approach which focuses on generating concise goal-oriented Minimum Viable Products (MVPs) with minimal yet functional features sets.
   - Keep it simple!
@@ -111,8 +111,8 @@ When facing conflicting instructions or ambiguous situations, use this priority 
 **Decision Process:**
 
 1. User instruction? *(None given)*
-2. AGENTS.md rule? *"Always create Pytest unit tests"* ✅  
-3. **Action:** Use pytest as specified
+2. AGENTS.md rule? *"Always create Hypothesis property-based tests"* ✅  
+3. **Action:** Use hypothesis as specified
 
 #### Example 3: Code Organization
 
@@ -141,29 +141,37 @@ When facing conflicting instructions or ambiguous situations, use this priority 
 
 ## Architecture Overview
 
-This is a Multi-Agent System (MAS) evaluation framework for assessing agentic AI systems. The project uses **PydanticAI** as the core framework for agent orchestration and is designed for evaluation purposes, not for production agent deployment.
+This is a context engineering template project designed to demonstrate effective AI agent workflows using structured documentation, custom commands, and subagent configurations. The project serves as a foundation for building context-aware AI development environments.
 
 ### Data Flow
 
-1. User input → Manager Agent (can be single-LLM)
-2. Optional: Manager delegates to Researcher Agent (with DuckDuckGo search)
-3. Optional: Researcher results → Analyst Agent for validation
-4. Optional: Validated data → Synthesizer Agent for report generation
-5. Results evaluated using configurable metrics
+1. User defines feature requirements in `$CTX_FEATURES_PATH`
+2. Code agent generates Feature Requirements Prompts (FRPs) using custom commands
+3. Agents execute FRPs with structured context from AGENTS.md and paths.md
+4. Results are logged and tracked using standardized workflows
+5. Multiple agent systems (Claude, Cline, Gemini) can coordinate through shared configuration
 
 ### Key Dependencies
 
-- **PydanticAI**: Agent framework and orchestration
 - **uv**: Fast Python dependency management
-- **Streamlit**: GUI framework
-- **Ruff**: Code formatting and linting
+- **Ruff**: Code formatting and linting  
 - **pyright**: Static type checking
+- **Hypothesis**: Property-based testing framework
+- **Coverage**: Test coverage reporting
+- **MkDocs**: Documentation generation (optional)
 
 ## Codebase Structure & Modularity
 
 ### Main Components
 
-See the "Important files" sections in $DEFAULT_PATHS_MD for key application entry points and core modules.
+See the "Important files" sections in $CTX_CONFIG_PATH/paths.md for key application entry points and core modules.
+
+**Key Files:**
+- `src/main.py`: Main CLI entry point (currently minimal template)
+- `$CTX_CONFIG_PATH/paths.md`: Path variable definitions
+- `$CTX_FEATURES_PATH`: Feature requirement definitions
+- `$CTX_FRP_PATH`: Generated Feature Requirements Prompts
+- `$CTX_TEMPLATES_PATH`: Template files for code generation
 
 ### Code Organization Rules
 
@@ -212,38 +220,37 @@ Use this universal framework to assess task readiness before implementation:
 
 ### Testing Strategy & Guidelines
 
-**Always create comprehensive tests** for new features following the testing hierarchy below:
+**Always create comprehensive property-based tests** for new features using the Hypothesis framework:
 
-#### Unit Tests (Always Required)
+#### Property-Based Tests (Always Required)
 
-- **Mock external dependencies** (HTTP requests, file systems, APIs) using `@patch`
-- **Test business logic** and data validation thoroughly
-- **Test error handling** for all failure modes and edge cases
-- **Ensure deterministic behavior** - tests should pass consistently
-- Use `pytest` with clear arrange/act/assert structure
+- **Generate test cases automatically** using Hypothesis strategies
+- **Test business logic** across wide input ranges with property-based assertions  
+- **Test error handling** for boundary conditions and invalid inputs
+- **Ensure reproducible failures** with proper random seed management
+- Use `hypothesis` with clear property-based testing structure
 - Tests must live in the $TEST_PATH folder, mirroring the $APP_PATH structure
 
-#### Integration Tests (Required for External Dependencies)
+#### Integration Tests (When Required)
 
-- **Test real external integrations** at least once during implementation
-- **Verify actual URLs, APIs, and data formats** work as expected
-- **Document any external dependencies** that could change over time
-- **Use real test data** when feasible, fallback to representative samples
-- **Include in implementation validation** but may be excluded from CI if unreliable
+- **Test real integrations** with generated test data when external dependencies exist
+- **Use Hypothesis strategies** to generate realistic test data for external APIs
+- **Document external dependencies** and their expected data formats
+- **Include in implementation validation** but may use mocked services for CI reliability
 
 #### When to Mock vs Real Testing
 
-- **Mock for**: Unit tests, CI/CD pipelines, deterministic behavior, fast feedback
-- **Real test for**: Initial implementation validation, external API changes, data format verification
-- **Always test real integrations** during feature development, then mock for ongoing automated tests
-- **Document real test results** in implementation logs for future reference
+- **Property-based for**: Core business logic, data validation, edge case discovery
+- **Real integration for**: Initial validation, API contract verification
+- **Generated test data for**: Comprehensive coverage across input domains
+- **Document test properties** and assumptions in test docstrings
 
 #### Testing Anti-Patterns to Avoid
 
-- ❌ **Only mocking external dependencies** without ever testing real integration
-- ❌ **Assuming external APIs work** without verification during implementation
-- ❌ **Testing only happy paths** - always include error cases
-- ❌ **Brittle tests** that break with minor changes to implementation details
+- ❌ **Only testing fixed examples** without property-based generation
+- ❌ **Assuming limited input ranges** without comprehensive coverage
+- ❌ **Testing only expected inputs** - always include invalid/boundary cases
+- ❌ **Overly specific tests** that fail on implementation refactoring rather than behavior changes
 
 **To run tests** see the [Unified Command Reference](#unified-command-reference) for all testing commands with error recovery procedures.
 
@@ -251,7 +258,7 @@ Use this universal framework to assess task readiness before implementation:
 
 ### Coding Style
 
-- **Use Pydantic** models in $DATAMODELS_PATH for all data validation and data contracts. **Always use or update these models** when modifying data flows.
+- Follow established patterns for data validation and contracts when implementing features.
 - Use the predefined error message functions for consistency. Update or create new if necessary.
 - When writing complex logic, **add an inline `# Reason:` comment** explaining the *why*, not just the *what*.
 - Comment non-obvious code to ensure it is understandable to a mid-level developer.
@@ -275,14 +282,14 @@ Use this universal framework to assess task readiness before implementation:
 
 - Provide an example usage in regards to the whole project. How would your code be integrated, what entrypoints to use
 - Update this `AGENTS.md` file when introducing new patterns or concepts.
-- Document significant architectural decisions in $ADR_PATH.
+- Document significant architectural decisions in appropriate documentation files.
 - Document all significant changes, features, and bug fixes in $CHANGELOG_PATH.
 
 ### Code Pattern Examples
 
-**Reference**: See `${CTX_EXAMPLES_PATH}/code-patterns.md` for comprehensive examples including:
+**Reference**: See `$CTX_EXAMPLES_PATH/code-patterns.md` for comprehensive examples including:
 
-- ✅ Pydantic model usage vs ❌ direct dictionaries
+- ✅ Structured data handling vs ❌ unstructured approaches
 - ✅ Absolute imports vs ❌ relative imports  
 - ✅ Specific error handling vs ❌ generic try/catch
 - ✅ Complete docstrings vs ❌ minimal documentation
@@ -301,15 +308,13 @@ Use this universal framework to assess task readiness before implementation:
 
 ### Pre-commit Checklist
 
-1. **Automated validation**: `make validate` - runs complete sequence (ruff + type_check + test_all)
-2. **Quick validation** (development): `make quick_validate` - runs fast checks (ruff + type_check only)
+1. **Complete validation**: See [Standard Workflow Commands](#standard-workflow-commands) for full sequence
+2. **Quick validation** (development): See [Standard Workflow Commands](#standard-workflow-commands) for fast checks
 3. Update documentation as described above.
 
 **Manual fallback** (if make commands fail):
 
-1. `uv run ruff format . && uv run ruff check . --fix`
-2. `uv run pyright`
-3. `uv run pytest`
+See individual command "Error Recovery" procedures in the [Unified Command Reference](#unified-command-reference) table.
 
 ## Timestamping for CLI Operations
 
@@ -332,35 +337,35 @@ Use this universal framework to assess task readiness before implementation:
 
 ### Path References
 
-- **All paths**: See cached variables from `context/config/paths.md`
+- **All paths**: See cached variables from `$CTX_CONFIG_PATH/paths.md`
 
 ### Standard Workflow Commands
 
-**Pre-commit checklist** (automated):
+**Pre-commit checklist** (manual sequence):
 
-1. `make validate` - Complete validation sequence (ruff + type_check + test_all)
-2. Update documentation if needed
+1. `make ruff` - Format code and fix linting issues
+2. `make check_types` - Run static type checking
+3. `make test_all` - Run all property-based tests
+4. Update documentation if needed
 
 **Quick development cycle**:
 
-1. `make quick_validate` - Fast validation (ruff + type_check only)
-2. Continue development
+See [Standard Workflow Commands](#standard-workflow-commands) for fast validation steps, then continue development
 
 | Command | Purpose | Prerequisites | Error Recovery |
 |---------|---------|---------------|----------------|
-| `make setup_dev` | Install all dev dependencies | Makefile exists, uv installed | Try `uv sync --dev` directly |
-| `make setup_dev_claude` | Setup with Claude Code CLI | Above + Claude Code available | Manual setup per Claude docs |
-| `make setup_dev_ollama` | Setup with Ollama local LLM | Above + Ollama installed | Check Ollama installation |
-| `make run_cli` | Run CLI application | Dev environment setup | Try `uv run python src/app/main.py` |
-| `make run_cli ARGS="--help"` | Run CLI with arguments | Above | Try `uv run python src/app/main.py --help` |
-| `make run_gui` | Run Streamlit GUI | Above + Streamlit installed | Try `uv run streamlit run src/run_gui.py` |
+| `make setup_dev` | Install all dev dependencies | Makefile exists, uv installed | Try `uv sync --all-groups` directly |
+| `make setup_claude_code` | Setup with Claude Code CLI | Above + Claude Code available | Manual setup per Claude docs |
+| `make setup_gemini_cli` | Setup Gemini CLI | Above + npm available | Manual setup per Gemini docs |
+| `make run_example_gui` | Run example GUI | Dev environment setup | Try manual execution of example |
+| `make run_example_server` | Run example server | Above | Try manual execution of example |
+| `make run_example_client` | Run example client | Above | Try manual execution of example |
 | `make ruff` | Format code and fix linting | Ruff installed | Try `uv run ruff format . && uv run ruff check . --fix` |
-| `make type_check` | Run pyright static type checking | pyright installed | Try `uv run pyright` |
-| `make test_all` | Run all tests with pytest | Pytest installed | Try `uv run pytest` |
-| `make coverage_all` | Run tests with coverage report | Above + coverage installed | Try `uv run coverage run -m pytest \|\| true && uv run coverage report -m` |
-| `make validate` | Complete pre-commit validation | Above dependencies | Run individual commands manually |
-| `make quick_validate` | Fast development validation | Ruff and pyright installed | Run `make ruff && make type_check` |
-| `uv run pytest <path>` | Run specific test file/function | Pytest available | Check test file exists and syntax |
+| `make check_types` | Run pyright static type checking | pyright installed | Try `uv run pyright $APP_PATH` |
+| `make test_all` | Run all hypothesis tests | Hypothesis installed | Try `for test_file in tests/test_*.py; do uv run python "$test_file"; done` |
+| `make coverage_all` | Run tests with coverage report | Above + coverage installed | Try `uv run coverage erase && for test_file in tests/test_*.py; do uv run coverage run -a "$test_file"; done && uv run coverage report -m` |
+| Sequential validation | Complete pre-commit validation | Above dependencies | See [Standard Workflow Commands](#standard-workflow-commands) |
+| `make test_single FILE=<filename>` | Run specific test file | Test file exists | Check test file exists and syntax |
 
 ## Requests to Humans
 
@@ -391,11 +396,9 @@ This section contains a list of questions, clarifications, or tasks that AI agen
 
 ### Active Requests
 
-- [ ] The `agent_system.py` module has a `NotImplementedError` for streaming with Pydantic model outputs. Please clarify the intended approach for streaming structured data.
+- [ ] Consider adding example implementations for common context engineering patterns.
   - Human: `# TODO` but not of priority as of now. Remind me once a week.
-- [ ] The `llm_model_funs.py` module has `NotImplementedError` for the Gemini and HuggingFace providers. Please provide the correct implementation or remove them if they are not supported.
-  - Human: `# TODO` but not of priority as of now. Remind me once a week.
-- [ ] The `agent_system.py` module contains a `FIXME` note regarding the use of a try-catch context manager. Please review and implement the intended error handling.
+- [ ] Improve integration between different agent systems (Claude, Cline, Gemini).
   - Human: `# TODO` but not of priority as of now. Remind me once a week.
 - [ ] Add TypeScript testing guidelines (if a TypeScript frontend is planned for the future).
   - Human: `# TODO` but not of priority as of now. Remind me once a week.
@@ -421,15 +424,15 @@ When documenting a new pattern, use this format:
 **Example Entry:**
 
 ```markdown
-### Learned Pattern: Async Error Handling in Agents
+### Learned Pattern: Context Variable Resolution
 
-- **Date**: 2025-07-20T14:30:00Z
-- **Context**: PydanticAI agent processing with timeouts
-- **Problem**: Agents hanging on long requests without proper timeout handling
-- **Solution**: Use asyncio.wait_for with context manager for cleanup
-- **Example**: See context/examples/async-timeout-pattern.py
-- **Validation**: Test with deliberately slow mock responses
-- **References**: src/app/agents/agent_system.py:142
+- **Date**: 2025-08-10T14:30:00Z
+- **Context**: Agent workflows requiring consistent path resolution
+- **Problem**: Agents repeatedly reading paths.md causing inefficiency
+- **Solution**: Cache path variables once at session start per AGENTS.md guidelines
+- **Example**: Read $CTX_CONFIG_PATH/paths.md once, store variables in memory
+- **Validation**: Verify path resolution works without repeated file reads
+- **References**: AGENTS.md lines 37-43
 ```
 
 ### Active Learning Entries
@@ -440,8 +443,8 @@ Agents should add new patterns discovered during development here.
 
 **Before ANY task, verify:**
 
-- All `$VARIABLE` paths resolve via `$DEFAULT_PATHS_MD`
-- Libraries exist in `$PROJECT_REQUIREMENTS`
+- All path variables resolve via $CTX_CONFIG_PATH/paths.md
+- Libraries exist in $PROJECT_REQUIREMENTS
 - No missing context assumptions
 
 **Documentation tasks:**
@@ -453,7 +456,7 @@ Agents should add new patterns discovered during development here.
 **Code tasks:**
 
 - Max 500 lines/file
-- Create tests in `$TEST_PATH`
+- Create tests in $TEST_PATH directory
 - Google-style docstrings
 - Verify imports exist
 

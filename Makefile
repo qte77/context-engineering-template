@@ -12,8 +12,8 @@ ENV_FILE := .env
 SRC_PATH := src
 APP_PATH := $(SRC_PATH)
 EXAMPLES_PATH := examples/mcp-server-client
-FEAT_DEF_PATH := /context/features
-FRP_DEF_PATH := /context/FRPs
+FEAT_DEF_PATH := context/features
+FRP_DEF_PATH := context/FRPs
 FRP_CLAUDE_GEN_CMD := generate-frp
 FRP_CLAUDE_EXE_CMD := execute-frp
 
@@ -112,7 +112,7 @@ ruff:  ## Lint: Format and check with ruff
 
 
 check_types:  ## Check for static typing errors
-	uv run mypy $(APP_PATH)
+	uv run pyright $(APP_PATH)
 
 
 # MARK: tests

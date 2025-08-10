@@ -13,7 +13,6 @@ Note: Update this file according to project needs.
 
 ## Context
 
-- `AGENTSMD_PATH`: Contains the main context for cading agents.
 - `CONTEXT_PATH = context`: Contains auxiliary context for coding agents.
 - `CTX_CONFIG_PATH = ${CONTEXT_PATH}/config`
 - `CTX_EXAMPLES_PATH = ${CONTEXT_PATH}/examples`
