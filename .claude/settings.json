@@ -3,6 +3,21 @@
     "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
     "DISABLE_TELEMETRY": "1"
   },
+  "statusLine": {
+    "enabled": true,
+    "format": "🤖 Claude Code | {cwd} | {branch} | {time}",
+    "showGitBranch": true,
+    "showWorkingDirectory": true,
+    "showTimestamp": true,
+    "updateInterval": 1000,
+    "colors": {
+      "primary": "#0066cc",
+      "secondary": "#666666",
+      "success": "#00cc66",
+      "warning": "#ff9900",
+      "error": "#cc0000"
+    }
+  },
   "permissions": {
     "allow": [
       "Bash(date:*)",
@@ -20,6 +35,7 @@
       "Bash(uv run pytest:*)",
       "Bash(uv run ruff:*)",
       "Edit(AGENTS.md)",
+      "Edit(CHANGELOG.md)",
       "Edit(docs/**/*.md)",
       "Edit(Makefile)",
       "Edit(README.md)",
@@ -28,11 +44,13 @@
       "Edit(tests/**/*.py)",
       "Edit(tests/**/*.json)",
       "Edit(pyproject.toml)",
+      "Read(**/*)",
       "WebFetch(domain:github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md)",
       "WebFetch(domain:docs.anthropic.com)"
     ],
     "deny": [
       "Bash(cat:*)",
+      "Bash(cp:*)",
       "Bash(find:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
@@ -44,8 +62,9 @@
       "Bash(rg:*)",
       "Bash(rm:*)",
       "Bash(tail:*)",
+      "Edit(.claude/settings*.json)",
       "Edit(.claude/commands/*.md)",
-      "Edit(.claude/settings.local.json)",
+      "Edit(context/**/*.md)",
       "Edit(CLAUDE.md)"
     ]
   }
