@@ -44,10 +44,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - context/PRDs/ directory for product requirements documents
 - CABIO vision documents: vision, product roadmap, and implementation guide
 - Prominent product state and vision summary in README.md
+- Complete PlantUML architecture diagram suite with GitHub theme support
+- Workflow visualizations showing current → enhanced → enterprise evolution
+- docs/architecture/ directory with comprehensive PlantUML source files
+- Architecture documentation (README.md) with local and online rendering instructions
 
 ### Changed
 
-- Restructured README.md for clarity (reduced from 262 to 63 lines)
+- Restructured README.md for clarity with workflow visualizations using GitHub theme-aware diagrams
 - Updated paths.md with new BRD, PRD, and business input paths
 - Enhanced execute-frp command to reference PRD and BRD context for full traceability
 - Legacy Makefile recipes renamed for clarity (frp_gen_legacy_claude, frp_exe_legacy_claude)

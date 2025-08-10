@@ -1,0 +1,64 @@
+@startuml Business-Driven-Development-Current-Dark
+title Current Business-Driven Development Workflow
+
+!log Current 'STYLE' dvar: STYLE
+!log About to include: styles/github-STYLE.puml
+!include styles/github-STYLE.puml
+
+participant "User" as User
+participant "Claude Code" as Claude
+participant "AI Agent" as Agent
+
+== Business-Driven Development (Recommended) ==
+
+group Business Input Options [#161B22]
+
+    alt Option A: Business Input Document
+        User -> User: Create business_inputs/project.md
+        User -> Claude: /generate-brd project.md\nOR make brd_gen_claude "ARGS=project.md"
+        Claude -> Agent: Read business input → Expand to BRD
+    else Option B: Interactive Session  
+        User -> Claude: /generate-brd project.md\nOR make brd_gen_claude "ARGS=project.md"
+        Claude -> Agent: Conduct Q&A → Generate BRD
+    else Option C: Complete Partial BRD
+        User -> User: Partially fill BRDs/project.md
+        User -> Claude: /generate-brd project.md\nOR make brd_gen_claude "ARGS=project.md"
+        Claude -> Agent: Complete missing sections
+    end
+    
+    Agent --> User: **Comprehensive BRD** with business context
+
+end
+
+group BRD → PRD → FRP Workflow [#161B22]
+
+    User -> Claude: /generate-prd-from-brd project.md\nOR make prd_gen_claude "ARGS=project.md"
+    Claude -> Agent: Translate business to product features
+    Agent --> User: **PRD** with feature list & user stories
+    
+    User -> Claude: /generate-frp-from-prd project.md feature_name\nOR make frp_gen_claude "ARGS=project.md feature_name"
+    Claude -> Agent: Create feature-specific technical spec
+    Agent --> User: **FRP**: project_feature_name.md
+    
+    User -> Claude: /execute-frp project_feature_name.md\nOR make frp_exe_claude "ARGS=project_feature_name.md"
+    Claude -> Agent: Implement with full BRD→PRD→FRP context
+    Agent --> User: **Feature** with business traceability
+
+end
+
+== Direct Feature Development (Legacy) ==
+
+group Legacy Workflow [#30363D]
+
+    User -> User: Create features/feature.md
+    User -> Claude: /generate-frp feature.md\nOR make frp_gen_legacy_claude "ARGS=feature.md"
+    Claude -> Agent: Create FRP from feature description
+    Agent --> User: Technical spec (limited context)
+    
+    User -> Claude: /execute-frp feature.md\nOR make frp_exe_legacy_claude "ARGS=feature.md"
+    Claude -> Agent: Quick implementation
+    Agent --> User: Feature prototype
+
+end
+
+@enduml

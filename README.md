@@ -83,6 +83,24 @@ Building on proven BRD→PRD→FRP foundation, CABIO represents our evolution pa
 
 **Development**: Iterative approach starting with enhanced templates for small teams (8-12 weeks), then agent orchestration, expanding based on validation and user feedback. Current BRD→PRD→FRP workflow remains the foundation.
 
+## Workflow Visualizations
+
+<details>
+    <summary>📊 Current Workflow (Template-based) - Visualization</summary>
+    <img src="assets/images/Business-Driven-Development-Current-Concise-light.png#gh-light-mode-only" alt="Current Business-Driven Development Workflow Diagram" title="Visualization: Current template-based BRD→PRD→FRP workflow with AI agent support" width="80%" />
+    <img src="assets/images/Business-Driven-Development-Current-Concise-dark.png#gh-dark-mode-only" alt="Current Business-Driven Development Workflow Diagram" title="Visualization: Current template-based BRD→PRD→FRP workflow with AI agent support" width="80%" />
+</details>
+    <details>
+    <summary>🔄 Enhanced Templates (8-12 weeks) - Agent Orchestration Visualization</summary>
+    <img src="assets/images/Business-Driven-Development-CABIO-SMB-Concise-light.png#gh-light-mode-only" alt="Enhanced Templates Agent Orchestration Diagram" title="Visualization: Agent orchestration with context compression and 50% less manual editing" width="80%" />
+    <img src="assets/images/Business-Driven-Development-CABIO-SMB-Concise-dark.png#gh-dark-mode-only" alt="Enhanced Templates Agent Orchestration Diagram" title="Visualization: Agent orchestration with context compression and 50% less manual editing" width="80%" />
+</details>
+<details>
+    <summary>🚀 Enterprise CABIO (12+ months) - Real-time Intelligence Visualization</summary>
+    <img src="assets/images/Business-Driven-Development-CABIO-Enterprise-Concise-light.png#gh-light-mode-only" alt="Enterprise CABIO Business Intelligence Diagram" title="Visualization: Real-time market data with enterprise scalability and multi-model optimization" width="80%" />
+    <img src="assets/images/Business-Driven-Development-CABIO-Enterprise-Concise-dark.png#gh-dark-mode-only" alt="Enterprise CABIO Business Intelligence Diagram" title="Visualization: Real-time market data with enterprise scalability and multi-model optimization" width="80%" />
+</details>
+
 ## Comprehensive Usage
 
 ### Business-Driven Development (Recommended)

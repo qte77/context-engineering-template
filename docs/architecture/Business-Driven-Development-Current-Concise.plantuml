@@ -1,0 +1,49 @@
+@startuml Business-Driven-Development-Current-Concise
+title Current Business-Driven Development Workflow - Concise
+
+!log Current 'STYLE' dvar: STYLE
+!log About to include: styles/github-STYLE.puml
+!include styles/github-STYLE.puml
+
+participant "User" as User
+participant "Claude Code" as Claude
+participant "AI Agent" as Agent
+
+== Business-Driven Development (Recommended) ==
+
+alt Business Input Options
+    User -> User: Create business_inputs/project.md
+else Interactive Session
+    User -> Claude: Interactive BRD generation
+else Partial BRD
+    User -> User: Partially fill BRDs/project.md
+end
+
+User -> Claude: make brd_gen_claude
+Claude -> Agent: Generate BRD from business input
+Agent -> User: **Comprehensive BRD**
+
+User -> Claude: make prd_gen_claude
+Claude -> Agent: Transform BRD to product features
+Agent -> User: **PRD** with feature list
+
+User -> Claude: make frp_gen_claude
+Claude -> Agent: Create feature-specific technical spec
+Agent -> User: **FRP** with business context
+
+User -> Claude: make frp_exe_claude
+Claude -> Agent: Implement with full context
+Agent -> User: **Feature** with business traceability
+
+== Direct Feature Development (Legacy) ==
+
+User -> User: Create features/feature.md
+User -> Claude: make frp_gen_legacy_claude
+Claude -> Agent: Generate FRP from feature
+Agent -> User: Technical spec (limited context)
+
+User -> Claude: make frp_exe_legacy_claude
+Claude -> Agent: Quick implementation
+Agent -> User: Feature prototype
+
+@enduml
