@@ -3,7 +3,7 @@
 Business workflow system with AI agent support. Evolving toward intelligent orchestration: from business analysis to requirements to implementation.
 
 [![License](https://img.shields.io/badge/license-GNUGPLv3-green.svg)](LICENSE)
-![Version](https://img.shields.io/badge/version-0.0.1-58f4c2)
+![Version](https://img.shields.io/badge/version-1.0.0-58f4c2)
 [![CodeQL](https://github.com/qte77/context-engineering-template/actions/workflows/codeql.yaml/badge.svg)](https://github.com/qte77/context-engineering-template/actions/workflows/codeql.yaml)
 [![CodeFactor](https://www.codefactor.io/repository/github/qte77/context-engineering-template/badge)](https://www.codefactor.io/repository/github/qte77/context-engineering-template)
 [![ruff](https://github.com/qte77/context-engineering-template/actions/workflows/ruff.yaml/badge.svg)](https://github.com/qte77/context-engineering-template/actions/workflows/ruff.yaml)
