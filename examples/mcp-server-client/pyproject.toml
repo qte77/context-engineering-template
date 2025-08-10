@@ -4,12 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 version = "0.0.1"
-name = "context-engineering-template"
-description = "Assess the effectiveness of agentic AI systems across various use cases focusing on agnostic metrics that measure core agentic capabilities."
+name = "mcp-server-client-demo"
+description = "Demonstrates a MCP server-client infrastructure developed with Claude Code CLI using context and custom commands."
 authors = [
     {name = "qte77", email = "qte@77.gh"}
 ]
-requires-python = "==3.13.*"
+readme = "README.md"
+requires-python = ">=3.13"
 license = "bsd-3-clause"
 dependencies = [
     "mcp[cli]>=1.10.0",
@@ -42,15 +43,12 @@ docs = [
     "mkdocstrings[python]>=0.27.0",
 ]
 
-[tool.uv]
-package = true
-exclude-newer = "2025-07-06T00:00:00Z"
-
 [tool.hatch.build.targets.wheel]
 packages = ["src"]
 
-[tool.hatch.build.targets.sdist]
-include = ["/src"]
+[tool.uv]
+package = true
+exclude-newer = "2025-07-06T00:00:00Z"
 
 [tool.ruff]
 target-version = "py313"
