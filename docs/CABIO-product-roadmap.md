@@ -4,55 +4,59 @@ What we're building and the value it delivers
 
 ## Value Proposition
 
-**Enterprise-grade business intelligence for teams of any size.**
+**Structured business intelligence for small teams, built to scale toward enterprise capabilities.**
 
-CABIO delivers comprehensive business analysis - market research, competitive intelligence, financial modeling, go-to-market strategy - through AI agent orchestration that preserves context and enhances insights.
+CABIO delivers systematic business analysis workflows - starting with template-based BRD generation for small teams, evolving toward comprehensive market research, competitive intelligence, and strategic planning through AI agent orchestration.
 
 ## Customer Pain Points & Gains
 
-### Current Pain Points
+### Current Pain Points (Small Teams Focus)
 
-- **Fragmented Analysis**: Market research, competitive analysis, and financial modeling happen in silos
-- **Information Overload**: Traditional BI tools overwhelm users with data instead of insights
-- **High Costs**: Dedicated business analysts and consultants are expensive for small teams
-- **Context Loss**: Insights get lost when moving between tools and team members
-- **Time-Intensive**: Manual business analysis takes weeks when decisions need to be made quickly
+- **Lack of Structure**: Business decisions made without systematic analysis framework
+- **Resource Constraints**: Can't afford dedicated business analysts or consultants
+- **Time Pressure**: Need structured business requirements quickly for product decisions
+- **Documentation Gap**: Informal business thinking not suitable for investors or team alignment
 
 ### Customer Gains with CABIO
 
-- **Comprehensive Intelligence**: Complete business analysis in hours, not weeks
-- **Cost Effective**: Enterprise-level analysis at small team budgets  
-- **Context Preservation**: Insights build and enhance rather than getting lost
-- **Actionable Outputs**: Structured business requirements ready for implementation
-- **Real-Time Intelligence**: Live market data and competitive insights, not static reports
+- **Structured Framework**: Professional business analysis workflow accessible to small teams
+- **Cost Effective**: Business intelligence at small team budgets  
+- **Speed**: Generate structured BRDs in hours instead of weeks
+- **Professional Output**: Business documentation ready for stakeholders and implementation
 
 ## Target Customers
 
-### Primary Markets
+### Primary Markets (Phase 1: Small Teams First)
 
-1. Small Growing Companies (10-50 people)
+1. **Small Teams & Startups (5-25 people)** - *Primary Focus*
 
-   - Need enterprise-level business analysis but can't afford dedicated roles
-   - Making critical product and market decisions with limited resources
-   - Want professional business intelligence without the learning curve
+   - Need structured business analysis but lack dedicated roles
+   - Making critical product decisions with limited resources
+   - Want professional business intelligence without complexity
 
-2. Consulting Firms & Agencies
+2. **Solo Entrepreneurs & Founders** - *Core Market*
 
-   - Need to deliver comprehensive business analysis quickly for clients
-   - Want to offer enterprise-level strategic services at competitive rates  
-   - Require consistent, high-quality business intelligence frameworks
+   - Making business decisions without analysis resources
+   - Need validation for product ideas and market strategies
+   - Want professional business documentation for investors
 
-3. Enterprise Product Teams
+3. **Small Consulting Firms** - *Early Adopters*
 
-- Managing multiple product lines with complex market dynamics
-- Need faster, more comprehensive business requirements generation
-- Want real-time competitive and market intelligence integration
+   - Need to deliver business analysis quickly for clients
+   - Want consistent, high-quality frameworks at small team scale
+   - Require cost-effective strategic services delivery
 
-**4. Solo Entrepreneurs & Founders**  
+### Secondary Markets (Future Phases)
 
-- Making business decisions without dedicated analysis resources
-- Need validation for product ideas and market strategies
-- Want professional business documentation for investors and partners
+4. **SMB Companies (25-100 people)** - *Phase 2 Expansion*
+
+   - Growing teams needing scalable business intelligence
+   - Multiple product lines requiring coordinated analysis
+
+5. **Enterprise Teams** - *Long-term Vision (1-1.5 years)*
+
+   - Complex market dynamics and real-time intelligence needs
+   - Advanced workflow integration and compliance requirements
 
 ## Implementation Phases
 
@@ -65,15 +69,15 @@ CABIO delivers comprehensive business analysis - market research, competitive in
 
 ### Phase 2: Smart Context Management  
 
-- [ ] **Intelligent Context Allocation**: Right-size information per agent (no more information overload)
+- [ ] **Context Compression & Routing**: Compress business input and route relevant sections to specific agents
 - [ ] **Progressive Context Building**: Start simple, add complexity as analysis deepens
 - [ ] **Context Quality Control**: Ensure no critical business insights get lost
 
-### Phase 3: Real-World Business Intelligence
+### Phase 3: Template-Based Business Intelligence
 
-- [ ] **Live Market Data**: Connect to Google Analytics, Crunchbase, social media APIs
-- [ ] **Competitive Intelligence**: Automated competitor research and analysis
-- [ ] **Industry Insights**: Access real business data, not just templates
+- [ ] **Enhanced Templates**: Comprehensive BRD templates with market research frameworks
+- [ ] **Basic Market Analysis**: Template-driven competitive analysis and industry structure
+- [ ] **Structured Output**: Professional business documentation ready for stakeholders
 
 ### Phase 4: Workflow Orchestration
 
@@ -87,12 +91,12 @@ CABIO delivers comprehensive business analysis - market research, competitive in
 - [ ] **Easy Migration**: Smooth transition from custom commands to agent orchestration
 - [ ] **Comprehensive Documentation**: Examples and guides for all use cases
 
-### Phase 6: Production Readiness
+### Phase 6: Small Team Production Features
 
-- [ ] **Enterprise-Grade Architecture**: Scalable, reliable, monitorable
-- [ ] **Advanced Context Management**: Memory systems that get smarter over time  
-- [ ] **Human Oversight**: Approval gates for critical business decisions
-- [ ] **Multi-Model Strategy**: Use the right AI model for each task
+- [ ] **Reliable Architecture**: Stable deployment for consistent small team usage
+- [ ] **Enhanced Context Management**: Improved context routing and compression  
+- [ ] **Quality Gates**: Validation checkpoints for business analysis output
+- [ ] **Multi-Agent Coordination**: Seamless handoffs between analysis agents
 
 ## Core Technology Stack
 
@@ -105,7 +109,7 @@ CABIO delivers comprehensive business analysis - market research, competitive in
 
 ### Context Efficiency
 
-- **Intelligent Context Allocation**: Right-sizing context per agent rather than simple reduction
+- **Context Compression & Allocation**: Smart routing of compressed business context to appropriate agents based on need-to-know principles
 - **Focused Processing**: Agents receive only relevant information for their specific role
 - **Scalable Workflow**: Maintains performance as project complexity grows
 
@@ -129,19 +133,6 @@ CABIO delivers comprehensive business analysis - market research, competitive in
 - **Multi-Model Optimization**: Cost-effective model selection based on task complexity
 - **Structured Quality Gates**: Extract-Resolve-Enrich pattern ensures consistent, high-quality outputs
 
-## Success Metrics
-
-- [ ] Intelligent context allocation achieves right-sizing per agent
-- [ ] End-to-end workflow completes without manual intervention
-- [ ] Business intelligence integration provides actionable insights
-- [ ] Maintains compatibility with existing BRD→PRD→FRP process
-- [ ] Documentation covers 100% of new features with examples
-- [ ] **Production-Ready Metrics** (Phase 7):
-  - [ ] Agent reliability >99.5% uptime
-  - [ ] Human approval workflows <2 hour average response time
-  - [ ] Multi-model strategy achieves 40%+ cost reduction vs single-model
-  - [ ] Memory decay maintains >95% critical information retention
-  - [ ] Extract-Resolve-Enrich pattern shows measurable quality improvements
 
 ## Risks & Mitigation
 
@@ -166,14 +157,19 @@ CABIO delivers comprehensive business analysis - market research, competitive in
 
 ## Timeline Estimate
 
-- **Phase 1-2**: 2-3 weeks (Sub-agents + Context engineering)
-- **Phase 3**: 1-2 weeks (MCP integration)  
-- **Phase 4-5**: 2-3 weeks (Orchestration + Integration)
-- **Phase 6**: 1 week (Documentation)
-- **Phase 7**: 3-4 weeks (Production-ready enhancements)
+### MVP Timeline (Small Teams Focus)
+- **Phase 1-2**: 2-3 weeks (Sub-agents + Basic context management)
+- **Phase 3**: 2-3 weeks (Template-based business intelligence)  
+- **Phase 4**: 1-2 weeks (Basic orchestration + Integration testing)
 
-**Total Core CABIO**: 6-9 weeks  
-**Total with Production Features**: 9-13 weeks
+**Total MVP**: 6-8 weeks
+
+### Enterprise Timeline (Future Phases)
+- **Advanced Context Engineering**: 3-4 months
+- **Real-time Business Intelligence**: 4-6 months
+- **Enterprise Architecture & Compliance**: 6-12 months
+
+**Total Enterprise-Ready**: 12-18 months
 
 ## Market Applications & Commercialization Opportunities
 
@@ -222,20 +218,29 @@ CABIO delivers comprehensive business analysis - market research, competitive in
 - [ ] **Market Research**: Validate demand across different company sizes and sectors
 - [ ] **Validation Gates**: Add workflow restart triggers when business assumptions are invalidated (outlook)
 
-### Outlook: Advanced Enhancements
+### Enterprise Evolution (12-18 Months Outlook)
 
-- [ ] **Business Context Persistence**: Track business context evolution and requirement changes over time
-- [ ] **Competitive Intelligence Integration**: Systematic competitive monitoring with dedicated intelligence agents
-- [ ] **Validation & Testing Framework**: Business hypothesis testing with measurable predictions
-- [ ] **Business Outcome Metrics**: Track real-world effectiveness beyond process efficiency
-- [ ] **Business Intelligence Effectiveness Tracking**: Measure decision quality, not just workflow speed
+- [ ] **Real-Time Market Data**: Live connections to Google Analytics, Crunchbase, social media APIs
+- [ ] **Advanced Competitive Intelligence**: Automated competitor research and systematic monitoring
+- [ ] **Enterprise Architecture**: High-availability, compliance-ready systems with >99.5% uptime
+- [ ] **Advanced Context Management**: Memory systems with intelligent decay and retention
+- [ ] **Business Validation Framework**: Hypothesis testing with measurable business predictions
+- [ ] **Human Oversight Integration**: Approval workflows for high-stakes business decisions
+- [ ] **Multi-Model Optimization**: Cost-effective model selection achieving 40%+ cost reduction
 
-## Development Timeline
+## Success Metrics & Examples
 
-**Core CABIO Implementation**: 6-9 weeks  
-**Production-Ready System**: 9-13 weeks
+### MVP Success Criteria (6-8 Weeks)
+- [ ] **Workflow Completion**: Sarah (startup founder) uploads business idea → receives structured BRD in 2 hours
+- [ ] **Context Efficiency**: Business input compressed to relevant sections for each agent (market analysis agent gets 20% of total context, strategy agent gets 15%)
+- [ ] **Template Quality**: Generated BRDs include structured sections: Executive Summary, Market Analysis, Technical Requirements, Go-to-Market Strategy
+- [ ] **User Adoption**: 90%+ of users complete full workflow without external help
 
-> Timeline assumes dedicated development focus with access to Claude Code CLI and external APIs
+### Enterprise Metrics Examples (12-18 Months Outlook)
+- [ ] **System Reliability**: >99.5% uptime for business-critical analysis workflows
+- [ ] **Cost Optimization**: Multi-model routing achieves 40%+ cost reduction (e.g., use Claude-3.5-Sonnet for complex analysis, GPT-4o-mini for template formatting)
+- [ ] **Processing Speed**: Complete competitive analysis including real-time data in <30 minutes vs 2-3 days manual research
+- [ ] **Context Intelligence**: Memory decay preserves 95%+ of critical business insights while reducing token usage by 60%
 
 ## Next Steps
 

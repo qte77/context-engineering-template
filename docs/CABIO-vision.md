@@ -21,7 +21,7 @@ From our own development experience, we've seen how business analysis gets fragm
 
 We envision a world where:
 
-- **Small teams have access to enterprise-grade business analysis** without hiring specialists
+- **Small teams have access to structured business analysis** that scales toward enterprise capabilities
 - **Business insights flow naturally** from market research to strategy to requirements
 - **Context is preserved and enhanced** as analysis deepens, not lost in handoffs
 - **Real market intelligence** informs every product decision, not just intuition
@@ -34,11 +34,11 @@ AI agents are becoming sophisticated enough to handle complex business analysis,
 
 ### The Context Problem  
 
-Traditional tools overwhelm users with information. We believe in **intelligent context allocation** - giving decision makers exactly the information they need, when they need it.
+Traditional tools overwhelm users with information. We believe in **context compression and on-demand routing** - giving decision makers exactly the information they need, when they need it, through smart allocation and need-to-know filtering.
 
 ### The Small Team Reality
 
-Most innovation happens in small teams that can't afford dedicated business analysts, market researchers, or strategy consultants. AI should democratize business intelligence.
+Most innovation happens in small teams (5-25 people) that can't afford dedicated business analysts, market researchers, or strategy consultants. AI should democratize access to structured business intelligence, starting with these teams before scaling to enterprise needs.
 
 ## Our North Star
 
