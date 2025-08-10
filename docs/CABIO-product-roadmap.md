@@ -1,6 +1,6 @@
 # CABIO Product Roadmap
 
-**What we're building and the value it delivers**
+What we're building and the value it delivers
 
 ## Value Proposition
 
@@ -11,6 +11,7 @@ CABIO delivers comprehensive business analysis - market research, competitive in
 ## Customer Pain Points & Gains
 
 ### Current Pain Points
+
 - **Fragmented Analysis**: Market research, competitive analysis, and financial modeling happen in silos
 - **Information Overload**: Traditional BI tools overwhelm users with data instead of insights
 - **High Costs**: Dedicated business analysts and consultants are expensive for small teams
@@ -18,6 +19,7 @@ CABIO delivers comprehensive business analysis - market research, competitive in
 - **Time-Intensive**: Manual business analysis takes weeks when decisions need to be made quickly
 
 ### Customer Gains with CABIO
+
 - **Comprehensive Intelligence**: Complete business analysis in hours, not weeks
 - **Cost Effective**: Enterprise-level analysis at small team budgets  
 - **Context Preservation**: Insights build and enhance rather than getting lost
@@ -28,22 +30,26 @@ CABIO delivers comprehensive business analysis - market research, competitive in
 
 ### Primary Markets
 
-**1. Small Growing Companies (10-50 people)**
-- Need enterprise-level business analysis but can't afford dedicated roles
-- Making critical product and market decisions with limited resources
-- Want professional business intelligence without the learning curve
+1. Small Growing Companies (10-50 people)
 
-**2. Consulting Firms & Agencies**
-- Need to deliver comprehensive business analysis quickly for clients
-- Want to offer enterprise-level strategic services at competitive rates  
-- Require consistent, high-quality business intelligence frameworks
+   - Need enterprise-level business analysis but can't afford dedicated roles
+   - Making critical product and market decisions with limited resources
+   - Want professional business intelligence without the learning curve
 
-**3. Enterprise Product Teams**
+2. Consulting Firms & Agencies
+
+   - Need to deliver comprehensive business analysis quickly for clients
+   - Want to offer enterprise-level strategic services at competitive rates  
+   - Require consistent, high-quality business intelligence frameworks
+
+3. Enterprise Product Teams
+
 - Managing multiple product lines with complex market dynamics
 - Need faster, more comprehensive business requirements generation
 - Want real-time competitive and market intelligence integration
 
 **4. Solo Entrepreneurs & Founders**  
+
 - Making business decisions without dedicated analysis resources
 - Need validation for product ideas and market strategies
 - Want professional business documentation for investors and partners
@@ -173,26 +179,30 @@ CABIO delivers comprehensive business analysis - market research, competitive in
 
 ### Target Market Segments
 
-**1. Multi-Agent Infrastructure Platform**
-- **Problem**: Multi-agent systems are complex to build and orchestrate effectively
-- **CABIO Solution**: Context-aware orchestration platform for enterprise agent workflows
-- **Market**: B2B SaaS for companies building AI agent systems, enterprise software teams
-- **Revenue Model**: Platform licensing + usage-based pricing
+1. Multi-Agent Infrastructure Platform
 
-**2. AI-Native Business Intelligence Suite**
-- **Problem**: Traditional BI tools lack AI-native architecture and contextual intelligence
-- **CABIO Solution**: Complete BRD→PRD→FRP workflow with real-time business intelligence
-- **Market**: Enterprise product teams, consulting firms, startups, SMBs
-- **Revenue Model**: Subscription tiers based on analysis complexity and team size
+   - **Problem**: Multi-agent systems are complex to build and orchestrate effectively
+   - **CABIO Solution**: Context-aware orchestration platform for enterprise agent workflows
+   - **Market**: B2B SaaS for companies building AI agent systems, enterprise software teams
+   - **Revenue Model**: Platform licensing + usage-based pricing
 
-**3. Small Team Productivity Amplifier**
-- **Problem**: 10-person companies need enterprise-level business analysis but lack dedicated roles
-- **CABIO Solution**: "CABIO Lite" - simplified single-agent mode that scales to multi-agent orchestration
-- **Market**: Small companies, consulting firms, agencies, bootstrapped startups
-- **Revenue Model**: Affordable tiers designed for small teams ($99-499/month)
-- **TODO**: Decide whether to start with CABIO Lite or implement scaling later
+2. AI-Native Business Intelligence Suite
 
-**4. Professional Development & Training Platform**
+   - **Problem**: Traditional BI tools lack AI-native architecture and contextual intelligence
+   - **CABIO Solution**: Complete BRD→PRD→FRP workflow with real-time business intelligence
+   - **Market**: Enterprise product teams, consulting firms, startups, SMBs
+   - **Revenue Model**: Subscription tiers based on analysis complexity and team size
+
+3. Small Team Productivity Amplifier
+
+   - **Problem**: 10-person companies need enterprise-level business analysis but lack dedicated roles
+   - **CABIO Solution**: "CABIO Lite" - simplified single-agent mode that scales to multi-agent orchestration
+   - **Market**: Small companies, consulting firms, agencies, bootstrapped startups
+   - **Revenue Model**: Affordable tiers designed for small teams ($99-499/month)
+   - **TODO**: Decide whether to start with CABIO Lite or implement scaling later
+
+4. Professional Development & Training Platform
+
 - **Problem**: Rapid skill development needed for business analysis and product management
 - **CABIO Solution**: AI-powered training using real business scenarios and structured frameworks
 - **Market**: Corporate training, professional development, individual skill building
@@ -200,7 +210,8 @@ CABIO delivers comprehensive business analysis - market research, competitive in
 
 ### Commercial Extensions
 
-**Phase 8: Market Validation & Product Development**
+### Phase 8: Market Validation & Product Development
+
 - [ ] **Multi-Agent Infrastructure MVP**: Package CABIO as agent orchestration platform
 - [ ] **Small Team Solution**: Create simplified version for 10-person companies
   - [ ] One-click business analysis workflows
@@ -224,7 +235,7 @@ CABIO delivers comprehensive business analysis - market research, competitive in
 **Core CABIO Implementation**: 6-9 weeks  
 **Production-Ready System**: 9-13 weeks
 
-*Timeline assumes dedicated development focus with access to Claude Code CLI and external APIs*
+> Timeline assumes dedicated development focus with access to Claude Code CLI and external APIs
 
 ## Next Steps
 

@@ -12,6 +12,8 @@ ENV_FILE := .env
 SRC_PATH := src
 APP_PATH := $(SRC_PATH)
 EXAMPLES_PATH := examples/mcp-server-client
+PLANTUML_CONTAINER := plantuml/plantuml:latest
+PLANTUML_SCRIPT := scripts/generate-plantuml-png.sh
 
 # Context engineering paths
 BRD_DEF_PATH := context/BRDs
