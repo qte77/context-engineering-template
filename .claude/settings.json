@@ -1,0 +1,71 @@
+{
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
+    "DISABLE_TELEMETRY": "1"
+  },
+  "statusLine": {
+    "enabled": true,
+    "format": "🤖 Claude Code | {cwd} | {branch} | {time}",
+    "showGitBranch": true,
+    "showWorkingDirectory": true,
+    "showTimestamp": true,
+    "updateInterval": 1000,
+    "colors": {
+      "primary": "#0066cc",
+      "secondary": "#666666",
+      "success": "#00cc66",
+      "warning": "#ff9900",
+      "error": "#cc0000"
+    }
+  },
+  "permissions": {
+    "allow": [
+      "Bash(date:*)",
+      "Bash(git:diff*)",
+      "Bash(git:log*)",
+      "Bash(git:status*)",
+      "Bash(git log --grep:*)",
+      "Bash(make:*)",
+      "Bash(mkdir:*)",
+      "Bash(source:*)",
+      "Bash(touch:*)",
+      "Bash(tree:*)",
+      "Bash(uv sync:*)",
+      "Bash(uv run mypy:*)",
+      "Bash(uv run pytest:*)",
+      "Bash(uv run ruff:*)",
+      "Edit(AGENTS.md)",
+      "Edit(CHANGELOG.md)",
+      "Edit(docs/**/*.md)",
+      "Edit(Makefile)",
+      "Edit(README.md)",
+      "Edit(src/**/*.py)",
+      "Edit(src/**/*.json)",
+      "Edit(tests/**/*.py)",
+      "Edit(tests/**/*.json)",
+      "Edit(pyproject.toml)",
+      "Read(**/*)",
+      "WebFetch(domain:github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md)",
+      "WebFetch(domain:docs.anthropic.com)"
+    ],
+    "deny": [
+      "Bash(cat:*)",
+      "Bash(cp:*)",
+      "Bash(find:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(grep:*)",
+      "Bash(head:*)",
+      "Bash(ls:*)",
+      "Bash(mv:*)",
+      "Bash(rg:*)",
+      "Bash(rm:*)",
+      "Bash(tail:*)",
+      "Edit(.claude/settings*.json)",
+      "Edit(.claude/commands/*.md)",
+      "Edit(context/**/*.md)",
+      "Edit(CLAUDE.md)"
+    ]
+  }
+}

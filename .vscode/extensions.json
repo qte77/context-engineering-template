@@ -1,12 +1,14 @@
 {
     "recommendations": [
+        "anthropic.claude-code",
+        "saoudrizwan.claude-dev",
+
         "charliermarsh.ruff",
         "davidanson.vscode-markdownlint",
         "donjayamanne.githistory",
         "editorconfig.editorconfig",
         "gruntfuggly.todo-tree",
         "mhutchie.git-graph",
-        "PKief.material-icon-theme",
         "redhat.vscode-yaml",
         "tamasfe.even-better-toml",
         "yzhang.markdown-all-in-one",
@@ -15,6 +17,7 @@
         "github.copilot-chat",
         "github.vscode-github-actions",
         "ms-azuretools.vscode-docker",
+        "ms-azuretools.vscode-containers",
         "ms-python.debugpy",
         "ms-python.python",
         "ms-python.vscode-pylance",

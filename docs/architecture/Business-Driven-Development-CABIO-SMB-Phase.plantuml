@@ -1,0 +1,77 @@
+@startuml Business-Driven-Development-CABIO-SMB-Phase
+title Enhanced Templates with Agent Orchestration (8-12 weeks)
+
+!log Current 'STYLE' dvar: STYLE
+!log About to include: styles/github-STYLE.puml
+!include styles/github-STYLE.puml
+
+participant "User" as User
+participant "Context Router" as Router
+participant "Market Research Agent" as MarketAgent
+participant "Strategy Agent" as StrategyAgent
+participant "Technical Agent" as TechAgent
+participant "Quality Gate" as Quality
+
+== Enhanced Templates with Agent Orchestration ==
+
+group Business Input Processing [#161B22]
+
+    User -> Router: Upload business_inputs/project.md
+    Router -> Router: **Context Compression**\nAnalyze & route relevant sections
+    
+    alt Comprehensive Business Input
+        Router -> MarketAgent: Market analysis sections (20% context)
+        Router -> StrategyAgent: Strategy sections (15% context)
+        Router -> TechAgent: Technical requirements (25% context)
+    else Partial Business Input
+        Router -> User: Request missing information via guided prompts
+        User -> Router: Provide additional context
+        Router -> Router: Re-compress and route
+    end
+
+end
+
+group Agent Orchestration with Context Preservation [#161B22]
+
+    MarketAgent -> MarketAgent: Generate market research\nwith competitive analysis
+    MarketAgent -> Router: Market insights + preserved context
+    
+    Router -> StrategyAgent: Market insights + strategy context
+    StrategyAgent -> StrategyAgent: Generate go-to-market\nstrategy with market data
+    StrategyAgent -> Router: Strategy framework + preserved context
+    
+    Router -> TechAgent: Business + market + strategy context
+    TechAgent -> TechAgent: Generate technical\nrequirements with business alignment
+    TechAgent -> Router: Technical specification + full context
+
+end
+
+group Quality Gates and Streamlined Output [#161B22]
+
+    Router -> Quality: Validate context preservation\nand professional output quality
+    Quality -> Quality: **50% less manual editing**\nverification checkpoint
+    
+    alt Quality Check Passed
+        Quality -> User: **Enhanced BRD** with market research integration\nand preserved business context
+    else Quality Issues Found
+        Quality -> Router: Request agent refinement
+        Router -> MarketAgent: Refine analysis
+        Router -> StrategyAgent: Refine strategy
+        Router -> TechAgent: Refine requirements
+    end
+
+end
+
+group PRD and FRP Generation [#161B22]
+
+    User -> Router: Generate PRD from enhanced BRD
+    Router -> TechAgent: Transform BRD to product features\nwith full business context
+    TechAgent -> User: **Enhanced PRD** with feature prioritization\nand business traceability
+    
+    User -> Router: Generate FRP for specific feature
+    Router -> TechAgent: Create technical specification\nwith BRD→PRD→FRP context
+    TechAgent -> User: **Enhanced FRP** ready for implementation
+
+end
+
+@enduml

@@ -3,7 +3,7 @@
 
 .SILENT:
 .ONESHELL:
-.PHONY: setup_dev setup_prod ruff test_all check_types coverage_all run_gui run_server run_client help
+.PHONY: setup_dev setup_prod ruff test_all check_types coverage_all run_gui run_server run_client run_full help
 .DEFAULT_GOAL := help
 
 SRC_PATH := src
@@ -47,6 +47,9 @@ run_server:  ## Run MCP server
 
 run_client:  ## Run MCP client (requires ARGS)
 	uv run python -m src.main client $(ARGS)
+
+run_full:  ## Run full MCP server-client demo using Docker Compose
+	docker compose up --build $(ARGS)
 
 # MARK: help
 

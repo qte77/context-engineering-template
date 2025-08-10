@@ -1,0 +1,40 @@
+{
+  "project": {
+    "name": "context-engineering-template",
+    "description": "See AGENTS.md for details",
+    "type": "python",
+    "root": "."
+  },
+  "rules": [
+    {
+      "name": "Core Agent Instructions",
+      "description": "Follow AGENTS.md for all agent behavior, decision framework, and coding conventions.",
+      "severity": "error"
+    },
+    {
+      "name": "Path Resolution",
+      "description": "All path variables are defined in context/config/paths.md; read once and cache.",
+      "severity": "error"
+    }
+  ],
+  "important_files": [
+    "AGENTS.md",
+    "context/config/paths.md",
+    "pyproject.toml",
+    "src/app/app.py"
+  ],
+  "ignore_patterns": [
+    "*.pyc",
+    "__pycache__/",
+    ".pytest_cache/",
+    ".ruff_cache/",
+    ".git/",
+    "logs/",
+    "*.png",
+    "*.pdf"
+  ],
+  "context_files": [
+    "AGENTS.md",
+    "context/config/paths.md"
+  ]
+}

@@ -1,0 +1,49 @@
+@startuml Business-Driven-Development-CABIO-SMB-Concise
+title Enhanced Templates with Agent Orchestration (8-12 weeks) - Concise
+
+!log Current 'STYLE' dvar: STYLE
+!log About to include: styles/github-STYLE.puml
+!include styles/github-STYLE.puml
+
+participant "User" as User
+participant "Context Router" as Router
+participant "Market Agent" as MarketAgent
+participant "Strategy Agent" as StrategyAgent
+participant "Technical Agent" as TechAgent
+
+== Enhanced Templates with Agent Orchestration ==
+
+User -> Router: Business input
+Router -> Router: **Context Compression**\n& routing
+
+par Agent Coordination
+    Router -> MarketAgent: Market analysis (20% context)
+    Router -> StrategyAgent: Strategy analysis (15% context) 
+    Router -> TechAgent: Technical requirements (25% context)
+end
+
+par Context Preservation
+    MarketAgent --> Router: Market insights
+    StrategyAgent --> Router: Strategy framework
+    TechAgent --> Router: Technical specs
+end
+
+Router -> User: **Enhanced BRD** with market integration\n**50% less manual editing**
+
+== PRD & FRP Generation ==
+
+User -> Router: Generate PRD
+Router -> TechAgent: Transform BRD to product features\nwith full business context
+TechAgent -> User: **Enhanced PRD**\nwith business traceability
+
+User -> Router: Generate FRP
+Router -> TechAgent: Create technical specification\nwith BRD→PRD context
+TechAgent -> User: **Enhanced FRP**\nwith market integration
+
+== Implementation (Key USP) ==
+
+User -> Router: Execute FRP implementation
+Router -> TechAgent: **Implement feature**\nwith full BRD→PRD→FRP context
+TechAgent -> User: **Working Feature**\nwith business traceability & market alignment
+
+@enduml

@@ -1,0 +1,19 @@
+{
+  "agent_name": "Gemini-CLI-Agent",
+  "version": "1.0.1",
+  "description": "An interactive CLI agent specializing in software engineering tasks, designed for safety and efficiency within a user's development environment.",
+  "generated_at": "2025-07-27T20:20:00Z",
+  "contextFileName": "AGENTS.md",
+  "excludeTools": [
+    "ShellTool(rm -rf)",
+    "ShellTool(git commit)",
+    "ShellTool(git push)"
+  ],
+  "telemetry": {
+    "enabled": false,
+    "target": "gcp",
+    "logPrompts": false
+  },
+  "hideBanner": true,
+  "sandbox": false
+}
