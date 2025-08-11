@@ -31,11 +31,11 @@ Business workflow system with AI agent support. Evolving toward intelligent orch
 # 1. Setup environment
 make setup_dev
 
-# 2. Try business-driven approach with existing example
+# 2. business-driven product development approach wih example files
 make brd_gen_claude "ARGS=example_ai_assistant.md"        # Business Requierements Definition
 make prd_gen_claude "ARGS=example_ai_assistant.md"        # Product Requierements Definition
-make frp_gen_claude "ARGS=example_ai_assistant.md task_automation"    
-make frp_exe_claude "ARGS=example_ai_assistant_task_automation.md"
+make frp_gen_claude "ARGS=example_ai_assistant.md task_automation"    # Feature Request Prompt generation
+make frp_exe_claude "ARGS=example_ai_assistant_task_automation.md"    # Feature Request Prompt execution
 ```
 
 ## The Product
@@ -116,9 +116,9 @@ Building on proven BRD→PRD→FRP foundation, CABIO represents our evolution pa
 
 ### Legacy Development
 
-1. **Create feature**: `cp context/templates/feature_base.md context/features/my_feature.md`
-2. **Generate FRP**: `make frp_gen_legacy_claude "ARGS=my_feature.md"`
-3. **Implement**: `make frp_exe_legacy_claude "ARGS=my_feature.md"`
+1. **Create feature**: `cp context/templates/feature_base.md context/features/my_feature_description.md`
+2. **Generate FRP**: `make frp_gen_legacy_claude "ARGS=my_feature_description.md"`
+3. **Implement**: `make frp_exe_legacy_claude "ARGS=my_feature_frp.md"`
 
 ## Status
 
