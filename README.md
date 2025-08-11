@@ -16,7 +16,10 @@ Business workflow system with AI agent support. Evolving toward intelligent orch
 
 ### Current State
 
-- **Template-based business workflow system** for small teams (5-25 people) using BRD→PRD→FRP generation via make commands with Claude Code. Cline and Gemini configurations are present as fall-back solutions.
+- **Template-based business workflow system** for small teams (5-25 people) using `BRD → PRD → FRP` generation via make commands and Claude Code.
+- Business Requirements Definition to Product Requirements Definition to Feature Request Prompt to Implementation
+- Business Requierements can be provided via complete requirements template, description or iterative process
+- Cline and Gemini configurations are present as fall-back solutions.
 
 ### CABIO Vision
 
@@ -28,18 +31,18 @@ Business workflow system with AI agent support. Evolving toward intelligent orch
 # 1. Setup environment
 make setup_dev
 
-# 2. Try business-driven approach with existing example
-make brd_gen_claude "ARGS=example_ai_assistant.md"
-make prd_gen_claude "ARGS=example_ai_assistant.md"  
-make frp_gen_claude "ARGS=example_ai_assistant.md task_automation"
-make frp_exe_claude "ARGS=example_ai_assistant_task_automation.md"
+# 2. business-driven product development approach wih example files
+make brd_gen_claude "ARGS=example_ai_assistant.md"        # Business Requierements Definition
+make prd_gen_claude "ARGS=example_ai_assistant.md"        # Product Requierements Definition
+make frp_gen_claude "ARGS=example_ai_assistant.md task_automation"    # Feature Request Prompt generation
+make frp_exe_claude "ARGS=example_ai_assistant_task_automation.md"    # Feature Request Prompt execution
 ```
 
-## The Current Product
+## The Product
 
 **Template-based business workflow system for small teams (5-25 people).**
 
-Structured BRD → PRD → FRP workflow with AI agent configurations. Currently uses templates and make commands, evolving toward automated business intelligence orchestration.
+Structured `BRD → PRD → FRP` workflow with AI agent configurations. Currently uses templates and make commands, evolving toward automated business intelligence orchestration.
 
 **Problem**: Small teams need structured business analysis but lack dedicated resources for professional frameworks.
 
@@ -53,6 +56,8 @@ Structured BRD → PRD → FRP workflow with AI agent configurations. Currently 
 - **AI Agent Configurations**: Ready-to-use prompts for Claude Code, Cline, and Gemini
 - **Quality Automation**: Integrated testing, linting, and validation workflows
 - **Professional Output**: Business documentation ready for stakeholders
+
+## Evolution: CABIO (Context-Aware Business Intelligence Orchestration)
 
 ### Enhanced Templates (8-12 weeks)
 
@@ -68,8 +73,6 @@ Structured BRD → PRD → FRP workflow with AI agent configurations. Currently 
 - **Enterprise Scalability**: Advanced workflows for larger organizations
 - **Accessible Intelligence**: Professional business analysis without dedicated specialists
 - **Faster Iterations**: Complete business requirements in hours rather than days
-
-## Evolution: CABIO (Context-Aware Business Intelligence Orchestration)
 
 **Goal**: Transform template-based workflow into intelligent agent orchestration.
 
@@ -113,9 +116,9 @@ Building on proven BRD→PRD→FRP foundation, CABIO represents our evolution pa
 
 ### Legacy Development
 
-1. **Create feature**: `cp context/templates/feature_base.md context/features/my_feature.md`
-2. **Generate FRP**: `make frp_gen_legacy_claude "ARGS=my_feature.md"`
-3. **Implement**: `make frp_exe_legacy_claude "ARGS=my_feature.md"`
+1. **Create feature**: `cp context/templates/feature_base.md context/features/my_feature_description.md`
+2. **Generate FRP**: `make frp_gen_legacy_claude "ARGS=my_feature_description.md"`
+3. **Implement**: `make frp_exe_legacy_claude "ARGS=my_feature_frp.md"`
 
 ## Status
 
@@ -128,4 +131,4 @@ See [CHANGELOG.md](CHANGELOG.md) for version history.
 - **[Usage Guide](docs/usage-guide.md)** - Detailed workflow instructions
 - **[Examples](docs/examples.md)** - Complete examples and demonstrations
 - **[AGENTS.md](AGENTS.md)** - Agent configuration and behavior
-- **[examples/mcp-server-client/](examples/mcp-server-client/)** - Working MCP implementation
+- **[examples/mcp-server-client/](examples/mcp-server-client/)** - Working MCP implementation, implemented with legacy custom commands workflow
